@@ -31,13 +31,13 @@ while True:
 
             if i == 0:
                 glucose += 10
-                print("🔴 Suiker gegeven ->", glucose)
+                print("Suiker gegeven ->", glucose)
 
             elif i == 1:
-                print("🟡 Wachten")
+                print("Wachten")
 
             elif i == 2:
-                print("🟢 Huidige waarde:", glucose)
+                print("Huidige waarde:", glucose)
 
         vorige_status[i] = huidige_status
 
