@@ -1,0 +1,178 @@
+[
+    {
+        "id": 1,
+        "title": "Thomas moest sprinten voor de bus.",
+        "feedback": "Door de inspanning verbruikten zijn spieren extra glucose. Een snelle suikerbron helpt een hypo voorkomen.",
+        "choices": [
+            {
+                "text": "Geef Dextro",
+                "effect": 10,
+                "correct": true
+            },
+            {
+                "text": "Doe niets",
+                "effect": -15,
+                "correct": false
+            },
+            {
+                "text": "Controleer sensor opnieuw",
+                "effect": 0,
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "title": "Thomas vergat zijn lunch op school.",
+        "feedback": "Zonder koolhydraten blijft de glucose dalen terwijl de insuline actief blijft.",
+        "choices": [
+            {
+                "text": "Koop iets met koolhydraten",
+                "effect": 10,
+                "correct": true
+            },
+            {
+                "text": "Drink alleen water",
+                "effect": -10,
+                "correct": false
+            },
+            {
+                "text": "Wacht tot thuis",
+                "effect": -15,
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "title": "Thomas krijgt onverwacht sportles.",
+        "feedback": "Sport verhoogt het glucoseverbruik. Extra koolhydraten kunnen nodig zijn.",
+        "choices": [
+            {
+                "text": "Neem een snack vooraf",
+                "effect": 10,
+                "correct": true
+            },
+            {
+                "text": "Doe niets",
+                "effect": -15,
+                "correct": false
+            },
+            {
+                "text": "Neem extra insuline",
+                "effect": -20,
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "title": "Het is 32°C buiten.",
+        "feedback": "Warmte kan ervoor zorgen dat insuline sneller wordt opgenomen.",
+        "choices": [
+            {
+                "text": "Controleer vaker zijn glucose",
+                "effect": 5,
+                "correct": true
+            },
+            {
+                "text": "Negeer de hitte",
+                "effect": -10,
+                "correct": false
+            },
+            {
+                "text": "Neem extra insuline",
+                "effect": -15,
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "title": "Thomas voelt zich plots trillerig en begint te zweten.",
+        "feedback": "Trillen en zweten zijn typische signalen van een hypo.",
+        "choices": [
+            {
+                "text": "Geef snelwerkende suikers",
+                "effect": 15,
+                "correct": true
+            },
+            {
+                "text": "Laat hem rusten",
+                "effect": -15,
+                "correct": false
+            },
+            {
+                "text": "Geef insuline",
+                "effect": -25,
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "title": "Thomas heeft veel stress voor een examen.",
+        "feedback": "Stresshormonen kunnen de glucosewaarde beïnvloeden.",
+        "choices": [
+            {
+                "text": "Controleer de sensor",
+                "effect": 5,
+                "correct": true
+            },
+            {
+                "text": "Negeer de situatie",
+                "effect": -10,
+                "correct": false
+            },
+            {
+                "text": "Geef Dextro zonder te meten",
+                "effect": -5,
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "title": "Thomas drinkt alcohol op een feestje.",
+        "feedback": "Alcohol kan uren later een hypo veroorzaken doordat de lever minder glucose afgeeft.",
+        "choices": [
+            {
+                "text": "Controleer extra tijdens de avond",
+                "effect": 10,
+                "correct": true
+            },
+            {
+                "text": "Doe niets",
+                "effect": -15,
+                "correct": false
+            },
+            {
+                "text": "Neem extra insuline",
+                "effect": -20,
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "title": "Thomas komt thuis na een drukke dag.",
+        "feedback": "Regelmatig controleren helpt onverwachte schommelingen voorkomen.",
+        "choices": [
+            {
+                "text": "Controleer zijn glucose",
+                "effect": 10,
+                "correct": true
+            },
+            {
+                "text": "Ga meteen slapen",
+                "effect": -10,
+                "correct": false
+            },
+            {
+                "text": "Neem insuline zonder meting",
+                "effect": -15,
+                "correct": false
+            }
+        ]
+    }
+]

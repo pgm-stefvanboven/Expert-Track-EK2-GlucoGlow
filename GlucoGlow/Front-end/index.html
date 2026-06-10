@@ -4,11 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <title>GlucoGlow</title>
-
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
+
+    <!-- STARTSCHERM -->
+
+    <div id="start-screen">
+
+        <h1>GLUCOGLOW</h1>
+
+        <p class="intro-text">
+            Help Thomas zijn glucose stabiel te houden.
+        </p>
+
+        <div class="roles">
+            <p><strong>Speler 1:</strong> Zorgverlener</p>
+            <p><strong>Speler 2:</strong> Beslisser</p>
+        </div>
+
+        <button id="startBtn">
+            START
+        </button>
+
+    </div>
+
+    <!-- SPEL -->
 
     <div id="game-container">
 
@@ -23,32 +45,54 @@
 
             <div id="timer-container">
                 <span class="label">Tijd</span>
-                <div id="timer">120</div>
+                <div id="timer">90</div>
             </div>
 
         </div>
 
-        <div id="status">VEILIG</div>
+        <div id="status">STABIEL</div>
 
-        <div id="situation">
-            Thomas vertrekt naar school.
-        </div>
+        <div id="situation"></div>
 
         <div id="choices">
 
-            <button id="redBtn">
-                Keuze A
-            </button>
+            <button id="redBtn"></button>
 
-            <button id="yellowBtn">
-                Keuze B
-            </button>
+            <button id="yellowBtn"></button>
 
-            <button id="greenBtn">
-                Keuze C
+            <button id="greenBtn"></button>
+
+        </div>
+
+        <div id="feedback-card">
+
+            <h2 id="feedback-status"></h2>
+
+            <p id="feedback-text"></p>
+
+            <button id="nextBtn">
+                VOLGENDE
             </button>
 
         </div>
+
+    </div>
+
+    <!-- EINDSCHERM -->
+
+    <div id="end-screen">
+
+        <h1 id="end-title">
+            MISSIE GESLAAGD
+        </h1>
+
+        <p id="end-message">
+            Thomas kwam veilig thuis.
+        </p>
+
+        <button id="restartBtn">
+            OPNIEUW SPELEN
+        </button>
 
     </div>
 
