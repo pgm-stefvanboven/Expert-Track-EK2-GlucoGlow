@@ -24,8 +24,8 @@ const glucoseElement =
 const timerElement =
     document.getElementById("timer");
 
-const statusElement =
-    document.getElementById("status");
+const trendElement =
+    document.getElementById("trend");
 
 const situationElement =
     document.getElementById("situation");
@@ -87,16 +87,18 @@ startBtn.addEventListener("click", () => {
     startScreen.style.display =
         "none";
 
-    gameContainer.style.display = "flex";
-    gameContainer.style.flexDirection = "column";
+    gameContainer.style.display =
+        "flex";
+
+    glucose = 75;
+    timer = 90;
+    currentEventIndex = 0;
 
     glucoseElement.textContent =
         glucose;
 
     timerElement.textContent =
         timer;
-
-    updateStatus();
 
     loadEvent(events[0]);
 
@@ -134,6 +136,9 @@ function loadEvent(event) {
     situationElement.textContent =
         event.title;
 
+    trendElement.textContent =
+        event.trend;
+
     redBtn.textContent =
         event.choices[0].text;
 
@@ -148,47 +153,6 @@ function loadEvent(event) {
 
     choicesContainer.style.display =
         "flex";
-}
-
-// STATUS
-
-function updateStatus() {
-
-    if (glucose < 60) {
-
-        statusElement.textContent =
-            "HYPO RISICO";
-
-        statusElement.style.color =
-            "#ff4444";
-
-        glucoseElement.style.color =
-            "#ff4444";
-    }
-
-    else if (glucose > 120) {
-
-        statusElement.textContent =
-            "HYPER RISICO";
-
-        statusElement.style.color =
-            "#ff8800";
-
-        glucoseElement.style.color =
-            "#ff8800";
-    }
-
-    else {
-
-        statusElement.textContent =
-            "STABIEL";
-
-        statusElement.style.color =
-            "#00ff99";
-
-        glucoseElement.style.color =
-            "#00ff99";
-    }
 }
 
 // KEUZE
@@ -210,9 +174,7 @@ function choose(choiceIndex) {
     glucoseElement.textContent =
         glucose;
 
-    updateStatus();
-
-    if (glucose <= 40) {
+    if (glucose <= 55) {
 
         endGame(
             "THOMAS KREEG EEN ERNSTIGE HYPO"
@@ -221,7 +183,7 @@ function choose(choiceIndex) {
         return;
     }
 
-    if (glucose >= 180) {
+    if (glucose >= 250) {
 
         endGame(
             "THOMAS KREEG EEN ERNSTIGE HYPER"
@@ -240,6 +202,7 @@ function choose(choiceIndex) {
 
         feedbackStatusElement.style.color =
             "#10b981";
+
     }
 
     else {
@@ -249,6 +212,7 @@ function choose(choiceIndex) {
 
         feedbackStatusElement.style.color =
             "#ef4444";
+
     }
 
     choicesContainer.style.display =
@@ -269,6 +233,7 @@ nextBtn.addEventListener("click", () => {
         loadEvent(
             events[currentEventIndex]
         );
+
     }
 
     else {
@@ -283,9 +248,7 @@ nextBtn.addEventListener("click", () => {
 // KNOPPEN
 
 redBtn.addEventListener("click", () => choose(0));
-
 yellowBtn.addEventListener("click", () => choose(1));
-
 greenBtn.addEventListener("click", () => choose(2));
 
 // EINDSCHERM
@@ -297,8 +260,8 @@ function endGame(message) {
     gameContainer.style.display =
         "none";
 
-    endScreen.style.display = "flex";
-    endScreen.style.flexDirection = "column";
+    endScreen.style.display =
+        "flex";
 
     endMessage.textContent =
         message;
@@ -310,6 +273,7 @@ function endGame(message) {
 
         endTitle.style.color =
             "#00ff99";
+
     }
 
     else {
