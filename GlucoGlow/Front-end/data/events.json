@@ -2,6 +2,7 @@
     {
         "id": 1,
         "title": "Thomas moest sprinten voor de bus.",
+        "glucose": 75,
         "trend": "↓↓",
         "feedback": "Door de inspanning verbruikten zijn spieren extra glucose. Een snelle suikerbron helpt een hypo voorkomen.",
         "choices": [
@@ -25,6 +26,7 @@
     {
         "id": 2,
         "title": "Thomas ziet dat zijn brooddoos leeg is.",
+        "glucose": 85,
         "trend": "↓",
         "feedback": "Zonder koolhydraten blijft de glucose dalen terwijl de insuline actief blijft.",
         "choices": [
@@ -48,6 +50,7 @@
     {
         "id": 3,
         "title": "Thomas krijgt onverwacht sportles.",
+        "glucose": 95,
         "trend": "↓",
         "feedback": "Sport verhoogt het glucoseverbruik. Extra koolhydraten kunnen nodig zijn.",
         "choices": [
@@ -71,6 +74,7 @@
     {
         "id": 4,
         "title": "Thomas voelt zich plots trillerig en begint te zweten.",
+        "glucose": 65,
         "trend": "↓↓",
         "feedback": "Trillen en zweten zijn typische signalen van een hypo.",
         "choices": [
@@ -94,6 +98,7 @@
     {
         "id": 5,
         "title": "Thomas heeft veel stress voor een examen.",
+        "glucose": 145,
         "trend": "↑",
         "feedback": "Stress kan zorgen voor hogere glucosewaarden. Eerst controleren is belangrijk.",
         "choices": [
@@ -117,6 +122,7 @@
     {
         "id": 6,
         "title": "Thomas gaat zwemmen met vrienden.",
+        "glucose": 100,
         "trend": "↓",
         "feedback": "Langdurige beweging kan de glucose laten dalen.",
         "choices": [
@@ -140,6 +146,7 @@
     {
         "id": 7,
         "title": "Thomas fietst onverwacht naar huis.",
+        "glucose": 80,
         "trend": "↓↓",
         "feedback": "Extra inspanning verhoogt het risico op een hypo.",
         "choices": [
@@ -163,6 +170,7 @@
     {
         "id": 8,
         "title": "Thomas komt thuis na een drukke dag.",
+        "glucose": 110,
         "trend": "→",
         "feedback": "Regelmatig controleren helpt onverwachte schommelingen voorkomen.",
         "choices": [
