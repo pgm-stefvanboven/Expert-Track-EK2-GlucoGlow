@@ -1,5 +1,13 @@
 let events = [];
-let currentEvent = 0;
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+let currentEvent =
+    Number(
+        params.get("event")
+    ) || 0;
 
 const glucoseElement =
     document.getElementById("phone-glucose");

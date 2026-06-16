@@ -5,6 +5,20 @@ let events = [];
 let currentEventIndex = 0;
 let timerInterval;
 
+// LOAD DATA
+function saveGameState() {
+
+    fetch("data/gameState.json")
+        .then(response => response.json())
+        .then(data => {
+
+            data.currentEvent =
+                currentEventIndex;
+
+        });
+
+}
+
 // STARTSCHERM
 
 const startScreen =
