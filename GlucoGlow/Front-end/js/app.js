@@ -113,7 +113,14 @@ startBtn.addEventListener("click", () => {
 
     fetch(
         "http://10.250.156.212:5000/set_event/0"
-    );
+    )
+        .then(response => response.json())
+        .then(data => {
+            console.log("START EVENT:", data);
+        })
+        .catch(error => {
+            console.error("FOUT:", error);
+        });
 
     glucoseElement.textContent =
         glucose;
@@ -253,7 +260,14 @@ nextBtn.addEventListener("click", () => {
 
         fetch(
             `http://10.250.156.212:5000/set_event/${currentEventIndex}`
-        );
+        )
+            .then(response => response.json())
+            .then(data => {
+                console.log("SET EVENT:", data);
+            })
+            .catch(error => {
+                console.error("FOUT:", error);
+            });
 
         loadEvent(
             events[currentEventIndex]
