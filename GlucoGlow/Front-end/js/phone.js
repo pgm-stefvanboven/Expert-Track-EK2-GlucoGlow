@@ -1,3 +1,6 @@
+console.log("PHONEJS GELADEN");
+alert("PHONEJS GELADEN");
+
 let events = [];
 let currentEvent = 0;
 
@@ -30,6 +33,8 @@ function updateFromServer() {
     fetch("http://10.250.156.212:5000/get_event")
         .then(response => response.json())
         .then(data => {
+
+            console.log("EVENT:", data);
 
             currentEvent =
                 data.currentEvent;
