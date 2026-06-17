@@ -1,13 +1,5 @@
 let events = [];
-const params =
-    new URLSearchParams(
-        window.location.search
-    );
-
-let currentEvent =
-    Number(
-        params.get("event")
-    ) || 0;
+let currentEvent = 0;
 
 const glucoseElement =
     document.getElementById("phone-glucose");
@@ -24,14 +16,38 @@ fetch("data/events.json")
 
         events = data;
 
-        loadPhoneEvent();
+        updateFromServer();
+
+        setInterval(
+            updateFromServer,
+            1000
+        );
 
     });
+
+function updateFromServer() {
+
+    fetch("http://10.250.156.212:5000/get_event")
+        .then(response => response.json())
+        .then(data => {
+
+            currentEvent =
+                data.currentEvent;
+
+            loadPhoneEvent();
+
+        });
+
+}
 
 function loadPhoneEvent() {
 
     const event =
         events[currentEvent];
+
+    if (!event) {
+        return;
+    }
 
     glucoseElement.textContent =
         event.glucose;
