@@ -1,3 +1,6 @@
+console.log("APPJS GELADEN");
+alert("APPJS GELADEN");
+
 let glucose = 75;
 let timer = 90;
 
