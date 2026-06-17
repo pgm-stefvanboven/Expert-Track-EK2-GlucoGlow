@@ -108,6 +108,10 @@ startBtn.addEventListener("click", () => {
     timer = 90;
     currentEventIndex = 0;
 
+    fetch(
+        "http://10.250.156.212:5000/set_event/0"
+    );
+
     glucoseElement.textContent =
         glucose;
 
@@ -243,6 +247,10 @@ nextBtn.addEventListener("click", () => {
     currentEventIndex++;
 
     if (currentEventIndex < events.length) {
+
+        fetch(
+            `http://10.250.156.212:5000/set_event/${currentEventIndex}`
+        );
 
         loadEvent(
             events[currentEventIndex]
