@@ -55,9 +55,6 @@ function loadPhoneEvent() {
         return;
     }
 
-    glucoseElement.textContent =
-        data.glucose;
-
     trendElement.textContent =
         event.trend;
 
