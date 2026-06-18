@@ -6,6 +6,12 @@ let timer = 90;
 
 let events = [];
 let currentEventIndex = 0;
+
+// SET GLUCOSE
+fetch(
+    "http://10.250.156.212:5000/set_glucose/75"
+);
+
 let timerInterval;
 
 // LOAD DATA
@@ -194,6 +200,17 @@ function choose(choiceIndex) {
         currentEvent.choices[choiceIndex];
 
     glucose += choice.effect;
+
+    fetch(
+        `http://10.250.156.212:5000/set_glucose/${glucose}`
+    )
+        .then(response => response.json())
+        .then(data => {
+            console.log("SET GLUCOSE:", data);
+        })
+        .catch(error => {
+            console.error("FOUT:", error);
+        });
 
     if (glucose < 0) {
         glucose = 0;

@@ -5,14 +5,13 @@ app = Flask(__name__)
 CORS(app)
 
 game_state = {
-    "currentEvent": 0
+    "currentEvent": 0,
+    "glucose": 75
 }
-
 
 @app.route("/get_event")
 def get_event():
     return jsonify(game_state)
-
 
 @app.route("/set_event/<int:event_id>")
 def set_event(event_id):
@@ -24,6 +23,15 @@ def set_event(event_id):
         "currentEvent": event_id
     })
 
+@app.route("/set_glucose/<int:value>")
+def set_glucose(value):
+
+    game_state["glucose"] = value
+
+    return jsonify({
+        "success": True,
+        "glucose": value
+    })
 
 if __name__ == "__main__":
     app.run(

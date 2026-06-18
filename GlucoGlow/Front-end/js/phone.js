@@ -34,10 +34,11 @@ function updateFromServer() {
         .then(response => response.json())
         .then(data => {
 
-            console.log("EVENT:", data);
-
             currentEvent =
                 data.currentEvent;
+
+            glucoseElement.textContent =
+                data.glucose;
 
             loadPhoneEvent();
 
@@ -55,7 +56,7 @@ function loadPhoneEvent() {
     }
 
     glucoseElement.textContent =
-        event.glucose;
+        data.glucose;
 
     trendElement.textContent =
         event.trend;
