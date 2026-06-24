@@ -28,20 +28,22 @@ fetch("data/events.json")
 
     });
 
-function updateFromServer() {
+    function updateFromServer() {
 
     fetch("http://10.31.194.212:5000/get_event")
         .then(response => response.json())
         .then(data => {
 
-            currentEvent =
-                data.currentEvent;
+            currentEvent = data.currentEvent;
 
             glucoseElement.textContent =
                 data.glucose;
 
             loadPhoneEvent();
 
+        })
+        .catch(error => {
+            console.error(error);
         });
 
 }
