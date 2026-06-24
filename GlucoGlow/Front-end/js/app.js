@@ -9,7 +9,7 @@ let currentEventIndex = 0;
 
 // SET GLUCOSE
 fetch(
-    "http://10.250.156.212:5000/set_glucose/75"
+    "http://10.31.194.212:5000/set_glucose/75"
 );
 
 let timerInterval;
@@ -118,7 +118,7 @@ startBtn.addEventListener("click", () => {
     currentEventIndex = 0;
 
     fetch(
-        "http://10.250.156.212:5000/set_event/0"
+        "http://10.31.194.212:5000/set_event/0"
     )
         .then(response => response.json())
         .then(data => {
@@ -202,7 +202,7 @@ function choose(choiceIndex) {
     glucose += choice.effect;
 
     fetch(
-        `http://10.250.156.212:5000/set_glucose/${glucose}`
+        `http://10.31.194.212:5000/set_glucose/${glucose}`
     )
         .then(response => response.json())
         .then(data => {
@@ -276,7 +276,7 @@ nextBtn.addEventListener("click", () => {
     if (currentEventIndex < events.length) {
 
         fetch(
-            `http://10.250.156.212:5000/set_event/${currentEventIndex}`
+            `http://10.31.194.212:5000/set_event/${currentEventIndex}`
         )
             .then(response => response.json())
             .then(data => {

@@ -30,7 +30,7 @@ fetch("data/events.json")
 
 function updateFromServer() {
 
-    fetch("http://10.250.156.212:5000/get_event")
+    fetch("http://10.31.194.212:5000/get_event")
         .then(response => response.json())
         .then(data => {
 
