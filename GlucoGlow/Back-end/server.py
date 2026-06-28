@@ -4,6 +4,8 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+last_button = -1
+
 game_state = {
     "currentEvent": 0,
     "glucose": 75
@@ -31,6 +33,32 @@ def set_glucose(value):
     return jsonify({
         "success": True,
         "glucose": value
+    })
+
+
+@app.route("/button/<int:button_id>")
+def button(button_id):
+
+    global last_button
+
+    last_button = button_id
+
+    return jsonify({
+        "success": True,
+        "button": button_id
+    })
+
+
+@app.route("/get_button")
+def get_button():
+
+    global last_button
+
+    button = last_button
+    last_button = -1
+
+    return jsonify({
+        "button": button
     })
 
 if __name__ == "__main__":

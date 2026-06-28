@@ -307,6 +307,60 @@ redBtn.addEventListener("click", () => choose(0));
 yellowBtn.addEventListener("click", () => choose(1));
 greenBtn.addEventListener("click", () => choose(2));
 
+// LIGHT BUTTONS
+document.addEventListener("keydown", (event) => {
+
+    if (
+        choicesContainer.style.display !== "none"
+    ) {
+
+        if (event.key === "1") {
+            choose(0);
+        }
+
+        if (event.key === "2") {
+            choose(1);
+        }
+
+        if (event.key === "3") {
+            choose(2);
+        }
+    }
+
+    if (
+        feedbackCard.style.display !== "none"
+    ) {
+
+        if (event.key === " ") {
+            nextBtn.click();
+        }
+    }
+
+});
+
+// PHONE BUTTONS
+setInterval(() => {
+
+    fetch("http://10.31.194.212:5000/get_button")
+        .then(response => response.json())
+        .then(data => {
+
+            if (data.button === 0) {
+                choose(0);
+            }
+
+            if (data.button === 1) {
+                choose(1);
+            }
+
+            if (data.button === 2) {
+                choose(2);
+            }
+
+        });
+
+}, 200);
+
 // EINDSCHERM
 
 function endGame(message) {
