@@ -33,5 +33,17 @@
     </div>
 
 </body>
-<script src="js/phone.js"></script>
+<script>
+    // Genereer een unieke tijdstempel
+    const timestamp = new Date().getTime();
+    
+    // Maak een nieuw script-element aan
+    const script = document.createElement('script');
+    
+    // Voeg de tijdstempel toe aan de URL (bijv: js/phone.js?v=168493029)
+    script.src = 'js/phone.js?v=' + timestamp;
+    
+    // Plaats het in de HTML
+    document.body.appendChild(script);
+</script>
 </html>

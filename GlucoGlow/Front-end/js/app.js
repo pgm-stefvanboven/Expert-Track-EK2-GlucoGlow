@@ -200,10 +200,14 @@ document.addEventListener("keydown", (event) => {
 
 // ARCADE BUTTONS
 setInterval(() => {
+    // 1. We halen de knop ALTIJD op, ongeacht het scherm waar we in zitten.
+    // Dit zorgt ervoor dat de Flask server telkens netjes reset naar -1.
     fetch("http://10.31.194.212:5000/get_button")
         .then(response => response.json())
         .then(data => {
-            // Controleer strikt of het spel in de speelfase zit
+            
+            // 2. We reageren er ALLEEN op als we in de 'PLAYING' status zitten.
+            // Oude klikken in het startscherm verdwijnen nu gewoon in het niets!
             if (gameState === "PLAYING" && data.button !== -1) {
                 switch (data.button) {
                     case 0:
@@ -217,7 +221,12 @@ setInterval(() => {
                         break;
                 }
             }
+            
+        })
+        .catch(error => {
+            // Foutmeldingen genegeerd om de console schoon te houden
         });
+
 }, 200);
 
 // EINDSCHERM
