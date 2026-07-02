@@ -338,23 +338,33 @@ document.addEventListener("keydown", (event) => {
 
 });
 
-// PHONE BUTTONS
+// ARCADE BUTTONS
 setInterval(() => {
 
     fetch("http://10.31.194.212:5000/get_button")
         .then(response => response.json())
         .then(data => {
 
-            if (data.button === 0) {
-                choose(0);
-            }
+            if (
+                choicesContainer.style.display !== "none" &&
+                data.button !== -1
+            ) {
 
-            if (data.button === 1) {
-                choose(1);
-            }
+                switch (data.button) {
 
-            if (data.button === 2) {
-                choose(2);
+                    case 0:
+                        choose(0);
+                        break;
+
+                    case 1:
+                        choose(1);
+                        break;
+
+                    case 2:
+                        choose(2);
+                        break;
+                }
+
             }
 
         });
