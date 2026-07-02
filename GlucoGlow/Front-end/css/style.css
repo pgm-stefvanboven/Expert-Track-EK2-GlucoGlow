@@ -187,27 +187,20 @@ body {
     justify-content: center;
 }
 
-/* In-game keuzeknoppen */
-#choices button {
+/* In-game keuzeboxen (vervangen de buttons) */
+.choice-box {
     flex: 1;
     padding: 12px 10px;
     font-size: 1.1rem;
     font-weight: bold;
-    border: none;
     border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
-}
-
-#choices button:hover {
-    transform: translateY(-3px);
-    filter: brightness(1.15);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-}
-
-#choices button:active {
-    transform: translateY(0);
+    
+    /* Zorgt dat de tekst netjes in het midden staat */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 #redBtn {
