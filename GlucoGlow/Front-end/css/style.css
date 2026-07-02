@@ -1,5 +1,5 @@
 /* =========================================
-   1. BASIS STYLING
+   1. BASIC STYLING
 ========================================= */
 
 body {
@@ -13,7 +13,7 @@ body {
     min-height: 100vh;
 }
 
-/* Alleen startscherm zichtbaar bij opstart */
+/* Only startscreen visible when the game is not running */
 
 #start-screen {
     display: flex;
@@ -28,7 +28,7 @@ body {
 }
 
 /* =========================================
-   2. CONTAINERS (STRIKT 800x400)
+   2. CONTAINERS (STRICT 800x400)
 ========================================= */
 #start-screen,
 #game-container,
@@ -44,7 +44,7 @@ body {
 }
 
 /* =========================================
-   3. STARTSCHERM & EINDSCHERM
+   3. STARTSCREEN & ENDSCREEN LAYOUT
 ========================================= */
 #start-screen,
 #end-screen {
@@ -104,7 +104,7 @@ body {
 }
 
 /* =========================================
-   4. GAMESCHERM LAYOUT
+   4. GAMESCREEN LAYOUT
 ========================================= */
 #game-container {
     display: none;
@@ -178,7 +178,7 @@ body {
 }
 
 /* =========================================
-   5. KNOPPEN (GAMESCHERM)
+   5. CHOICEBOXES (GAMESCREEN)
 ========================================= */
 #choices {
     display: flex;
@@ -187,7 +187,7 @@ body {
     justify-content: center;
 }
 
-/* In-game keuzeboxen (vervangen de buttons) */
+/* In-game choiceboxes */
 .choice-box {
     flex: 1;
     padding: 12px 10px;
@@ -196,7 +196,6 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
     
-    /* Zorgt dat de tekst netjes in het midden staat */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -219,13 +218,12 @@ body {
 }
 
 /* =========================================
-   6. GROTE KNOPPEN (START, EIND, VOLGENDE)
+   6. BIG BUTTONS (START, END, NEXT)
 ========================================= */
 #startBtn,
 #restartBtn,
 #nextBtn {
     flex: none;
-    /* Voorkomt uittrekken */
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
     border: none;
@@ -266,7 +264,7 @@ body {
 }
 
 /* =========================================
-   7. ZWEVENDE FEEDBACK KAART (POP-UP)
+   7. FLOATING FEEDBACK CARD (POP-UP)
 ========================================= */
 #feedback-card {
     display: none;
@@ -281,7 +279,7 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     text-align: center;
 
-    /* Zwevende overlay styling */
+    /* Floating overlay styling */
     position: absolute;
     top: 50%;
     left: 50%;

@@ -1,18 +1,21 @@
 console.log("APPJS GELADEN");
 alert("APPJS GELADEN");
 
+// GAME VARIABLES
 let glucose = 75;
 let timer = 90;
 
+// EVENTS
 let events = [];
 let currentEventIndex = 0;
 
-// NIEUW: We houden de exacte status van het spel bij
-let gameState = "START"; // Kan zijn: "START", "PLAYING", "FEEDBACK", "END"
+// We keep track of the exact state of the game to prevent unwanted input during feedback or end screens
+let gameState = "START"; // Expected: "START", "PLAYING", "FEEDBACK", "END"
 
 // SET GLUCOSE
 fetch("http://10.31.194.212:5000/set_glucose/75");
 
+// SET EVENT
 let timerInterval;
 
 // LOAD DATA
@@ -24,11 +27,11 @@ function saveGameState() {
         });
 }
 
-// STARTSCHERM
+// STARTSCREEN
 const startScreen = document.getElementById("start-screen");
 const startBtn = document.getElementById("startBtn");
 
-// SPEL
+// GAME
 const gameContainer = document.getElementById("game-container");
 const glucoseElement = document.getElementById("glucose");
 const timerElement = document.getElementById("timer");
@@ -45,20 +48,20 @@ const feedbackStatusElement = document.getElementById("feedback-status");
 const feedbackTextElement = document.getElementById("feedback-text");
 const nextBtn = document.getElementById("nextBtn");
 
-// EINDSCHERM
+// ENDSCREEN
 const endScreen = document.getElementById("end-screen");
 const endTitle = document.getElementById("end-title");
 const endMessage = document.getElementById("end-message");
 const restartBtn = document.getElementById("restartBtn");
 
-// DATA LADEN
+// LOADING DATA
 fetch("data/events.json")
     .then(response => response.json())
     .then(data => {
         events = data;
     });
 
-// START SPEL
+// START GAME
 startBtn.addEventListener("click", () => {
     startScreen.style.display = "none";
     gameContainer.style.display = "flex";
@@ -67,7 +70,7 @@ startBtn.addEventListener("click", () => {
     timer = 90;
     currentEventIndex = 0;
     
-    // Status verandert naar PLAYING
+    // Status changes to PLAYING
     gameState = "PLAYING";
 
     fetch("http://10.31.194.212:5000/set_event/0")
@@ -98,7 +101,7 @@ function startTimer() {
     }, 1000);
 }
 
-// EVENT LADEN
+// LOADING EVENT
 function loadEvent(event) {
     situationElement.textContent = event.title;
     trendElement.textContent = event.trend;
@@ -109,83 +112,106 @@ function loadEvent(event) {
     feedbackCard.style.display = "none";
     choicesContainer.style.display = "flex";
     
-    // Klaar voor input
+    // Ready for input
     gameState = "PLAYING";
 }
 
-// KEUZE
+// Make CHOICE
 function choose(choiceIndex) {
-    // Blokkeer nieuwe input meteen!
+    // Block input if not in PLAYING state
+    if (gameState !== "PLAYING") {
+        return;
+    }
+    // Change state to FEEDBACK to prevent further input until next event
     gameState = "FEEDBACK";
 
+    // Update glucose based on the choice made
     const currentEvent = events[currentEventIndex];
     const choice = currentEvent.choices[choiceIndex];
 
     glucose += choice.effect;
 
+    // Update the Flask server with the new glucose value
     fetch(`http://10.31.194.212:5000/set_glucose/${glucose}`)
         .then(response => response.json())
         .then(data => {
             console.log("SET GLUCOSE:", data);
         })
         .catch(error => {
+            // Log the error to the console for debugging purposes
             console.error("FOUT:", error);
         });
 
+    // Ensure glucose does not go below 0
     if (glucose < 0) {
         glucose = 0;
     }
 
+    // Update the glucose display
     glucoseElement.textContent = glucose;
 
+    // Check for game-ending conditions based on glucose levels
     if (glucose <= 55) {
         endGame("THOMAS KREEG EEN ERNSTIGE HYPO");
         return;
     }
 
+    // Check for game-ending conditions based on glucose levels
     if (glucose >= 250) {
         endGame("THOMAS KREEG EEN ERNSTIGE HYPER");
         return;
     }
 
+    // Display feedback based on the choice made
     feedbackTextElement.textContent = currentEvent.feedback;
 
+    // Update feedback status based on the correctness of the choices
     if (choice.correct) {
         feedbackStatusElement.textContent = "✓ GOEDE KEUZE";
         feedbackStatusElement.style.color = "#10b981";
+
+        // Update feedback status based on the incorrectness of the choices
     } else {
         feedbackStatusElement.textContent = "✗ SLECHTE KEUZE";
         feedbackStatusElement.style.color = "#ef4444";
     }
 
+    // Hide the choices and show the feedback card
     choicesContainer.style.display = "none";
     feedbackCard.style.display = "flex";
 }
 
-// VOLGENDE
+// NEXT EVENT
 nextBtn.addEventListener("click", () => {
+    // Ready for the next event
     currentEventIndex++;
 
+    // Check if there are more events to load
     if (currentEventIndex < events.length) {
+        // Update the Flask server with the new event index
         fetch(`http://10.31.194.212:5000/set_event/${currentEventIndex}`)
+
+        // Convert the response to JSON
             .then(response => response.json())
+
+            // Log the response data to the console
             .then(data => {
                 console.log("SET EVENT:", data);
             })
+            // Handle any errors
             .catch(error => {
                 console.error("FOUT:", error);
             });
 
+        // Load the next event
         loadEvent(events[currentEventIndex]);
     } else {
+        // No more events, end the game
         endGame("THOMAS KWAM VEILIG THUIS");
     }
 });
 
-// KLIK EVENTS VERWIJDERD
-// (Je kan niet meer op redBtn, yellowBtn of greenBtn klikken met de muis)
-
-// LIGHT BUTTONS (Toetsenbord debug)
+// LIGHT BUTTONS (Keyboard debug)
 document.addEventListener("keydown", (event) => {
     if (gameState === "PLAYING") {
         if (event.key === "1") choose(0);
@@ -200,14 +226,14 @@ document.addEventListener("keydown", (event) => {
 
 // ARCADE BUTTONS
 setInterval(() => {
-    // 1. We halen de knop ALTIJD op, ongeacht het scherm waar we in zitten.
-    // Dit zorgt ervoor dat de Flask server telkens netjes reset naar -1.
+    // 1. The button is always retrieved, regardless of which screen we're on.
+    // This ensures that the Flask server is always properly reset to -1.
     fetch("http://10.31.194.212:5000/get_button")
         .then(response => response.json())
         .then(data => {
             
-            // 2. We reageren er ALLEEN op als we in de 'PLAYING' status zitten.
-            // Oude klikken in het startscherm verdwijnen nu gewoon in het niets!
+            // 2. A response is sent only when the status is set to "PLAYING"
+            // Old clicks on the home screen now just disappear.
             if (gameState === "PLAYING" && data.button !== -1) {
                 switch (data.button) {
                     case 0:
@@ -224,12 +250,12 @@ setInterval(() => {
             
         })
         .catch(error => {
-            // Foutmeldingen genegeerd om de console schoon te houden
+            // Error messages ignored to keep the console clean
         });
 
 }, 200);
 
-// EINDSCHERM
+// ENDSCREEN
 function endGame(message) {
     gameState = "END";
     clearInterval(timerInterval);
@@ -247,7 +273,7 @@ function endGame(message) {
     }
 }
 
-// HERSTART
+// RESTART
 restartBtn.addEventListener("click", () => {
     location.reload();
 });

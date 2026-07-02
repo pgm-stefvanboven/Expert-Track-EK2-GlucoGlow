@@ -93,16 +93,16 @@
     </div>
 
     <script>
-    // Genereer een unieke tijdstempel
+    // 1. Generate a unique timestamp
     const timestamp = new Date().getTime();
     
-    // Maak een nieuw script-element aan
+    // 2. Make a new script element
     const script = document.createElement('script');
     
-    // Voeg de tijdstempel toe aan de URL (bijv: js/app.js?v=168493029)
+    // 3. Add the timestamp to the URL (e.g.: js/app.js?v=168493029)
     script.src = 'js/app.js?v=' + timestamp;
     
-    // Plaats het in de HTML
+    // 4. Place it in the HTML
     document.body.appendChild(script);
 </script>
 
