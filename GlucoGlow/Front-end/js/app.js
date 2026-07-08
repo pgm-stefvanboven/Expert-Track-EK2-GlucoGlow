@@ -194,7 +194,16 @@ function choose(choiceIndex) {
     const currentEvent = events[currentEventIndex];
     const choice = currentEvent.choices[choiceIndex];
 
-    glucose += choice.effect;
+    console.log(
+    "Event:", currentEvent.title,
+    "| Knop:", choiceIndex,
+    "| Effect:", choice.effect,
+    "| Glucose voor:", glucose
+);
+
+glucose += choice.effect;
+
+console.log("Glucose na:", glucose);
 
     // Update the Flask server with the new glucose value
     fetch(`${SERVER}/set_glucose/${glucose}`)

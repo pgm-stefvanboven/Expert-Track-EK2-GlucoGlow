@@ -1,49 +1,27 @@
-# Import necessary libraries
 import pygame
-import requests
+import time
 
-# Initialize Pygame and the joystick module
 pygame.init()
+pygame.display.init()
+pygame.display.set_mode((100, 100))
+
 pygame.joystick.init()
 
-# Check if any joysticks are connected
+print("Aantal joysticks:", pygame.joystick.get_count())
+
+if pygame.joystick.get_count() == 0:
+    print("Geen joystick gevonden!")
+    quit()
+
 joystick = pygame.joystick.Joystick(0)
 joystick.init()
 
-print("Encoder actief")
+print("Joystick:", joystick.get_name())
 
-# Main loop to handle joystick events
 while True:
+    pygame.event.pump()
 
-    # Handle Pygame events
     for event in pygame.event.get():
-        
-        # Check if the event is a joystick button press
-        if event.type == pygame.JOYBUTTONDOWN:
-            
-            # Check which button was pressed and send a request to the server
-            if event.button == 0:
-                
-                # Print which button was pressed and send a GET request to the server
-                print("Knop 1")
-                requests.get(
-                    "http://localhost:5000/button/0"
-                )
-                
-            # Check if button 1 was pressed
-            elif event.button == 1:
+        print(event)
 
-                # Print which button was pressed and send a GET request to the server
-                print("Knop 2")
-                requests.get(
-                    "http://localhost:5000/button/1"
-                )
-                
-            # Check if button 2 was pressed
-            elif event.button == 2:
-
-                # Print which button was pressed and send a GET request to the server
-                print("Knop 3")
-                requests.get(
-                    "http://localhost:5000/button/2"
-                )
+    time.sleep(0.01)
