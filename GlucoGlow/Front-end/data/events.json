@@ -173,5 +173,80 @@
                 "correct": false
             }
         ]
+    },
+    {
+        "id": 8,
+        "title": "Thomas heeft een lichte verkoudheid.",
+        "minGlucose": 100,
+        "maxGlucose": 200,
+        "trend": "↑",
+        "feedback": "Ziekte kan de glucose beïnvloeden. Extra controles zijn belangrijk.",
+        "choices": [
+            {
+                "text": "Controleer vaker zijn glucose",
+                "effect": 0,
+                "correct": true
+            },
+            {
+                "text": "Negeer de situatie",
+                "effect": 20,
+                "correct": false
+            },
+            {
+                "text": "Geef extra insuline zonder meting",
+                "effect": -60,
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 9,
+        "title": "Thomas heeft een feestje met veel zoetigheden.",
+        "minGlucose": 90,
+        "maxGlucose": 160,
+        "trend": "→",
+        "feedback": "Het is belangrijk om de inname van koolhydraten te controleren en de insuline aan te passen.",
+        "choices": [
+            {
+                "text": "Controleer zijn glucose en pas insuline aan",
+                "effect": 0,
+                "correct": true
+            },
+            {
+                "text": "Laat hem alles eten zonder controle",
+                "effect": 30,
+                "correct": false
+            },
+            {
+                "text": "Geef extra insuline zonder meting",
+                "effect": -50,
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 10,
+        "title": "Thomas heeft een lange autorit voor de boeg.",
+        "minGlucose": 80,
+        "maxGlucose": 150,
+        "trend": "→",
+        "feedback": "Tijdens lange ritten is het belangrijk om regelmatig te controleren en snacks bij de hand te hebben.",
+        "choices": [
+            {
+                "text": "Controleer zijn glucose voor vertrek en neem snacks mee",
+                "effect": 0,
+                "correct": true
+            },
+            {
+                "text": "Negeer de situatie en vertrek",
+                "effect": -30,
+                "correct": false
+            },
+            {
+                "text": "Geef extra insuline zonder meting",
+                "effect": -50,
+                "correct": false
+            }
+        ]
     }
 ]
