@@ -1,16 +1,16 @@
 import os
 
-# --- DE MAGISCHE ARCADE INSTELLINGEN ---
-# 1. Zorg dat de joystick altijd gelezen wordt, ook als de browser open staat (geen focus nodig!)
+# --- ENVIRONMENTAL VARIABLES ---
+# 1. Make sure the joystick is always detected, even when the browser is open
 os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
-# 2. Forceer Pygame om onzichtbaar te blijven en géén schermpje te maken
+# 2. Force Pygame to remain invisible and not create a window
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 import pygame
 import time
 import requests 
 
-# We starten Pygame, maar zonder display functies! Geen zwart schermpje meer!
+# We initialize Pygame without any display functions
 pygame.init()
 pygame.joystick.init()
 
@@ -23,11 +23,11 @@ while True:
     try:
         for event in pygame.event.get():
             
-            # --- GELUIDSDEMPER VOOR DE SPAM ---
+            # --- SILENCER FOR THE SPAM ---
             if event.type == 1536:
                 continue 
             
-            # --- HOTPLUGGING (Als de USB hapert) ---
+            # --- HOTPLUGGING (When the USB connection is unstable) ---
             if event.type == pygame.JOYDEVICEADDED:
                 joy = pygame.joystick.Joystick(event.device_index)
                 joy.init()
@@ -37,12 +37,12 @@ while True:
             elif event.type == pygame.JOYDEVICEREMOVED:
                 if event.instance_id in actieve_joysticks:
                     del actieve_joysticks[event.instance_id]
-                print("⚠️ USB verbinding verbroken! Wachten op herstel...")
+                print("USB verbinding verbroken! Wachten op herstel...")
 
-            # --- KNOPPEN LOGICA ---
+            # --- BUTTONS LOGIC ---
             elif event.type == pygame.JOYBUTTONDOWN:
                 knop_id = event.button
-                print(f"✅ Knop {knop_id} ingedrukt!")
+                print(f"Knop {knop_id} ingedrukt!")
                 
                 try:
                     requests.get(f"{SERVER_URL}{knop_id}", timeout=1)
