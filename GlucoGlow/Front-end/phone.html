@@ -4,46 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlucoGlow Sensor</title>
+    <title>GlucoGlow Zorgverlener</title>
     <link rel="stylesheet" href="css/phone.css">
 </head>
 
 <body>
 
-    <div class="phone-container">
-
-        <h1>SENSORGEGEVENS</h1>
-
-        <div class="label">Glucose</div>
-
-        <div id="phone-glucose"></div>
-
-        <div id="phone-trend"></div>
-
-        <div id="phone-status"></div>
-
-        <div class="info">
-            Deel deze informatie met speler 2.
-        </div>
-
-        <button>
-            ACTIE BEVESTIGEN
-        </button>
-
+    <div id="waiting-screen">
+        <div class="loader"></div>
+        <h2>STAND-BY</h2>
+        <p>Wachten tot het spel start...</p>
     </div>
 
+    <div id="chat-container">
+        <div class="chat-header">
+            <span class="status-dot"></span> Patiënt Monitor: Thomas
+        </div>
+
+        <div class="chat-history">
+            <div class="message received">
+                <div class="sender">Nieuwe Update</div>
+                <div id="phone-situation">...</div>
+            </div>
+
+            <div class="message system">
+                <div class="sender">GlucoGlow Sensor</div>
+                <div class="sensor-data">
+                    <span id="phone-glucose">--</span>
+                    <span id="phone-trend">-</span>
+                </div>
+                <div id="phone-status">STABIEL</div>
+            </div>
+
+            <div class="info-text">Geef dit direct door aan Speler 2!</div>
+        </div>
+    </div>
+
+    <script>
+        const timestamp = new Date().getTime();
+        const script = document.createElement('script');
+        script.src = 'js/phone.js?v=' + timestamp;
+        document.body.appendChild(script);
+    </script>
 </body>
-<script>
-    // 1. Generate a unique timestamp
-    const timestamp = new Date().getTime();
-    
-    // 2. Make a new script element
-    const script = document.createElement('script');
-    
-    // 3. Add the timestamp to the URL (e.g.: js/phone.js?v=168493029)
-    script.src = 'js/phone.js?v=' + timestamp;
-    
-    // 4. Place it in the HTML
-    document.body.appendChild(script);
-</script>
+
 </html>

@@ -1,95 +1,141 @@
 html,
 body {
     margin: 0;
-    overflow: hidden;
-
-    user-select: none;
-    -webkit-user-select: none;
-
-    -webkit-touch-callout: none;
-    -webkit-tap-highlight-color: transparent;
-
-    touch-action: manipulation;
-}
-
-* {
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-button {
-    outline: none;
-}
-
-img {
-    pointer-events: none;
-    -webkit-user-drag: none;
-}
-
-body {
-    margin: 0;
+    padding: 0;
     background: #0d1117;
     color: white;
-    font-family: Segoe UI, sans-serif;
-
+    font-family: 'Segoe UI', sans-serif;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-
-    min-height: 100vh;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
-.phone-container {
+/* WACHTSCHERM */
+#waiting-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    width: 90%;
-}
-
-h1 {
-    color: #60a5fa;
-    margin-bottom: 30px;
-}
-
-.label {
     color: #9ca3af;
-    text-transform: uppercase;
-    letter-spacing: 2px;
 }
 
-#glucose {
-    font-size: 5rem;
+.loader {
+    border: 4px solid #1f2937;
+    border-top: 4px solid #60a5fa;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* CHAT CONTAINER */
+#chat-container {
+    display: none;
+    /* Wordt door JS aangezet */
+    width: 90%;
+    max-width: 400px;
+    background: #111827;
+    border-radius: 15px;
+    border: 1px solid #374151;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.chat-header {
+    background: #1f2937;
+    padding: 15px;
     font-weight: bold;
-    color: #00ff99;
-    margin: 20px 0;
-}
-
-#trend {
-    font-size: 4rem;
-    color: #60a5fa;
-}
-
-#status {
-    font-size: 1.5rem;
-    margin-top: 20px;
-    color: #facc15;
-}
-
-.info {
-    margin-top: 40px;
-    color: #d1d5db;
     font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #374151;
 }
 
-button {
-    margin-top: 40px;
-    width: 100%;
-    padding: 18px;
+.status-dot {
+    width: 10px;
+    height: 10px;
+    background: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10b981;
+}
 
-    border: none;
-    border-radius: 10px;
+.chat-history {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
-    background: #2563eb;
-    color: white;
+/* CHAT BUBBLES */
+.message {
+    padding: 15px;
+    border-radius: 12px;
+    position: relative;
+}
 
+.message .sender {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.message.received {
+    background: #1f2937;
+    border-left: 4px solid #3b82f6;
+    font-size: 1.1rem;
+    line-height: 1.4;
+}
+
+.message.system {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid #374151;
+    text-align: center;
+}
+
+.sensor-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 10px 0;
+}
+
+#phone-glucose {
+    font-size: 4rem;
+    font-weight: bold;
+}
+
+#phone-trend {
+    font-size: 3rem;
+}
+
+#phone-status {
     font-size: 1.2rem;
     font-weight: bold;
+    margin-top: 10px;
+}
+
+.info-text {
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    font-style: italic;
 }

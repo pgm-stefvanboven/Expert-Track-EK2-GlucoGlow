@@ -1,107 +1,74 @@
-// CHECK IF PHONE.JS IS LOADED (Only for debugging purposes)
-console.log("PHONEJS GELADEN");
-alert("PHONEJS GELADEN");
-
 const SERVER = "http://10.45.239.212:5000";
 
-// GAME VARIABLES
 let events = [];
 let currentEvent = 0;
 
-// PHONE ELEMENTS
-const glucoseElement =
-    document.getElementById("phone-glucose");
+// SCHERMEN
+const waitingScreen = document.getElementById("waiting-screen");
+const chatContainer = document.getElementById("chat-container");
 
-const trendElement =
-    document.getElementById("phone-trend");
+// ELEMENTEN
+const glucoseElement = document.getElementById("phone-glucose");
+const trendElement = document.getElementById("phone-trend");
+const statusElement = document.getElementById("phone-status");
+const situationElement = document.getElementById("phone-situation");
 
-const statusElement =
-    document.getElementById("phone-status");
-
-// LOADING DATA
+// LAAD JSON DATA EENMALIG
 fetch("data/events.json")
     .then(response => response.json())
     .then(data => {
-
         events = data;
-
-        updateFromServer();
-
-        setInterval(
-            updateFromServer,
-            1000
-        );
-
+        setInterval(updateFromServer, 500); // Check elke halve seconde
     });
 
-    // UPDATE FROM SERVER
-    function updateFromServer() {
-
-    // Fetch the current event and glucose level from the server
+function updateFromServer() {
     fetch(`${SERVER}/get_event`)
         .then(response => response.json())
         .then(data => {
 
-            // Update the current event index and glucose level based on the server response
+            // Als glucose -1 is, is het spel niet bezig!
+            if (data.glucose === -1) {
+                waitingScreen.style.display = "flex";
+                chatContainer.style.display = "none";
+                return;
+            }
+
+            // Het spel is wél bezig: toon de chat interface
+            waitingScreen.style.display = "none";
+            chatContainer.style.display = "block";
+
             currentEvent = data.currentEvent;
+            glucoseElement.textContent = data.glucose;
 
-            // Update the glucose level on the phone display
-            glucoseElement.textContent =
-                data.glucose;
+            // Kleur toepassen net als in app.js
+            if (data.glucose <= 75) {
+                glucoseElement.style.color = "#ef4444"; // Rood
+                statusElement.style.color = "#ef4444";
+            } else if (data.glucose >= 160) {
+                glucoseElement.style.color = "#f59e0b"; // Oranje
+                statusElement.style.color = "#f59e0b";
+            } else {
+                glucoseElement.style.color = "#10b981"; // Groen
+                statusElement.style.color = "#10b981";
+            }
 
-            // Load the current event details on the phone display
             loadPhoneEvent();
-
         })
-        .catch(error => {
-            // Handle any errors that occur during the fetch request
-            console.error(error);
-        });
-
+        .catch(error => console.error("Fout bij ophalen server:", error));
 }
 
-// LOAD PHONE EVENT
 function loadPhoneEvent() {
+    const event = events[currentEvent];
+    if (!event) return;
 
-    // Get the current event based on the currentEvent index
-    const event =
-        events[currentEvent];
+    situationElement.textContent = event.title;
+    trendElement.textContent = event.trend;
 
-    // If the event is not found, return early
-    if (!event) {
-        return;
+    if (event.trend === "↓↓" || event.trend === "↓") {
+        statusElement.textContent = "⚠ RISICO OP HYPO";
+    } else if (event.trend === "↑↑" || event.trend === "↑") {
+        statusElement.textContent = "⚠ RISICO OP HYPER";
+    } else {
+        statusElement.textContent = "STABIEL";
     }
-
-    // Update the trend element on the phone display with the event's trend
-    trendElement.textContent =
-        event.trend;
-
-    // Update the status element on the phone display based on the event's trend
-    if (
-        event.trend === "↓↓" ||
-        event.trend === "↓"
-    ) {
-
-        // Update the status element to indicate a risk of hypoglycemia
-        statusElement.textContent =
-            "RISICO OP HYPO";
-    }
-
-    // Update the status element to indicate a risk of hyperglycemia
-    else if (
-        event.trend === "↑↑" ||
-        event.trend === "↑"
-    ) {
-
-        statusElement.textContent =
-            "RISICO OP HYPER";
-    }
-
-    // Update the status element to indicate stable glucose levels
-    else {
-
-        statusElement.textContent =
-            "STABIEL";
-    }
-
 }
