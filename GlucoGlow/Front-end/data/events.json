@@ -2,9 +2,10 @@
     {
         "id": 1,
         "title": "Thomas moest sprinten voor de bus.",
-        "glucose": 75,
+        "minGlucose": 70,
+        "maxGlucose": 110,
         "trend": "↓↓",
-        "feedback": "Door de inspanning verbruikten zijn spieren extra glucose. Een snelle suikerbron helpt een hypo voorkomen.",
+        "feedback": "Door de inspanning verbruikten zijn spieren extra glucose. Een snelle suikerbron helpt een hypo voorkomen bij een snel dalende trend.",
         "choices": [
             {
                 "text": "Geef Dextro",
@@ -25,8 +26,9 @@
     },
     {
         "id": 2,
-        "title": "Thomas ziet dat zijn brooddoos leeg is.",
-        "glucose": 85,
+        "title": "Thomas ziet op school dat zijn brooddoos leeg is, hij spoot wel reeds zijn insuline in.",
+        "minGlucose": 75,
+        "maxGlucose": 130,
         "trend": "↓",
         "feedback": "Zonder koolhydraten blijft de glucose dalen terwijl de insuline actief blijft.",
         "choices": [
@@ -36,7 +38,7 @@
                 "correct": true
             },
             {
-                "text": "Eet je vezelkoek",
+                "text": "Eet de vezelrijke koek uit je boekentas",
                 "effect": -40,
                 "correct": false
             },
@@ -50,13 +52,14 @@
     {
         "id": 3,
         "title": "Thomas krijgt onverwacht sportles.",
-        "glucose": 95,
+        "minGlucose": 80,
+        "maxGlucose": 140,
         "trend": "↓",
-        "feedback": "Sport verhoogt het glucoseverbruik. Extra koolhydraten kunnen nodig zijn.",
+        "feedback": "Sport verhoogt het glucoseverbruik. Extra koolhydraten kunnen nodig zijn om stabiel te blijven.",
         "choices": [
             {
                 "text": "Neem een snack vooraf",
-                "effect": 20,
+                "effect": 15,
                 "correct": true
             },
             {
@@ -74,7 +77,8 @@
     {
         "id": 4,
         "title": "Thomas voelt zich plots trillerig en begint te zweten.",
-        "glucose": 65,
+        "minGlucose": 50,
+        "maxGlucose": 69,
         "trend": "↓↓",
         "feedback": "Trillen en zweten zijn typische signalen van een hypo.",
         "choices": [
@@ -98,9 +102,10 @@
     {
         "id": 5,
         "title": "Thomas heeft veel stress voor een examen.",
-        "glucose": 145,
+        "minGlucose": 140,
+        "maxGlucose": 220,
         "trend": "↑",
-        "feedback": "Stress kan zorgen voor hogere glucosewaarden. Eerst controleren is belangrijk.",
+        "feedback": "Stress kan zorgen voor hoge glycemiewaarden doordat stresshormonen de glucose beïnvloeden. Eerst meten is cruciaal.",
         "choices": [
             {
                 "text": "Controleer de sensor",
@@ -114,21 +119,22 @@
             },
             {
                 "text": "Geef Dextro zonder te meten",
-                "effect": 50,
+                "effect": 60,
                 "correct": false
             }
         ]
     },
     {
         "id": 6,
-        "title": "Thomas gaat zwemmen met vrienden.",
-        "glucose": 100,
-        "trend": "↓",
-        "feedback": "Langdurige beweging kan de glucose laten dalen.",
+        "title": "Thomas drinkt enkele glazen droge schuimwijn op een feestje.",
+        "minGlucose": 90,
+        "maxGlucose": 150,
+        "trend": "→",
+        "feedback": "Alcohol kan uren later een hypo veroorzaken doordat de lever minder glucose afgeeft.",
         "choices": [
             {
-                "text": "Neem een snack vooraf",
-                "effect": 20,
+                "text": "Controleer extra tijdens de avond",
+                "effect": 0,
                 "correct": true
             },
             {
@@ -145,32 +151,9 @@
     },
     {
         "id": 7,
-        "title": "Thomas fietst onverwacht naar huis.",
-        "glucose": 80,
-        "trend": "↓↓",
-        "feedback": "Extra inspanning verhoogt het risico op een hypo.",
-        "choices": [
-            {
-                "text": "Neem snelwerkende koolhydraten",
-                "effect": 50,
-                "correct": true
-            },
-            {
-                "text": "Doe niets",
-                "effect": -50,
-                "correct": false
-            },
-            {
-                "text": "Neem extra insuline",
-                "effect": -80,
-                "correct": false
-            }
-        ]
-    },
-    {
-        "id": 8,
         "title": "Thomas komt thuis na een drukke dag.",
-        "glucose": 110,
+        "minGlucose": 80,
+        "maxGlucose": 180,
         "trend": "→",
         "feedback": "Regelmatig controleren helpt onverwachte schommelingen voorkomen.",
         "choices": [
