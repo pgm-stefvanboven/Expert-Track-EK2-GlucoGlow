@@ -1,6 +1,8 @@
 console.log("APPJS GELADEN");
 alert("APPJS GELADEN");
 
+const SERVER = "http://10.45.239.212:5000";
+
 // GAME VARIABLES
 let glucose = 75;
 let timer = 90;
@@ -11,9 +13,6 @@ let currentEventIndex = 0;
 
 // We keep track of the exact state of the game to prevent unwanted input during feedback or end screens
 let gameState = "START"; // Expected: "START", "PLAYING", "FEEDBACK", "END"
-
-// // SET GLUCOSE
-// fetch("http://10.31.194.212:5000/set_glucose/75");
 
 // SET EVENT
 let timerInterval;
@@ -114,7 +113,7 @@ function triggerNextEvent() {
     if (nextEvent) {
         currentEventIndex = events.indexOf(nextEvent);
 
-        fetch(`http://10.31.194.212:5000/set_event/${currentEventIndex}`)
+        fetch(`${SERVER}/set_event/${currentEventIndex}`)
             .then(response => response.json())
             .catch(error => console.error("Flask Event Fout:", error));
 
@@ -140,7 +139,7 @@ startBtn.addEventListener("click", () => {
     timer = 90;
 
     // Stuur de start-glucose naar de Flask server
-    fetch(`http://10.31.194.212:5000/set_glucose/${glucose}`)
+    fetch(`${SERVER}/set_glucose/${glucose}`)
         .then(response => response.json())
         .catch(error => console.error("FOUT BIJ START GLUCOSE:", error));
 
@@ -198,7 +197,7 @@ function choose(choiceIndex) {
     glucose += choice.effect;
 
     // Update the Flask server with the new glucose value
-    fetch(`http://10.31.194.212:5000/set_glucose/${glucose}`)
+    fetch(`${SERVER}/set_glucose/${glucose}`)
         .then(response => response.json())
         .then(data => {
             console.log("SET GLUCOSE:", data);
@@ -270,7 +269,7 @@ document.addEventListener("keydown", (event) => {
 setInterval(() => {
     // 1. The button is always retrieved, regardless of which screen we're on.
     // This ensures that the Flask server is always properly reset to -1.
-    fetch("http://10.31.194.212:5000/get_button")
+    fetch(`${SERVER}/get_button`)
         .then(response => response.json())
         .then(data => {
 

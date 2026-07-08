@@ -12,7 +12,7 @@ const char* ssid = "ANDROID";
 const char* password = "bruhhhh1234";
 
 const char* apiUrl =
-  "http://10.31.194.212:5000/get_event";
+  "http://10.45.239.212:5000/get_event";
 
 void setup() {
 

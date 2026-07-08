@@ -2,6 +2,8 @@
 console.log("PHONEJS GELADEN");
 alert("PHONEJS GELADEN");
 
+const SERVER = "http://10.45.239.212:5000";
+
 // GAME VARIABLES
 let events = [];
 let currentEvent = 0;
@@ -36,7 +38,7 @@ fetch("data/events.json")
     function updateFromServer() {
 
     // Fetch the current event and glucose level from the server
-    fetch("http://10.31.194.212:5000/get_event")
+    fetch(`${SERVER}/get_event`)
         .then(response => response.json())
         .then(data => {
 
