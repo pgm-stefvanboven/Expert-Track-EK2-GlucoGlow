@@ -3,6 +3,8 @@ alert("APPJS GELADEN");
 
 const SERVER = "http://10.45.239.212:5000";
 
+fetch(`${SERVER}/set_glucose/-1`);
+
 // GAME VARIABLES
 let glucose = 75;
 let timer = 90;
@@ -309,6 +311,9 @@ setInterval(() => {
 function endGame(message) {
     gameState = "END";
     clearInterval(timerInterval);
+
+    // Zet de telefoon weer op wachtstand!
+    fetch(`${SERVER}/set_glucose/-1`);
 
     gameContainer.style.display = "none";
     endScreen.style.display = "flex";

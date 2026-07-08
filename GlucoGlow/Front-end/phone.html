@@ -3,48 +3,59 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlucoGlow Zorgverlener</title>
-    <link rel="stylesheet" href="css/phone.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zorgverlener Monitor</title>
+    <script>
+        document.write('<link rel="stylesheet" href="css/phone.css?v=' + new Date().getTime() + '">');
+    </script>
 </head>
 
 <body>
 
     <div id="waiting-screen">
-        <div class="loader"></div>
+        <div class="spinner"></div>
         <h2>STAND-BY</h2>
-        <p>Wachten tot het spel start...</p>
+        <p>Wachten op connectie met spelsysteem...</p>
     </div>
 
     <div id="chat-container">
+
         <div class="chat-header">
-            <span class="status-dot"></span> Patiënt Monitor: Thomas
+            <div class="avatar">T</div>
+            <div class="header-info">
+                <div class="name">Thomas</div>
+                <div class="status"><span class="dot"></span> Online - Sensor actief</div>
+            </div>
         </div>
 
         <div class="chat-history">
+
+            <div class="date-divider">VANDAAG</div>
+
             <div class="message received">
-                <div class="sender">Nieuwe Update</div>
-                <div id="phone-situation">...</div>
+                <div class="sender">Thomas</div>
+                <div class="bubble-text" id="phone-situation">...</div>
+                <div class="time">Zojuist</div>
             </div>
 
             <div class="message system">
-                <div class="sender">GlucoGlow Sensor</div>
-                <div class="sensor-data">
-                    <span id="phone-glucose">--</span>
-                    <span id="phone-trend">-</span>
+                <div class="sender">GlucoGlow Sensor Alert</div>
+                <div class="bubble-widget">
+                    <div class="sensor-row">
+                        <span id="phone-glucose">--</span>
+                        <span id="phone-trend">-</span>
+                    </div>
+                    <div id="phone-status">STABIEL</div>
                 </div>
-                <div id="phone-status">STABIEL</div>
+                <div class="time">Live data</div>
             </div>
 
-            <div class="info-text">Geef dit direct door aan Speler 2!</div>
+            <div class="action-hint">Geef deze info door aan de beslisser!</div>
         </div>
     </div>
 
     <script>
-        const timestamp = new Date().getTime();
-        const script = document.createElement('script');
-        script.src = 'js/phone.js?v=' + timestamp;
-        document.body.appendChild(script);
+        document.write('<script src="js/phone.js?v=' + new Date().getTime() + '"><\/script>');
     </script>
 </body>
 

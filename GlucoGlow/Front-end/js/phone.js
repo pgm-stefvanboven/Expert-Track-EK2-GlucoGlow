@@ -13,12 +13,11 @@ const trendElement = document.getElementById("phone-trend");
 const statusElement = document.getElementById("phone-status");
 const situationElement = document.getElementById("phone-situation");
 
-// LAAD JSON DATA EENMALIG
 fetch("data/events.json")
     .then(response => response.json())
     .then(data => {
         events = data;
-        setInterval(updateFromServer, 500); // Check elke halve seconde
+        setInterval(updateFromServer, 500);
     });
 
 function updateFromServer() {
@@ -26,35 +25,34 @@ function updateFromServer() {
         .then(response => response.json())
         .then(data => {
 
-            // Als glucose -1 is, is het spel niet bezig!
+            // Controle: Is het spel niet bezig? (-1)
             if (data.glucose === -1) {
                 waitingScreen.style.display = "flex";
                 chatContainer.style.display = "none";
                 return;
             }
 
-            // Het spel is wél bezig: toon de chat interface
+            // Het spel is wél bezig: toon de chat!
             waitingScreen.style.display = "none";
-            chatContainer.style.display = "block";
+            chatContainer.style.display = "flex";
 
             currentEvent = data.currentEvent;
             glucoseElement.textContent = data.glucose;
 
-            // Kleur toepassen net als in app.js
             if (data.glucose <= 75) {
-                glucoseElement.style.color = "#ef4444"; // Rood
+                glucoseElement.style.color = "#ef4444";
                 statusElement.style.color = "#ef4444";
             } else if (data.glucose >= 160) {
-                glucoseElement.style.color = "#f59e0b"; // Oranje
+                glucoseElement.style.color = "#f59e0b";
                 statusElement.style.color = "#f59e0b";
             } else {
-                glucoseElement.style.color = "#10b981"; // Groen
-                statusElement.style.color = "#10b981";
+                glucoseElement.style.color = "#00a884"; // WhatsApp Groen
+                statusElement.style.color = "#00a884";
             }
 
             loadPhoneEvent();
         })
-        .catch(error => console.error("Fout bij ophalen server:", error));
+        .catch(error => console.error(error));
 }
 
 function loadPhoneEvent() {
