@@ -112,7 +112,13 @@ def check_pin(pin):
 @app.route("/save_score/<int:score>")
 def save_score(score):
 
-    bestand = "data/highscores.json"
+    bestand = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "Front-end",
+    "data",
+    "highscores.json"
+)
 
     # Bestaat het bestand nog niet?
     if not os.path.exists(bestand):
