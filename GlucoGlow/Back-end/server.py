@@ -36,11 +36,11 @@ def set_event(event_id):
 # Define route to set the glucose level based on value
 @app.route("/set_glucose/<int:value>")
 def set_glucose(value):
-    
-    # Update the glucose level in the game_state dictionary
+
+    print("Nieuwe glucose:", value)
+
     game_state["glucose"] = value
 
-    # Return a JSON response indicating success and the glucose level
     return jsonify({
         "success": True,
         "glucose": value
