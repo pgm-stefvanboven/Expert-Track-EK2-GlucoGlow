@@ -55,35 +55,40 @@
     </div>
 
     <div id="quest-screen"
-        style="display: none; flex-direction: column; height: 100vh; background-color: #f3f4f6; color: #111827; padding: 20px; overflow-y: auto; z-index: 200; position: absolute; top: 0; left: 0; width: 100%; box-sizing: border-box;">
+        style="display: none; flex-direction: column; height: 100vh; background-color: #0b141a; color: #e9edef; padding: 20px; overflow-y: auto; z-index: 200; position: absolute; top: 0; left: 0; width: 100%; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
 
-        <div style="border-bottom: 3px solid #ef4444; padding-bottom: 10px; margin-bottom: 20px; margin-top: 20px;">
-            <h2 style="color: #ef4444; margin: 0; font-size: 1.8rem;">🚨 URGENT: NOOD-INSULINE</h2>
-            <p style="margin: 5px 0 0 0; font-weight: bold; color: #374151;">Toegangscode Kluis Vereist</p>
+        <div
+            style="border-bottom: 2px solid #ef4444; padding-bottom: 15px; margin-bottom: 20px; margin-top: 10px; text-align: center;">
+            <h2 style="color: #ef4444; margin: 0; font-size: 1.8rem; text-transform: uppercase;">🚨 SYSTEEM ALERT</h2>
+            <p style="margin: 5px 0 0 0; color: #8696a0; font-family: monospace;">Override Vereist</p>
         </div>
 
         <div
-            style="background-color: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;">
-            <h3 style="margin-top: 0; border-bottom: 1px solid #ccc; padding-bottom: 5px;">PATIËNTENDOSSIER</h3>
-            <p><strong>Naam patiënt:</strong> Thomas</p>
-            <p><strong>Max veilige glucose:</strong> 160 mg/dL</p>
-            <p><strong>Standaard alarm hypo:</strong> ↓↓ (Dubbele pijl omlaag)</p>
+            style="background-color: #111b21; padding: 20px; border-radius: 10px; border: 1px solid #202c33; margin-bottom: 20px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
+            <h3 style="margin-top: 0; color: #00a884; border-bottom: 1px dashed #202c33; padding-bottom: 10px;">DOSSIER:
+                THOMAS</h3>
+            <p style="color: #8696a0; margin: 8px 0;">ID: <span style="color: #e9edef; float: right;">#8492-A</span></p>
+            <p style="color: #8696a0; margin: 8px 0;">Max veilige glucose: <span
+                    style="color: #e9edef; float: right;">160 mg/dL</span></p>
+            <p style="color: #8696a0; margin: 8px 0;">Standaard alarm hypo: <span
+                    style="color: #e9edef; float: right;">↓↓ (2 pijltjes)</span></p>
         </div>
 
-        <div
-            style="background-color: #fef08a; padding: 15px; border-radius: 10px; border-left: 5px solid #eab308; color: #854d0e;">
-            <p style="margin: 0;"><strong>HINT VOOR KLUIS:</strong></p>
-            <ol style="margin-bottom: 0; padding-left: 20px; font-size: 1.1rem; line-height: 1.5;">
-                <li>Aantal letters van de voornaam</li>
-                <li>Eerste twee cijfers van de max. veilige glucose</li>
-                <li>Aantal pijltjes bij een standaard hypo-alarm</li>
-            </ol>
+        <div style="background-color: #3b2c00; padding: 20px; border-radius: 10px; border-left: 5px solid #f59e0b;">
+            <p style="margin: 0 0 10px 0; color: #fcd34d; font-weight: bold;">OVERRIDE PROTOCOL:</p>
+            <ul style="margin: 0; padding-left: 20px; color: #fde68a; font-size: 1.1rem; line-height: 1.6;">
+                <li>Aantal letters voornaam patiënt</li>
+                <li>Eerste twee cijfers max. veilige glucose</li>
+                <li>Aantal pijltjes standaard hypo-alarm</li>
+            </ul>
         </div>
 
-        <p
-            style="margin-top: 25px; font-weight: bold; text-align: center; color: #ef4444; font-size: 1.2rem; text-transform: uppercase;">
-            Geef de code razendsnel door aan de beslisser!
-        </p>
+        <div style="margin-top: 40px; text-align: center;">
+            <p
+                style="color: #ef4444; font-weight: bold; font-size: 1.3rem; text-transform: uppercase; text-shadow: 0 0 10px rgba(239,68,68,0.5);">
+                GEEF CODE DOOR AAN BESLISSER!
+            </p>
+        </div>
 
     </div>
 

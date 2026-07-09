@@ -48,6 +48,7 @@ const questOverlay = document.getElementById("quest-overlay");
 const pinInput = document.getElementById("pinInput");
 const pinSubmitBtn = document.getElementById("pinSubmitBtn");
 const pinFeedback = document.getElementById("pinFeedback");
+const questTimerDisplay = document.getElementById("quest-timer-display");
 
 // FEEDBACK
 const feedbackCard = document.getElementById("feedback-card");
@@ -170,19 +171,16 @@ function startTimer() {
             return;
         }
 
-        // Als er een paniek-quest bezig is, tikt de tijd DUBBEL zo snel weg!
+        // Als er een systeemstoring bezig is, tikt de tijd dubbel zo snel!
         if (gameState === "QUEST") {
             timer--;
         }
 
         timer--;
-        timerElement.textContent = timer;
 
-        // Willekeurig een quest triggeren! 
-        // Voorwaarde: Je bent aan het spelen, er is nog genoeg tijd, en 2% kans per seconde
-        if (gameState === "PLAYING" && timer > 20 && Math.random() < 0.02) {
-            triggerQuest("pincode");
-        }
+        // Update de gewone timer én de grote alarm timer
+        timerElement.textContent = timer;
+        questTimerDisplay.textContent = timer;
 
     }, 1000);
 }
@@ -293,8 +291,16 @@ function choose(choiceIndex) {
 
 // NEXT EVENT
 nextBtn.addEventListener("click", () => {
-    // Dit roept nu onze slimme functie aan in plaats van gewoon +1 te doen
-    triggerNextEvent();
+    // Verberg altijd eerst het feedback scherm
+    feedbackCard.style.display = "none";
+
+    // 30% kans dat de pomp plots blokkeert (alleen tussen events door!)
+    if (Math.random() < 0.30) {
+        triggerQuest("pincode");
+    } else {
+        // Geen storing? Laad veilig de volgende situatie in
+        triggerNextEvent();
+    }
 });
 
 // LIGHT BUTTONS (Keyboard debug)

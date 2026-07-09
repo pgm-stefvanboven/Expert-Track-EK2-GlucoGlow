@@ -67,21 +67,29 @@
         </div>
 
         <div id="quest-overlay"
-            style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 100; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(11, 20, 26, 0.95); z-index: 100; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(5px);">
             <div
-                style="background-color: #1f2937; padding: 40px; border-radius: 15px; border: 4px solid #ef4444; box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);">
-                <h2
-                    style="color: #ef4444; margin-top: 0; font-size: 2.5rem; text-shadow: 0 0 10px rgba(239,68,68,0.8);">
-                    ⚠ NOOD-INSULINE ⚠</h2>
-                <p style="font-size: 1.2rem; margin-bottom: 20px;">Voer de 4-cijferige code van de kluis in!</p>
+                style="background-color: #1e293b; padding: 40px; border-radius: 20px; border: 2px solid #ef4444; box-shadow: 0 0 50px rgba(239, 68, 68, 0.4); width: 80%; max-width: 600px;">
 
-                <input type="number" id="pinInput" placeholder="0000"
-                    style="font-size: 2rem; padding: 10px; width: 150px; text-align: center; border-radius: 10px; border: none; margin-bottom: 20px;"><br>
+                <h2
+                    style="color: #ef4444; font-size: 2.5rem; margin-top: 0; text-transform: uppercase; letter-spacing: 2px;">
+                    ⚠ POMP VERGRENDELD ⚠</h2>
+                <p style="color: #94a3b8; font-size: 1.2rem;">Voer medische override code in om insulinetoediening te
+                    hervatten!</p>
+
+                <div id="quest-timer-display"
+                    style="font-size: 5rem; color: #ef4444; font-weight: bold; margin: 20px 0; font-family: monospace; text-shadow: 0 0 15px rgba(239,68,68,0.8);">
+                    90</div>
+
+                <input type="number" id="pinInput" placeholder="----"
+                    style="font-size: 3rem; padding: 15px; width: 200px; text-align: center; border-radius: 10px; border: 2px solid #334155; background: #0f172a; color: #38bdf8; margin-bottom: 20px; outline: none; letter-spacing: 5px;"><br>
 
                 <button id="pinSubmitBtn"
-                    style="background-color: #ef4444; color: white; font-size: 1.5rem; padding: 10px 30px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;">ONTGRENDEL</button>
+                    style="background-color: #ef4444; color: white; font-size: 1.5rem; padding: 15px 40px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase;">OVERRIDE
+                    STARTEN</button>
 
-                <p id="pinFeedback" style="color: #f59e0b; font-weight: bold; margin-top: 20px; height: 20px;"></p>
+                <p id="pinFeedback"
+                    style="color: #f59e0b; font-weight: bold; margin-top: 20px; height: 25px; font-size: 1.2rem;"></p>
             </div>
         </div>
 
