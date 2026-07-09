@@ -409,16 +409,14 @@ function endGame(message) {
         endTitle.textContent = "MISSIE MISLUKT";
         endTitle.style.color = "#ff4444";
     }
-}
 
-// RESTART
-restartBtn.addEventListener("click", () => {
-
-    fetch(`${SERVER}/set_glucose/-1`);
-    fetch(`${SERVER}/set_event/0`);
-
+    // Automatisch herstarten na 5 seconden
     setTimeout(() => {
-        location.reload();
-    }, 200);
 
-});
+        fetch(`${SERVER}/set_glucose/-1`);
+        fetch(`${SERVER}/set_event/0`);
+
+        location.reload();
+
+    }, 5000);
+}
