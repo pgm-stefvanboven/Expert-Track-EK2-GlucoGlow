@@ -39,12 +39,12 @@
             },
             {
                 "text": "Eet de vezelrijke koek uit je boekentas",
-                "effect": -40,
+                "effect": -25,
                 "correct": false
             },
             {
                 "text": "Wacht tot thuis",
-                "effect": -80,
+                "effect": -45,
                 "correct": false
             }
         ]
@@ -64,12 +64,12 @@
             },
             {
                 "text": "Doe niets",
-                "effect": -40,
+                "effect": -25,
                 "correct": false
             },
             {
                 "text": "Neem extra insuline",
-                "effect": -60,
+                "effect": -35,
                 "correct": false
             }
         ]
@@ -89,12 +89,12 @@
             },
             {
                 "text": "Laat hem rusten",
-                "effect": -40,
+                "effect": -25,
                 "correct": false
             },
             {
                 "text": "Geef insuline",
-                "effect": -80,
+                "effect": -45,
                 "correct": false
             }
         ]
@@ -139,12 +139,12 @@
             },
             {
                 "text": "Doe niets",
-                "effect": -40,
+                "effect": -25,
                 "correct": false
             },
             {
                 "text": "Neem extra insuline",
-                "effect": -60,
+                "effect": -35,
                 "correct": false
             }
         ]

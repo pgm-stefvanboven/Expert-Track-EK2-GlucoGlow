@@ -366,6 +366,7 @@ setInterval(() => {
             // 2. A response is sent only when the status is set to "PLAYING"
             // Old clicks on the home screen now just disappear.
             if (gameState === "PLAYING" && data.button !== -1) {
+
                 switch (data.button) {
                     case 0:
                         choose(0);
@@ -386,37 +387,13 @@ setInterval(() => {
 
 }, 200);
 
-// PINCODE SUBMIT
-pinSubmitBtn.addEventListener("click", () => {
-    const pin = pinInput.value;
-
-    fetch(`${SERVER}/check_pin/${pin}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Code is correct!
-                questOverlay.style.display = "none";
-                gameState = "PLAYING";
-
-                // Bonus tijd voor de moeite
-                timer += 10;
-                timerElement.textContent = timer;
-
-            } else {
-                // Code is fout! Straf de speler!
-                pinFeedback.textContent = "FOUTIEVE CODE! -5 SECONDEN!";
-                timer -= 5;
-                timerElement.textContent = timer;
-                pinInput.value = "";
-            }
-        })
-        .catch(error => console.error("Kluis Fout:", error));
-});
-
 // ENDSCREEN
 function endGame(message) {
     gameState = "END";
     clearInterval(timerInterval);
+
+    questOverlay.style.display = "none";
+    feedbackCard.style.display = "none";
 
     // Zet de telefoon weer op wachtstand!
     fetch(`${SERVER}/set_glucose/-1`);
