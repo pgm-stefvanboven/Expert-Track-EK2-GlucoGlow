@@ -163,40 +163,80 @@ startBtn.addEventListener("click", () => {
     startTimer();
 });
 
-// TIMER
+// TIMER FIX
 function startTimer() {
     timerInterval = setInterval(() => {
+        // Trek eerst de juiste hoeveelheid tijd af
+        if (gameState === "QUEST") {
+            timer -= 2; // Straf!
+        } else {
+            timer -= 1; // Normaal
+        }
+
+        // Check dan pas of de timer 0 of lager is (voorkomt de -1 bug)
         if (timer <= 0) {
-            endGame("DE TIJD IS OPGELOPEN");
+            timer = 0; // Klem hem vast op 0
+            timerElement.textContent = timer;
+            if (questTimerDisplay) questTimerDisplay.textContent = timer;
+            endGame("DE TIJD IS OP");
             return;
         }
 
-        // Als er een systeemstoring bezig is, tikt de tijd dubbel zo snel!
-        if (gameState === "QUEST") {
-            timer--;
-        }
-
-        timer--;
-
-        // Update de gewone timer én de grote alarm timer
+        // Update de schermen
         timerElement.textContent = timer;
-        questTimerDisplay.textContent = timer;
+        if (questTimerDisplay) questTimerDisplay.textContent = timer;
 
     }, 1000);
 }
 
-// Start quest
-function triggerQuest(questName) {
-    gameState = "QUEST"; // Verander status zodat de normale knoppen (1, 2, 3) blokkeren
+// ONSCREEN NUMPAD LOGICA
+let currentPin = "";
+const pinDisplay = document.getElementById("pinDisplay");
 
-    // Vertel de server dat de quest begint
+function addPin(num) {
+    if (currentPin.length < 4) {
+        currentPin += num;
+        pinDisplay.textContent = currentPin;
+    }
+}
+
+function clearPin() {
+    currentPin = "";
+    pinDisplay.textContent = "";
+    document.getElementById("pinFeedback").textContent = "";
+}
+
+function submitPin() {
+    if (currentPin.length !== 4) return; // Doe niets als het geen 4 cijfers zijn
+
+    fetch(`${SERVER}/check_pin/${currentPin}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                questOverlay.style.display = "none";
+                timer += 10; // Bonus
+                timerElement.textContent = timer;
+                clearPin(); // Reset voor de volgende keer
+                triggerNextEvent();
+            } else {
+                document.getElementById("pinFeedback").textContent = "FOUT! -5 SEC!";
+                timer -= 5;
+                timerElement.textContent = timer;
+                clearPin(); // Maak veld weer leeg
+            }
+        })
+        .catch(error => console.error("Kluis Fout:", error));
+}
+
+// Aangepaste triggerQuest functie zodat hij het nieuwe display reset
+function triggerQuest(questName) {
+    gameState = "QUEST";
     fetch(`${SERVER}/set_quest/${questName}`);
 
     if (questName === "pincode") {
-        questOverlay.style.display = "flex"; // Toon de pop-up
-        pinInput.value = ""; // Maak het veld leeg
-        pinFeedback.textContent = "";
-        pinInput.focus(); // Zet de cursor direct in het invulveld
+        feedbackCard.style.display = "none";
+        questOverlay.style.display = "flex";
+        clearPin(); // Zorg dat display leeg start
     }
 }
 
@@ -258,14 +298,13 @@ function choose(choiceIndex) {
     // Update the glucose display AND color
     updateGlucoseDisplay();
 
-    // Check for game-ending conditions based on glucose levels
-    if (glucose <= 55) {
+    // Check for game-ending conditions
+    if (glucose <= 45) { // Maak dit lager (was 55)
         endGame("THOMAS KREEG EEN ERNSTIGE HYPO");
         return;
     }
 
-    // Check for game-ending conditions based on glucose levels
-    if (glucose >= 250) {
+    if (glucose >= 280) { // Maak dit hoger (was 250)
         endGame("THOMAS KREEG EEN ERNSTIGE HYPER");
         return;
     }
