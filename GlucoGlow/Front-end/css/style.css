@@ -256,10 +256,9 @@ body {
 }
 
 /* =========================================
-   7. BIG BUTTONS (START, END, NEXT)
+   7. BIG BUTTONS (START, NEXT)
 ========================================= */
 #startBtn,
-#restartBtn,
 #nextBtn {
     flex: none;
     background: linear-gradient(135deg, #3b82f6, #2563eb);
@@ -274,11 +273,14 @@ body {
     transition: all 0.2s ease-in-out;
 }
 
-#startBtn {
-    margin-top: 10px;
+#restartCountdown {
+    margin-top: 15px;
+    font-size: 1.2rem;
+    color: #d1d5db;
+    text-align: center;
 }
 
-#restartBtn {
+#startBtn {
     margin-top: 10px;
 }
 
@@ -288,7 +290,6 @@ body {
 }
 
 #startBtn:hover,
-#restartBtn:hover,
 #nextBtn:hover {
     transform: translateY(-3px);
     filter: brightness(1.2);
@@ -296,7 +297,6 @@ body {
 }
 
 #startBtn:active,
-#restartBtn:active,
 #nextBtn:active {
     transform: translateY(0);
 }

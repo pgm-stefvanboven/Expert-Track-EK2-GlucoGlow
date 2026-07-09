@@ -60,7 +60,6 @@ const nextBtn = document.getElementById("nextBtn");
 const endScreen = document.getElementById("end-screen");
 const endTitle = document.getElementById("end-title");
 const endMessage = document.getElementById("end-message");
-const restartBtn = document.getElementById("restartBtn");
 
 // LOADING DATA
 fetch("data/events.json")
@@ -410,13 +409,25 @@ function endGame(message) {
         endTitle.style.color = "#ff4444";
     }
 
-    // Automatisch herstarten na 5 seconden
-    setTimeout(() => {
+    // Aftellen naar het startscherm
+    let countdown = 5;
 
-        fetch(`${SERVER}/set_glucose/-1`);
-        fetch(`${SERVER}/set_event/0`);
+    const countdownElement = document.getElementById("countdown");
+    countdownElement.textContent = countdown;
 
-        location.reload();
+    const countdownInterval = setInterval(() => {
 
-    }, 5000);
+        countdown--;
+        countdownElement.textContent = countdown;
+
+        if (countdown <= 0) {
+            clearInterval(countdownInterval);
+
+            fetch(`${SERVER}/set_glucose/-1`);
+            fetch(`${SERVER}/set_event/0`);
+
+            location.reload();
+        }
+
+    }, 1000);
 }
