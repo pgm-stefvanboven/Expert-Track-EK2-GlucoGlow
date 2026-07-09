@@ -34,16 +34,17 @@ def set_event(event_id):
     })
 
 # Define route to set the glucose level based on value
-@app.route("/set_glucose/<int:value>")
+@app.route("/set_glucose/<value>")
 def set_glucose(value):
-
-    print("Nieuwe glucose:", value)
-
-    game_state["glucose"] = value
+    # Zet de binnengekomen URL-tekst (inclusief mintekens) om naar een integer
+    numeric_value = int(value)
+    
+    print("Nieuwe glucose:", numeric_value)
+    game_state["glucose"] = numeric_value
 
     return jsonify({
         "success": True,
-        "glucose": value
+        "glucose": numeric_value
     })
 
 # Define route to handle button presses based on button_id
