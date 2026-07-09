@@ -12,7 +12,7 @@ last_button = -1
 # Initialize game_state dictionary to store current event and glucose level
 game_state = {
     "currentEvent": 0,
-    "glucose": 75
+    "glucose": -1
 }
 
 # Define route to get the current game state
