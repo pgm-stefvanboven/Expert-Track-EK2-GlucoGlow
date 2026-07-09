@@ -8,7 +8,7 @@ let wasPlaying = false; // Houdt bij of we hiervoor aan het spelen waren
 const waitingScreen = document.getElementById("waiting-screen");
 const chatContainer = document.getElementById("chat-container");
 
-// WACHTSCHERM ELEMENTEN (Nieuw!)
+// WACHTSCHERM ELEMENTEN
 const waitingSpinner = document.getElementById("waiting-spinner");
 const waitingTitle = document.getElementById("waiting-title");
 const waitingText = document.getElementById("waiting-text");
@@ -82,7 +82,25 @@ function updateFromServer() {
                 statusElement.style.color = "#00a884";
             }
 
+            // Roep de functie aan die de specifieke event-teksten inlaadt
             loadPhoneEvent();
         })
         .catch(error => console.error(error));
+}
+
+// DEZE FUNCTIE ONTBAK: Zorgt voor de juiste teksten en pijltjes per situatie
+function loadPhoneEvent() {
+    const event = events[currentEvent];
+    if (!event) return;
+
+    situationElement.textContent = event.title;
+    trendElement.textContent = event.trend;
+
+    if (event.trend === "↓↓" || event.trend === "↓") {
+        statusElement.textContent = "⚠ RISICO OP HYPO";
+    } else if (event.trend === "↑↑" || event.trend === "↑") {
+        statusElement.textContent = "⚠ RISICO OP HYPER";
+    } else {
+        statusElement.textContent = "STABIEL";
+    }
 }
