@@ -135,6 +135,13 @@ body {
     margin: 0;
 }
 
+#end-score {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #fcd34d;
+    margin: 10px 0;
+}
+
 /* =========================================
    5. GAMESCREEN LAYOUT
 ========================================= */

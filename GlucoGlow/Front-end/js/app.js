@@ -8,6 +8,7 @@ fetch(`${SERVER}/set_glucose/-1`);
 // GAME VARIABLES
 let glucose = 75;
 let timer = 90;
+let score = 0;
 
 // EVENTS
 let events = [];
@@ -60,6 +61,7 @@ const nextBtn = document.getElementById("nextBtn");
 const endScreen = document.getElementById("end-screen");
 const endTitle = document.getElementById("end-title");
 const endMessage = document.getElementById("end-message");
+const endScore = document.getElementById("end-score");
 
 // LOADING DATA
 fetch("data/events.json")
@@ -313,11 +315,16 @@ function choose(choiceIndex) {
 
     // Update feedback status based on the correctness of the choices
     if (choice.correct) {
+
+        score += 100;
+
         feedbackStatusElement.textContent = "✓ GOEDE KEUZE";
         feedbackStatusElement.style.color = "#10b981";
 
-        // Update feedback status based on the incorrectness of the choices
     } else {
+
+        score -= 25;
+
         feedbackStatusElement.textContent = "✗ SLECHTE KEUZE";
         feedbackStatusElement.style.color = "#ef4444";
     }
@@ -402,12 +409,17 @@ function endGame(message) {
     endMessage.textContent = message;
 
     if (message.includes("VEILIG")) {
+        score += 300;
+
         endTitle.textContent = "MISSIE GESLAAGD";
         endTitle.style.color = "#00ff99";
     } else {
         endTitle.textContent = "MISSIE MISLUKT";
         endTitle.style.color = "#ff4444";
     }
+
+    // Toon de behaalde score
+    endScore.textContent = `Score: ${score} punten`;
 
     // Aftellen naar het startscherm
     let countdown = 5;
