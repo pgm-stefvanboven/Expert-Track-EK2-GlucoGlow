@@ -122,16 +122,19 @@ body {
 }
 
 #highscore-box {
-    padding: 15px 30px;
-    border-radius: 12px;
-    border: 2px solid #facc15;
-    background: rgba(250, 204, 21, .08);
-}
+    margin-top: 10px;
+    padding: 10px 20px;
 
-.record-title {
-    font-size: 0.9rem;
-    color: #d1d5db;
-    letter-spacing: 2px;
+    border-radius: 10px;
+    border: 2px solid #facc15;
+
+    background: rgba(250, 204, 21, 0.08);
+
+    color: #facc15;
+    font-size: 1.4rem;
+    font-weight: bold;
+
+    text-align: center;
 }
 
 .record-score {
