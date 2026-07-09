@@ -421,6 +421,8 @@ function endGame(message) {
     // Toon de behaalde score
     endScore.textContent = `Score: ${score} punten`;
 
+    fetch(`${SERVER}/save_score/${score}`);
+
     // Aftellen naar het startscherm
     let countdown = 5;
 

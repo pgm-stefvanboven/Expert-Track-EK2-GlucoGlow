@@ -2,6 +2,9 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 
+import json
+import os
+
 # Initialize Flask app and enable CORS
 app = Flask(__name__)
 CORS(app)
@@ -105,6 +108,39 @@ def check_pin(pin):
     else:
         # Code is fout.
         return jsonify({"success": False, "message": "Foutieve code!"})
+    
+@app.route("/save_score/<int:score>")
+def save_score(score):
+
+    bestand = "data/highscores.json"
+
+    # Bestaat het bestand nog niet?
+    if not os.path.exists(bestand):
+        with open(bestand, "w") as f:
+            json.dump([], f)
+
+    # Lees de huidige highscores
+    with open(bestand, "r") as f:
+        highscores = json.load(f)
+
+    # Nieuwe score toevoegen
+    highscores.append({
+        "score": score
+    })
+
+    # Sorteer van hoog naar laag
+    highscores.sort(key=lambda x: x["score"], reverse=True)
+
+    # Bewaar enkel de beste 5
+    highscores = highscores[:5]
+
+    # Opslaan
+    with open(bestand, "w") as f:
+        json.dump(highscores, f, indent=4)
+
+    return jsonify({
+        "success": True
+    })
 
 # Run the Flask app if this script is executed directly
 if __name__ == "__main__":
