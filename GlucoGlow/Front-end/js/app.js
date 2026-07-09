@@ -197,15 +197,15 @@ function choose(choiceIndex) {
     const choice = currentEvent.choices[choiceIndex];
 
     console.log(
-    "Event:", currentEvent.title,
-    "| Knop:", choiceIndex,
-    "| Effect:", choice.effect,
-    "| Glucose voor:", glucose
-);
+        "Event:", currentEvent.title,
+        "| Knop:", choiceIndex,
+        "| Effect:", choice.effect,
+        "| Glucose voor:", glucose
+    );
 
-glucose += choice.effect;
+    glucose += choice.effect;
 
-console.log("Glucose na:", glucose);
+    console.log("Glucose na:", glucose);
 
     // Update the Flask server with the new glucose value
     fetch(`${SERVER}/set_glucose/${glucose}`)
@@ -330,5 +330,12 @@ function endGame(message) {
 
 // RESTART
 restartBtn.addEventListener("click", () => {
-    location.reload();
+
+    fetch(`${SERVER}/set_glucose/-1`);
+    fetch(`${SERVER}/set_event/0`);
+
+    setTimeout(() => {
+        location.reload();
+    }, 200);
+
 });
