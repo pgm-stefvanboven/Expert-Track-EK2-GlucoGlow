@@ -13,8 +13,8 @@ let timer = 90;
 let events = [];
 let currentEventIndex = 0;
 
-// We keep track of the exact state of the game to prevent unwanted input during feedback or end screens
-let gameState = "START"; // Expected: "START", "PLAYING", "FEEDBACK", "END"
+// We keep track of the exact state of the game
+let gameState = "START"; // Expected: "START", "PLAYING", "FEEDBACK", "END", "QUEST"
 
 // SET EVENT
 let timerInterval;
@@ -42,6 +42,12 @@ const choicesContainer = document.getElementById("choices");
 const redBtn = document.getElementById("redBtn");
 const yellowBtn = document.getElementById("yellowBtn");
 const greenBtn = document.getElementById("greenBtn");
+
+// QUEST ELEMENTS
+const questOverlay = document.getElementById("quest-overlay");
+const pinInput = document.getElementById("pinInput");
+const pinSubmitBtn = document.getElementById("pinSubmitBtn");
+const pinFeedback = document.getElementById("pinFeedback");
 
 // FEEDBACK
 const feedbackCard = document.getElementById("feedback-card");
@@ -163,9 +169,37 @@ function startTimer() {
             endGame("DE TIJD IS OPGELOPEN");
             return;
         }
+
+        // Als er een paniek-quest bezig is, tikt de tijd DUBBEL zo snel weg!
+        if (gameState === "QUEST") {
+            timer--;
+        }
+
         timer--;
         timerElement.textContent = timer;
+
+        // Willekeurig een quest triggeren! 
+        // Voorwaarde: Je bent aan het spelen, er is nog genoeg tijd, en 2% kans per seconde
+        if (gameState === "PLAYING" && timer > 20 && Math.random() < 0.02) {
+            triggerQuest("pincode");
+        }
+
     }, 1000);
+}
+
+// Start quest
+function triggerQuest(questName) {
+    gameState = "QUEST"; // Verander status zodat de normale knoppen (1, 2, 3) blokkeren
+
+    // Vertel de server dat de quest begint
+    fetch(`${SERVER}/set_quest/${questName}`);
+
+    if (questName === "pincode") {
+        questOverlay.style.display = "flex"; // Toon de pop-up
+        pinInput.value = ""; // Maak het veld leeg
+        pinFeedback.textContent = "";
+        pinInput.focus(); // Zet de cursor direct in het invulveld
+    }
 }
 
 // LOADING EVENT
@@ -306,6 +340,33 @@ setInterval(() => {
         });
 
 }, 200);
+
+// PINCODE SUBMIT
+pinSubmitBtn.addEventListener("click", () => {
+    const pin = pinInput.value;
+
+    fetch(`${SERVER}/check_pin/${pin}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Code is correct!
+                questOverlay.style.display = "none";
+                gameState = "PLAYING";
+
+                // Bonus tijd voor de moeite
+                timer += 10;
+                timerElement.textContent = timer;
+
+            } else {
+                // Code is fout! Straf de speler!
+                pinFeedback.textContent = "FOUTIEVE CODE! -5 SECONDEN!";
+                timer -= 5;
+                timerElement.textContent = timer;
+                pinInput.value = "";
+            }
+        })
+        .catch(error => console.error("Kluis Fout:", error));
+});
 
 // ENDSCREEN
 function endGame(message) {

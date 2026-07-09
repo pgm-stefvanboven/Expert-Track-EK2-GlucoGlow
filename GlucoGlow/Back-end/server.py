@@ -12,7 +12,8 @@ last_button = -1
 # Initialize game_state dictionary to store current event and glucose level
 game_state = {
     "currentEvent": 0,
-    "glucose": -1
+    "glucose": -1,
+    "activeQuest": "none" # houdt bij welke quest bezig is ("none" of "pincode")
 }
 
 # Define route to get the current game state
@@ -77,6 +78,33 @@ def get_button():
     return jsonify({
         "button": button
     })
+    
+    # Define route to trigger or end a quest
+@app.route("/set_quest/<quest_name>")
+def set_quest(quest_name):
+    # Verander de actieve quest (gebruik "none" om hem te stoppen)
+    game_state["activeQuest"] = quest_name
+    
+    print(f"Quest status geüpdatet naar: {quest_name}")
+    
+    return jsonify({
+        "success": True,
+        "activeQuest": quest_name
+    })
+
+# Define route to check the PIN code
+@app.route("/check_pin/<pin>")
+def check_pin(pin):
+    # De juiste code voor onze eerste quest
+    correct_pin = "6162"
+    
+    if pin == correct_pin:
+        # Code is goed! Stop de quest.
+        game_state["activeQuest"] = "none"
+        return jsonify({"success": True, "message": "Toegang verleend!"})
+    else:
+        # Code is fout.
+        return jsonify({"success": False, "message": "Foutieve code!"})
 
 # Run the Flask app if this script is executed directly
 if __name__ == "__main__":

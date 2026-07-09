@@ -7,6 +7,7 @@ let wasPlaying = false; // Houdt bij of we hiervoor aan het spelen waren
 // SCHERMEN
 const waitingScreen = document.getElementById("waiting-screen");
 const chatContainer = document.getElementById("chat-container");
+const questScreen = document.getElementById("quest-screen");
 
 // WACHTSCHERM ELEMENTEN
 const waitingSpinner = document.getElementById("waiting-spinner");
@@ -34,6 +35,7 @@ function updateFromServer() {
             // Controle: Is het spel niet bezig? (-1)
             if (data.glucose === -1) {
                 chatContainer.style.display = "none";
+                questScreen.style.display = "none"; // Zorg dat de quest ook verborgen is
                 waitingScreen.style.display = "flex";
 
                 // Als we hiervóór aan het spelen waren, is de missie zojuist geëindigd!
@@ -41,11 +43,10 @@ function updateFromServer() {
                     wasPlaying = false; // Reset de status
 
                     // Pas het scherm aan voor een mooiere afsluiting
-                    waitingSpinner.style.display = "none"; // Verberg het laadwieltje even
+                    waitingSpinner.style.display = "none";
                     waitingTitle.textContent = "MISSIE AFGELOPEN";
                     waitingText.textContent = "Kijk naar het grote scherm voor de uitslag!";
 
-                    // Zet na 6 seconden het scherm weer terug naar de normale Stand-by stand
                     setTimeout(() => {
                         waitingSpinner.style.display = "block";
                         waitingTitle.textContent = "STAND-BY";
@@ -56,18 +57,25 @@ function updateFromServer() {
             }
 
             // --- Vanaf hier is het spel wél bezig ---
-
-            // Markeer dat we aan het spelen zijn
             wasPlaying = true;
 
-            // Zorg dat het wachtscherm altijd goed gereset is (voor het geval we snel herstarten)
             waitingSpinner.style.display = "block";
             waitingTitle.textContent = "STAND-BY";
             waitingText.textContent = "Wachten op connectie met spelsysteem...";
-
             waitingScreen.style.display = "none";
-            chatContainer.style.display = "flex";
 
+            // HIER GEBEURT DE QUEST MAGIC: Check of er een quest actief is
+            if (data.activeQuest === "pincode") {
+                // Verberg de chat, toon het medisch dossier!
+                chatContainer.style.display = "none";
+                questScreen.style.display = "flex";
+            } else {
+                // Geen quest? Dan gewoon de normale chat tonen.
+                questScreen.style.display = "none";
+                chatContainer.style.display = "flex";
+            }
+
+            // Update glucose waarden
             currentEvent = data.currentEvent;
             glucoseElement.textContent = data.glucose;
 
@@ -78,17 +86,15 @@ function updateFromServer() {
                 glucoseElement.style.color = "#f59e0b";
                 statusElement.style.color = "#f59e0b";
             } else {
-                glucoseElement.style.color = "#00a884"; // WhatsApp Groen
+                glucoseElement.style.color = "#00a884";
                 statusElement.style.color = "#00a884";
             }
 
-            // Roep de functie aan die de specifieke event-teksten inlaadt
             loadPhoneEvent();
         })
         .catch(error => console.error(error));
 }
 
-// DEZE FUNCTIE ONTBAK: Zorgt voor de juiste teksten en pijltjes per situatie
 function loadPhoneEvent() {
     const event = events[currentEvent];
     if (!event) return;

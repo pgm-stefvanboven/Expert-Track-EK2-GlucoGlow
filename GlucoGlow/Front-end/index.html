@@ -60,6 +60,31 @@
             <div id="greenBtn" class="choice-box"></div>
         </div>
 
+        <div id="choices">
+            <div id="redBtn" class="choice-box"></div>
+            <div id="yellowBtn" class="choice-box"></div>
+            <div id="greenBtn" class="choice-box"></div>
+        </div>
+
+        <div id="quest-overlay"
+            style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 100; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div
+                style="background-color: #1f2937; padding: 40px; border-radius: 15px; border: 4px solid #ef4444; box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);">
+                <h2
+                    style="color: #ef4444; margin-top: 0; font-size: 2.5rem; text-shadow: 0 0 10px rgba(239,68,68,0.8);">
+                    ⚠ NOOD-INSULINE ⚠</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 20px;">Voer de 4-cijferige code van de kluis in!</p>
+
+                <input type="number" id="pinInput" placeholder="0000"
+                    style="font-size: 2rem; padding: 10px; width: 150px; text-align: center; border-radius: 10px; border: none; margin-bottom: 20px;"><br>
+
+                <button id="pinSubmitBtn"
+                    style="background-color: #ef4444; color: white; font-size: 1.5rem; padding: 10px 30px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;">ONTGRENDEL</button>
+
+                <p id="pinFeedback" style="color: #f59e0b; font-weight: bold; margin-top: 20px; height: 20px;"></p>
+            </div>
+        </div>
+
         <div id="feedback-card">
 
             <h2 id="feedback-status"></h2>
@@ -93,18 +118,18 @@
     </div>
 
     <script>
-    // 1. Generate a unique timestamp
-    const timestamp = new Date().getTime();
-    
-    // 2. Make a new script element
-    const script = document.createElement('script');
-    
-    // 3. Add the timestamp to the URL (e.g.: js/app.js?v=168493029)
-    script.src = 'js/app.js?v=' + timestamp;
-    
-    // 4. Place it in the HTML
-    document.body.appendChild(script);
-</script>
+        // 1. Generate a unique timestamp
+        const timestamp = new Date().getTime();
+
+        // 2. Make a new script element
+        const script = document.createElement('script');
+
+        // 3. Add the timestamp to the URL (e.g.: js/app.js?v=168493029)
+        script.src = 'js/app.js?v=' + timestamp;
+
+        // 4. Place it in the HTML
+        document.body.appendChild(script);
+    </script>
 
 </body>
 
