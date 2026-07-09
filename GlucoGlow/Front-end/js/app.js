@@ -32,6 +32,7 @@ function saveGameState() {
 // STARTSCREEN
 const startScreen = document.getElementById("start-screen");
 const startBtn = document.getElementById("startBtn");
+const highscoreElement = document.getElementById("highscore");
 
 // GAME
 const gameContainer = document.getElementById("game-container");
@@ -68,6 +69,12 @@ fetch("data/events.json")
     .then(response => response.json())
     .then(data => {
         events = data;
+    });
+
+fetch(`${SERVER}/get_highscore`)
+    .then(response => response.json())
+    .then(data => {
+        highscoreElement.textContent = data.highscore;
     });
 
 // Shuffle events (Fisher-Yates)

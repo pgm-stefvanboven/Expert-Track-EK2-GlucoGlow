@@ -147,6 +147,30 @@ def save_score(score):
     return jsonify({
         "success": True
     })
+    
+@app.route("/get_highscore")
+def get_highscore():
+
+    bestand = os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "Front-end",
+        "data",
+        "highscores.json"
+    )
+
+    if not os.path.exists(bestand):
+        return jsonify({"highscore": 0})
+
+    with open(bestand, "r") as f:
+        highscores = json.load(f)
+
+    if len(highscores) == 0:
+        return jsonify({"highscore": 0})
+
+    return jsonify({
+        "highscore": highscores[0]["score"]
+    })
 
 # Run the Flask app if this script is executed directly
 if __name__ == "__main__":
