@@ -247,11 +247,10 @@ body {
 #charCounter {
     position: absolute;
 
+    top: 12px;
     right: 10px;
-    bottom: 6px;
 
     font-size: .8rem;
-
     color: #9ca3af;
 }
 

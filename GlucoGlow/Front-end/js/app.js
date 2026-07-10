@@ -303,8 +303,11 @@ function startGame() {
 }
 
 startBtn.addEventListener("click", () => {
+    teamFeedback.textContent = "";
+    teamName = "";
+    updateTeamDisplay();
+
     teamOverlay.style.display = "flex";
-    teamNameInput.focus();
 });
 
 teamOkBtn.addEventListener("click", () => {
@@ -318,7 +321,11 @@ teamOkBtn.addEventListener("click", () => {
     if (!isValidTeamName(teamName)) {
 
         teamFeedback.textContent =
-            "Gelieve een geldige teamnaam in te voeren.";
+            "Teamnaam niet geldig.";
+
+        setTimeout(() => {
+            teamFeedback.textContent = "";
+        }, 5000);
 
         teamName = "";
 
@@ -327,6 +334,7 @@ teamOkBtn.addEventListener("click", () => {
         return;
     }
 
+    teamFeedback.textContent = "";
     teamOverlay.style.display = "none";
 
     startGame();
