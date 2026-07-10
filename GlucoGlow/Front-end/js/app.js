@@ -102,6 +102,46 @@ function shuffleEvents(array) {
     return shuffled;
 }
 
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+letters.split("").forEach(letter => {
+
+    const button = document.createElement("button");
+
+    button.className = "key";
+    button.textContent = letter;
+
+    button.addEventListener("click", () => {
+
+        if (teamName.length >= 15) return;
+
+        teamName += letter;
+        teamDisplay.textContent = teamName;
+
+    });
+
+    keyboard.appendChild(button);
+
+});
+
+backspaceBtn.addEventListener("click", () => {
+
+    teamName = teamName.slice(0, -1);
+
+    teamDisplay.textContent = teamName;
+
+});
+
+spaceBtn.addEventListener("click", () => {
+
+    if (teamName.length >= 15) return;
+
+    teamName += " ";
+
+    teamDisplay.textContent = teamName;
+
+});
+
 // UPDATE GLUCOSE KLEUR EN WAARDE
 function updateGlucoseDisplay() {
     glucoseElement.textContent = glucose;
@@ -185,9 +225,7 @@ startBtn.addEventListener("click", () => {
 
 teamOkBtn.addEventListener("click", () => {
 
-    teamName = teamNameInput.value.trim();
-
-    if (teamName === "") {
+    if (teamName.trim() === "") {
         teamName = "Anoniem";
     }
 
