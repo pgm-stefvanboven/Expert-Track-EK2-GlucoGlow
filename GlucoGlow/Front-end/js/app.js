@@ -37,6 +37,7 @@ const startScreen = document.getElementById("start-screen");
 const startBtn = document.getElementById("startBtn");
 const highscoreElement = document.getElementById("highscore");
 
+// TEAM NAME
 const teamOverlay = document.getElementById("team-overlay");
 const teamNameInput = document.getElementById("teamNameInput");
 const teamOkBtn = document.getElementById("teamOkBtn");
@@ -44,6 +45,7 @@ const teamDisplay = document.getElementById("teamDisplay");
 const keyboard = document.getElementById("keyboard");
 const backspaceBtn = document.getElementById("backspaceBtn");
 const spaceBtn = document.getElementById("spaceBtn");
+const charCounter = document.getElementById("charCounter");
 
 // GAME
 const gameContainer = document.getElementById("game-container");
@@ -116,7 +118,7 @@ letters.split("").forEach(letter => {
         if (teamName.length >= 15) return;
 
         teamName += letter;
-        teamDisplay.textContent = teamName;
+        updateTeamDisplay();
 
     });
 
@@ -128,7 +130,7 @@ backspaceBtn.addEventListener("click", () => {
 
     teamName = teamName.slice(0, -1);
 
-    teamDisplay.textContent = teamName;
+    updateTeamDisplay();
 
 });
 
@@ -138,9 +140,32 @@ spaceBtn.addEventListener("click", () => {
 
     teamName += " ";
 
-    teamDisplay.textContent = teamName;
+    updateTeamDisplay();
 
 });
+
+// UPDATE TEAM DISPLAY
+function updateTeamDisplay() {
+
+    teamDisplay.textContent = teamName;
+
+    charCounter.textContent = `${teamName.length}/15`;
+
+}
+
+function formatTeamName(name) {
+
+    return name
+        .trim()
+        .replace(/\s+/g, " ")
+        .split(" ")
+        .map(word =>
+            word.charAt(0).toUpperCase() +
+            word.slice(1).toLowerCase()
+        )
+        .join(" ");
+
+}
 
 // UPDATE GLUCOSE KLEUR EN WAARDE
 function updateGlucoseDisplay() {
@@ -228,6 +253,8 @@ teamOkBtn.addEventListener("click", () => {
     if (teamName.trim() === "") {
         teamName = "Anoniem";
     }
+
+    teamName = formatTeamName(teamName);
 
     teamOverlay.style.display = "none";
 

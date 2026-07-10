@@ -238,6 +238,23 @@ body {
     cursor: pointer;
 }
 
+#teamDisplayContainer {
+    position: relative;
+    width: 320px;
+    margin: 15px auto;
+}
+
+#charCounter {
+    position: absolute;
+
+    right: 10px;
+    bottom: 6px;
+
+    font-size: .8rem;
+
+    color: #9ca3af;
+}
+
 #teamDisplay {
     width: 320px;
     min-height: 45px;
