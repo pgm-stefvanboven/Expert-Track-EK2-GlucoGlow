@@ -565,7 +565,17 @@ function endGame(message) {
             clearInterval(countdownInterval);
             fetch(`${SERVER}/set_glucose/-1`);
             fetch(`${SERVER}/set_event/0`);
-            location.reload();
+
+            // Stuur het reset-signaal naar de server en wacht op antwoord
+            fetch(`${SERVER}/reset_game`)
+                .then(() => {
+                    // Herlaad pas als de server de reset succesvol heeft ontvangen
+                    location.reload();
+                })
+                .catch(() => {
+                    // Mocht er een netwerkfout zijn, herlaad dan alsnog als fallback
+                    location.reload();
+                });
         }
     }, 1000);
 }
