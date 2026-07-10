@@ -161,17 +161,23 @@ def get_highscore():
     )
 
     if not os.path.exists(bestand):
-        return jsonify({"highscore": 0})
+        return jsonify({"team": "Niemand", "highscore": 0})
 
     with open(bestand, "r") as f:
-        highscores = json.load(f)
+        try:
+            highscores = json.load(f)
+        except json.JSONDecodeError:
+            # Als het bestand corrupt is of leeg
+            return jsonify({"team": "Niemand", "highscore": 0})
 
     if len(highscores) == 0:
-        return jsonify({"highscore": 0})
+        return jsonify({"team": "Niemand", "highscore": 0})
 
+    # Gebruik .get() in plaats van direct opvragen. 
+    # Dit voorkomt een KeyError als "team" of "score" niet bestaat in oude data.
     return jsonify({
-        "team": highscores[0]["team"],
-        "highscore": highscores[0]["score"]
+        "team": highscores[0].get("team", "Onbekend"),
+        "highscore": highscores[0].get("score", 0)
     })
 
 # Run the Flask app if this script is executed directly
