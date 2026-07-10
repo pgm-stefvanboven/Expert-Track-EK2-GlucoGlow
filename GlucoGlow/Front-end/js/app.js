@@ -255,6 +255,10 @@ function triggerSensorCalibration() {
 
 function startGame() {
     startScreen.style.display = "none";
+
+    // Reset het spectator dashboard
+    fetch(`${SERVER}/reset_game`).catch(e => console.log(e));
+
     gameContainer.style.display = "flex";
 
     events.forEach(e => e.played = false);
@@ -321,6 +325,8 @@ function startTimer() {
 
         timerElement.textContent = timer;
         if (questTimerDisplay) questTimerDisplay.textContent = timer;
+
+        fetch(`${SERVER}/set_timer/${timer}`).catch(e => console.log(e));
     }, 1000);
 }
 
@@ -531,6 +537,9 @@ function endGame(message) {
     gameContainer.style.display = "none";
     endScreen.style.display = "flex";
     endMessage.textContent = message;
+
+    const isWin = message.includes("VEILIG") ? 1 : 0;
+    fetch(`${SERVER}/set_game_over/${isWin}`).catch(e => console.log(e));
 
     if (message.includes("VEILIG")) {
         score += 300;

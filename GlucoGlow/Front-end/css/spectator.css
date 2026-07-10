@@ -1,0 +1,236 @@
+/* Basis Reset & Fonts */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #0d1117;
+    /* Donkere, rustige achtergrond */
+    color: #c9d1d9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    /* Voorkomt scrollbars */
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    background-color: #161b22;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    color: #58a6ff;
+    /* Blauwe glow voor de titel */
+    letter-spacing: 2px;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px rgba(88, 166, 255, 0.3);
+}
+
+.timer {
+    font-family: monospace;
+    font-size: 1.5rem;
+    color: #8b949e;
+    background: #21262d;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #30363d;
+}
+
+/* Lijnen tussen secties */
+hr {
+    border: none;
+    border-top: 1px solid #30363d;
+    margin: 25px 0;
+}
+
+/* Patiënt Vitals (Het belangrijkste onderdeel) */
+.patient-vital {
+    text-align: center;
+    margin: 30px 0;
+}
+
+#glucose-value {
+    font-size: 5rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 10px;
+    font-family: monospace;
+    transition: color 0.5s ease;
+    /* Zorgt voor een vloeiende kleurovergang */
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+/* De verschillende statussen die we via JS gaan wisselen */
+.stable {
+    background-color: rgba(46, 160, 67, 0.15);
+    color: #3fb950;
+    border: 1px solid #2ea043;
+}
+
+.warning {
+    background-color: rgba(210, 153, 34, 0.15);
+    color: #e3b341;
+    border: 1px solid #d29922;
+}
+
+.danger {
+    background-color: rgba(248, 81, 73, 0.15);
+    color: #ff7b72;
+    border: 1px solid #f85149;
+    animation: pulse-danger 1.5s infinite;
+    /* Knippereffect bij gevaar */
+}
+
+/* Missie Voortgang */
+.mission-progress h3 {
+    margin-bottom: 15px;
+    color: #8b949e;
+    font-size: 1.1rem;
+}
+
+#mission-count {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 24px;
+    background-color: #21262d;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #30363d;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1f6feb, #58a6ff);
+    border-radius: 12px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Soepele en professionele animatie */
+}
+
+/* Team Status & Events */
+.team-status h3,
+.patient-events h3 {
+    color: #8b949e;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.team-status p,
+.patient-events p {
+    font-size: 1.2rem;
+    line-height: 1.5;
+}
+
+.event-panel {
+    margin-top: 15px;
+    background-color: #21262d;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #58a6ff;
+}
+
+.event-panel h4 {
+    color: #8b949e;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+/* Game Over Screen Overlay */
+#game-over-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(13, 17, 23, 0.95);
+    backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 16px;
+    z-index: 100;
+}
+
+#game-over-screen.hidden {
+    display: none;
+}
+
+#game-over-icon {
+    font-size: 6rem;
+    margin-bottom: 20px;
+    animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+#game-over-title {
+    font-size: 2.5rem;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+#game-over-subtitle {
+    font-size: 1.5rem;
+    color: #8b949e;
+}
+
+/* Animaties */
+@keyframes pulse-danger {
+    0% {
+        box-shadow: 0 0 0 0 rgba(248, 81, 73, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 15px rgba(248, 81, 73, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(248, 81, 73, 0);
+    }
+}
+
+@keyframes pop-in {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

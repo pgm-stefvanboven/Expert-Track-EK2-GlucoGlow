@@ -16,7 +16,10 @@ last_button = -1
 game_state = {
     "currentEvent": 0,
     "glucose": -1,
-    "activeQuest": "none" # houdt bij welke quest bezig is ("none" of "pincode")
+    "activeQuest": "none",
+    "timer": 90,
+    "game_over": False,
+    "win": False
 }
 
 # Define route to get the current game state
@@ -179,6 +182,23 @@ def get_highscore():
         "team": highscores[0].get("team", "Onbekend"),
         "highscore": highscores[0].get("score", 0)
     })
+    
+@app.route("/set_timer/<int:time>")
+def set_timer(time):
+    game_state["timer"] = time
+    return jsonify({"success": True})
+
+@app.route("/set_game_over/<int:is_win>")
+def set_game_over(is_win):
+    game_state["game_over"] = True
+    game_state["win"] = bool(is_win)
+    return jsonify({"success": True})
+
+@app.route("/reset_game")
+def reset_game():
+    game_state["game_over"] = False
+    game_state["timer"] = 90
+    return jsonify({"success": True})
 
 # Run the Flask app if this script is executed directly
 if __name__ == "__main__":

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlucoGlow - Spectator Dashboard</title>
+    <script>
+        document.write('<link rel="stylesheet" href="css/spectator.css?v=' + new Date().getTime() + '">');
+    </script>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header>
+            <h1>GLUCOGLOW</h1>
+            <div class="timer" id="game-timer">⏱ 01:13</div>
+        </header>
+
+        <!-- Main Patient Info -->
+        <section class="patient-vital">
+            <h2 id="glucose-value">84 mg/dL</h2>
+            <div class="status-badge stable" id="glucose-status">🟢 STABIEL</div>
+        </section>
+
+        <hr>
+
+        <!-- Mission Progress -->
+        <section class="mission-progress">
+            <h3>Missie <span id="mission-count">4 / 10</span></h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="mission-progress-bar" style="width: 40%;"></div>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- Team Status -->
+        <section class="team-status">
+            <h3>TEAMSTATUS</h3>
+            <p id="team-status-text">🧩 De spelers lossen momenteel een uitdaging op.</p>
+        </section>
+
+        <hr>
+
+        <!-- Patient & Events -->
+        <section class="patient-events">
+            <h3>🎙 PATIËNT</h3>
+            <p id="patient-message">Alles lijkt momenteel stabiel.</p>
+
+            <div class="event-panel">
+                <h4>Laatste gebeurtenis:</h4>
+                <p id="last-event">✅ Team stabiliseerde de patiënt.</p>
+            </div>
+        </section>
+
+        <!-- Game Over overlay (verborgen tijdens het spel) -->
+        <div id="game-over-screen" class="hidden">
+            <h1 id="game-over-icon">🎉</h1>
+            <h2 id="game-over-title">De patiënt is gered!</h2>
+            <p id="game-over-subtitle">Missies voltooid: 8 / 10</p>
+        </div>
+    </div>
+
+    <script>
+        document.write('<script src="js/spectator.js?v=' + new Date().getTime() + '"><\/script>');
+    </script>
+</body>
+
+</html>
