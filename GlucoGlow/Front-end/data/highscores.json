@@ -2,5 +2,17 @@
     {
         "team": "Gluco heroes",
         "score": 700
+    },
+    {
+        "team": "Hero",
+        "score": 225
+    },
+    {
+        "team": "Hiro",
+        "score": 100
+    },
+    {
+        "team": "Glucohero",
+        "score": 75
     }
 ]
