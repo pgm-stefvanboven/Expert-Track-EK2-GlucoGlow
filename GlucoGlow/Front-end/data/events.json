@@ -268,9 +268,10 @@
         "pin": "1515",
         "questTitle": "PROTOCOL: HYPO",
         "clues": [
-            "De 'gouden regel' bij een hypo:",
-            "Aantal gram snelle suikers dat je moet nemen",
-            "Aantal minuten wachten voor je opnieuw meet"
+            "De gouden regel bij een hypo is de 15-15 regel!",
+            "Stap 1: Neem 15 gram suiker.",
+            "Stap 2: Wacht 15 minuten.",
+            "De ontgrendelcode is dan?"
         ]
     },
     {
