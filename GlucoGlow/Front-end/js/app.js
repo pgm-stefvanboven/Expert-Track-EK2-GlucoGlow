@@ -13,6 +13,33 @@ let score = 0;
 // TEAM NAME
 let teamName = "";
 
+// BANNED WORDS
+const bannedWords = [
+    "fuck",
+    "fck",
+    "shit",
+    "bitch",
+    "porno",
+    "sex",
+    "seks",
+    "kut",
+    "lul",
+    "kanker",
+    "kkr",
+    "homo",
+    "hoer",
+    "slet",
+    "wijf",
+    "seksueel",
+    "sexywijf",
+    "gay",
+    "nigger",
+    "nigga",
+    "hitler",
+    "nazi",
+    "kaka"
+];
+
 // EVENTS
 let events = [];
 let currentEventIndex = 0;
@@ -46,6 +73,7 @@ const keyboard = document.getElementById("keyboard");
 const backspaceBtn = document.getElementById("backspaceBtn");
 const spaceBtn = document.getElementById("spaceBtn");
 const charCounter = document.getElementById("charCounter");
+const teamFeedback = document.getElementById("teamFeedback");
 
 // GAME
 const gameContainer = document.getElementById("game-container");
@@ -118,6 +146,9 @@ letters.split("").forEach(letter => {
         if (teamName.length >= 15) return;
 
         teamName += letter;
+
+        teamFeedback.textContent = "";
+
         updateTeamDisplay();
 
     });
@@ -130,6 +161,8 @@ backspaceBtn.addEventListener("click", () => {
 
     teamName = teamName.slice(0, -1);
 
+    teamFeedback.textContent = "";
+
     updateTeamDisplay();
 
 });
@@ -140,9 +173,35 @@ spaceBtn.addEventListener("click", () => {
 
     teamName += " ";
 
+    teamFeedback.textContent = "";
+
     updateTeamDisplay();
 
 });
+
+function isValidTeamName(name) {
+
+    const lower = name.toLowerCase();
+
+    // Verboden woorden
+    if (bannedWords.some(word => lower.includes(word))) {
+        return false;
+    }
+
+    // Minimaal 3 letters
+    const letters = (name.match(/[a-z]/gi) || []).length;
+
+    if (letters < 3) {
+        return false;
+    }
+
+    // Minstens één klinker
+    if (!/[aeiou]/i.test(name)) {
+        return false;
+    }
+
+    return true;
+}
 
 // UPDATE TEAM DISPLAY
 function updateTeamDisplay() {
@@ -255,6 +314,18 @@ teamOkBtn.addEventListener("click", () => {
     }
 
     teamName = formatTeamName(teamName);
+
+    if (!isValidTeamName(teamName)) {
+
+        teamFeedback.textContent =
+            "Gelieve een geldige teamnaam in te voeren.";
+
+        teamName = "";
+
+        updateTeamDisplay();
+
+        return;
+    }
 
     teamOverlay.style.display = "none";
 
