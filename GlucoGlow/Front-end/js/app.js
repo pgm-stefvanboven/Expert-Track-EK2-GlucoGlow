@@ -147,35 +147,49 @@ function triggerNextEvent() {
     }
 }
 
-// START GAME
-startBtn.addEventListener("click", () => {
+function startGame() {
+
     startScreen.style.display = "none";
     gameContainer.style.display = "flex";
 
     // Reset alle events zodat we met een schone lei beginnen
     events.forEach(e => e.played = false);
 
-    // Genereer een random glucose tussen de 80 en 130
     const minGlucose = 80;
     const maxGlucose = 130;
     glucose = Math.floor(Math.random() * (maxGlucose - minGlucose + 1)) + minGlucose;
 
     timer = 90;
+    score = 0;
 
-    // Stuur de start-glucose naar de Flask server
-    fetch(`${SERVER}/set_glucose/${glucose}`)
-        .then(response => response.json())
-        .catch(error => console.error("FOUT BIJ START GLUCOSE:", error));
+    fetch(`${SERVER}/set_glucose/${glucose}`);
 
-    // Status verandert naar PLAYING
     gameState = "PLAYING";
     timerElement.textContent = timer;
 
-    // HIER GEBEURT DE MAGIC: Update de kleur direct en laad een passend event
     updateGlucoseDisplay();
     triggerNextEvent();
 
     startTimer();
+}
+
+startBtn.addEventListener("click", () => {
+    teamOverlay.style.display = "flex";
+    teamNameInput.focus();
+});
+
+teamOkBtn.addEventListener("click", () => {
+
+    teamName = teamNameInput.value.trim();
+
+    if (teamName === "") {
+        teamName = "Anoniem";
+    }
+
+    teamOverlay.style.display = "none";
+
+    startGame();
+
 });
 
 // TIMER FIX
