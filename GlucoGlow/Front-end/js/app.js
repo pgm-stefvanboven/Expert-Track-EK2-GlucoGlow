@@ -40,6 +40,10 @@ const highscoreElement = document.getElementById("highscore");
 const teamOverlay = document.getElementById("team-overlay");
 const teamNameInput = document.getElementById("teamNameInput");
 const teamOkBtn = document.getElementById("teamOkBtn");
+const teamDisplay = document.getElementById("teamDisplay");
+const keyboard = document.getElementById("keyboard");
+const backspaceBtn = document.getElementById("backspaceBtn");
+const spaceBtn = document.getElementById("spaceBtn");
 
 // GAME
 const gameContainer = document.getElementById("game-container");
