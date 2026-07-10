@@ -10,34 +10,21 @@ let glucose = 75;
 let timer = 90;
 let score = 0;
 
+let targetPin = "";
+
 // TEAM NAME
 let teamName = "";
 
+// SIDEQUEST: SENSOR KALIBRATIE VARIABELEN
+let isSidequestActive = false;
+let sidequestCode = [];
+let enteredCode = [];
+
 // BANNED WORDS
 const bannedWords = [
-    "fuck",
-    "fck",
-    "shit",
-    "bitch",
-    "porno",
-    "sex",
-    "seks",
-    "kut",
-    "lul",
-    "kanker",
-    "kkr",
-    "homo",
-    "hoer",
-    "slet",
-    "wijf",
-    "seksueel",
-    "sexywijf",
-    "gay",
-    "nigger",
-    "nigga",
-    "hitler",
-    "nazi",
-    "kaka"
+    "fuck", "fck", "shit", "bitch", "porno", "sex", "seks", "kut", "lul",
+    "kanker", "kkr", "homo", "hoer", "slet", "wijf", "seksueel",
+    "sexywijf", "gay", "nigger", "nigga", "hitler", "nazi", "kaka"
 ];
 
 // EVENTS
@@ -122,98 +109,56 @@ fetch(`${SERVER}/get_highscore`)
 // Shuffle events (Fisher-Yates)
 function shuffleEvents(array) {
     const shuffled = [...array];
-
     for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-
     return shuffled;
 }
 
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 letters.split("").forEach(letter => {
-
     const button = document.createElement("button");
-
     button.className = "key";
     button.textContent = letter;
-
     button.addEventListener("click", () => {
-
         if (teamName.length >= 15) return;
-
         teamName += letter;
-
         teamFeedback.textContent = "";
-
         updateTeamDisplay();
-
     });
-
     keyboard.appendChild(button);
-
 });
 
 backspaceBtn.addEventListener("click", () => {
-
     teamName = teamName.slice(0, -1);
-
     teamFeedback.textContent = "";
-
     updateTeamDisplay();
-
 });
 
 spaceBtn.addEventListener("click", () => {
-
     if (teamName.length >= 15) return;
-
     teamName += " ";
-
     teamFeedback.textContent = "";
-
     updateTeamDisplay();
-
 });
 
 function isValidTeamName(name) {
-
     const lower = name.toLowerCase();
-
-    // Verboden woorden
-    if (bannedWords.some(word => lower.includes(word))) {
-        return false;
-    }
-
-    // Minimaal 3 letters
+    if (bannedWords.some(word => lower.includes(word))) return false;
     const letters = (name.match(/[a-z]/gi) || []).length;
-
-    if (letters < 3) {
-        return false;
-    }
-
-    // Minstens één klinker
-    if (!/[aeiou]/i.test(name)) {
-        return false;
-    }
-
+    if (letters < 3) return false;
+    if (!/[aeiou]/i.test(name)) return false;
     return true;
 }
 
-// UPDATE TEAM DISPLAY
 function updateTeamDisplay() {
-
     teamDisplay.textContent = teamName;
-
     charCounter.textContent = `${teamName.length}/15`;
-
 }
 
 function formatTeamName(name) {
-
     return name
         .trim()
         .replace(/\s+/g, " ")
@@ -223,28 +168,27 @@ function formatTeamName(name) {
             word.slice(1).toLowerCase()
         )
         .join(" ");
-
 }
 
-// UPDATE GLUCOSE KLEUR EN WAARDE
 function updateGlucoseDisplay() {
     glucoseElement.textContent = glucose;
-
     if (glucose <= 75) {
-        glucoseElement.style.color = "#ef4444"; // Rood (Hypo gevaar)
+        glucoseElement.style.color = "#ef4444";
         glucoseElement.style.textShadow = "0 0 15px rgba(239, 68, 68, 0.8)";
     } else if (glucose >= 160) {
-        glucoseElement.style.color = "#f59e0b"; // Oranje (Hyper gevaar)
+        glucoseElement.style.color = "#f59e0b";
         glucoseElement.style.textShadow = "0 0 15px rgba(245, 158, 11, 0.8)";
     } else {
-        glucoseElement.style.color = "#10b981"; // Groen (Veilig)
+        glucoseElement.style.color = "#10b981";
         glucoseElement.style.textShadow = "0 0 15px rgba(16, 185, 129, 0.8)";
     }
 }
 
-// KIES EEN LOGISCH EVENT
 function getValidEvent() {
     const validEvents = events.filter(event => {
+        // Zorg dat we sidequests hier uitsluiten voor de normale rotatie
+        if (event.type === "sidequest") return false;
+
         const pastBijGlucose = glucose >= event.minGlucose && glucose <= event.maxGlucose;
         const isNietGespeeld = !event.played;
         return pastBijGlucose && isNietGespeeld;
@@ -259,29 +203,60 @@ function getValidEvent() {
     return null;
 }
 
-// LAAD HET VOLGENDE EVENT
 function triggerNextEvent() {
     const nextEvent = getValidEvent();
-
     if (nextEvent) {
         currentEventIndex = events.indexOf(nextEvent);
-
         fetch(`${SERVER}/set_event/${currentEventIndex}`)
             .then(response => response.json())
             .catch(error => console.error("Flask Event Fout:", error));
-
         loadEvent(nextEvent);
     } else {
         endGame("THOMAS KWAM VEILIG THUIS");
     }
 }
 
-function startGame() {
+// --- DE NIEUWE SENSOR KALIBRATIE FUNCTIE ---
+function triggerSensorCalibration() {
+    isSidequestActive = true;
+    enteredCode = [];
 
+    // Zoek alle sidequests in de ingeladen events
+    let sidequestIndexes = [];
+    for (let i = 0; i < events.length; i++) {
+        if (events[i].type === "sidequest") sidequestIndexes.push(i);
+    }
+
+    // Als je nog geen sidequests in events.json hebt gezet, val dan veilig terug naar normaal
+    if (sidequestIndexes.length === 0) {
+        triggerNextEvent();
+        return;
+    }
+
+    // Kies willekeurig één van de sidequest codes
+    let randomSqIndex = sidequestIndexes[Math.floor(Math.random() * sidequestIndexes.length)];
+    currentEventIndex = randomSqIndex;
+    sidequestCode = events[randomSqIndex].code;
+
+    // Stuur het naar de server (en dus de telefoon)
+    fetch(`${SERVER}/set_event/${currentEventIndex}`);
+
+    gameState = "PLAYING";
+
+    // Verander het grote scherm om Speler 2 te instrueren
+    situationElement.textContent = "⚠ SENSOR OFFLINE ⚠";
+    trendElement.textContent = "";
+    redBtn.textContent = "WACHTEN";
+    yellowBtn.textContent = "OP";
+    greenBtn.textContent = "CODE";
+
+    choicesContainer.style.display = "flex";
+}
+
+function startGame() {
     startScreen.style.display = "none";
     gameContainer.style.display = "flex";
 
-    // Reset alle events zodat we met een schone lei beginnen
     events.forEach(e => e.played = false);
 
     const minGlucose = 80;
@@ -290,6 +265,7 @@ function startGame() {
 
     timer = 90;
     score = 0;
+    isSidequestActive = false; // Zeker weten dat dit gereset is
 
     fetch(`${SERVER}/set_glucose/${glucose}`);
 
@@ -306,64 +282,45 @@ startBtn.addEventListener("click", () => {
     teamFeedback.textContent = "";
     teamName = "";
     updateTeamDisplay();
-
     teamOverlay.style.display = "flex";
 });
 
 teamOkBtn.addEventListener("click", () => {
-
     if (teamName.trim() === "") {
         teamName = "Anoniem";
     }
-
     teamName = formatTeamName(teamName);
-
     if (!isValidTeamName(teamName)) {
-
-        teamFeedback.textContent =
-            "Teamnaam niet geldig.";
-
-        setTimeout(() => {
-            teamFeedback.textContent = "";
-        }, 5000);
-
+        teamFeedback.textContent = "Teamnaam niet geldig.";
+        setTimeout(() => { teamFeedback.textContent = ""; }, 5000);
         teamName = "";
-
         updateTeamDisplay();
-
         return;
     }
-
     teamFeedback.textContent = "";
     teamOverlay.style.display = "none";
-
     startGame();
-
 });
 
 // TIMER FIX
 function startTimer() {
     timerInterval = setInterval(() => {
-        // Trek eerst de juiste hoeveelheid tijd af
         if (gameState === "QUEST") {
-            timer -= 2; // Straf!
+            timer -= 2;
         } else {
-            timer -= 1; // Normaal
+            timer -= 1;
         }
 
-        // Check dan pas of de timer 0 of lager is (voorkomt de -1 bug)
         if (timer <= 0) {
-            timer = 0; // Klem hem vast op 0
+            timer = 0;
             timerElement.textContent = timer;
             if (questTimerDisplay) questTimerDisplay.textContent = timer;
             endGame("DE TIJD IS OP");
             return;
         }
 
-        // Update de schermen
         timerElement.textContent = timer;
         if (questTimerDisplay) questTimerDisplay.textContent = timer;
-
     }, 1000);
 }
 
@@ -385,40 +342,47 @@ function clearPin() {
 }
 
 function submitPin() {
-    if (currentPin.length !== 4) return; // Doe niets als het geen 4 cijfers zijn
+    if (currentPin.length !== 4) return;
 
-    fetch(`${SERVER}/check_pin/${currentPin}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                questOverlay.style.display = "none";
-                timer += 10; // Bonus
-                timerElement.textContent = timer;
-                clearPin(); // Reset voor de volgende keer
-                triggerNextEvent();
-            } else {
-                document.getElementById("pinFeedback").textContent = "FOUT! -5 SEC!";
-                timer -= 5;
-                timerElement.textContent = timer;
-                clearPin(); // Maak veld weer leeg
-            }
-        })
-        .catch(error => console.error("Kluis Fout:", error));
-}
-
-// Aangepaste triggerQuest functie zodat hij het nieuwe display reset
-function triggerQuest(questName) {
-    gameState = "QUEST";
-    fetch(`${SERVER}/set_quest/${questName}`);
-
-    if (questName === "pincode") {
-        feedbackCard.style.display = "none";
-        questOverlay.style.display = "flex";
-        clearPin(); // Zorg dat display leeg start
+    // Check lokaal in plaats van via de Flask server
+    if (currentPin === targetPin) {
+        questOverlay.style.display = "none";
+        timer += 10;
+        timerElement.textContent = timer;
+        clearPin();
+        triggerNextEvent();
+    } else {
+        document.getElementById("pinFeedback").textContent = "FOUT! -5 SEC!";
+        timer -= 5;
+        timerElement.textContent = timer;
+        clearPin();
     }
 }
 
-// LOADING EVENT
+// NIEUWE QUEST TRIGGER (Vervangt de oude triggerQuest)
+function triggerPincodeQuest() {
+    gameState = "QUEST";
+    clearPin();
+
+    let pinIndexes = [];
+    for (let i = 0; i < events.length; i++) {
+        if (events[i].type === "pincode") pinIndexes.push(i);
+    }
+
+    if (pinIndexes.length > 0) {
+        let randomPinIndex = pinIndexes[Math.floor(Math.random() * pinIndexes.length)];
+        currentEventIndex = randomPinIndex;
+        targetPin = events[randomPinIndex].pin;
+
+        fetch(`${SERVER}/set_event/${currentEventIndex}`);
+    } else {
+        targetPin = "6162"; // Fallback voor het geval JSON leeg is
+    }
+
+    feedbackCard.style.display = "none";
+    questOverlay.style.display = "flex";
+}
+
 function loadEvent(event) {
     situationElement.textContent = event.title;
     trendElement.textContent = event.trend;
@@ -428,146 +392,130 @@ function loadEvent(event) {
 
     feedbackCard.style.display = "none";
     choicesContainer.style.display = "flex";
-
-    // Ready for input
     gameState = "PLAYING";
 }
 
-// Make CHOICE
 function choose(choiceIndex) {
-    // Block input if not in PLAYING state
-    if (gameState !== "PLAYING") {
-        return;
-    }
-    // Change state to FEEDBACK to prevent further input until next event
+    if (gameState !== "PLAYING") return;
+
     gameState = "FEEDBACK";
 
-    // Update glucose based on the choice made
     const currentEvent = events[currentEventIndex];
     const choice = currentEvent.choices[choiceIndex];
 
-    console.log(
-        "Event:", currentEvent.title,
-        "| Knop:", choiceIndex,
-        "| Effect:", choice.effect,
-        "| Glucose voor:", glucose
-    );
-
     glucose += choice.effect;
 
-    console.log("Glucose na:", glucose);
-
-    // Update the Flask server with the new glucose value
     fetch(`${SERVER}/set_glucose/${glucose}`)
         .then(response => response.json())
-        .then(data => {
-            console.log("SET GLUCOSE:", data);
-        })
-        .catch(error => {
-            // Log the error to the console for debugging purposes
-            console.error("FOUT:", error);
-        });
+        .catch(error => console.error("FOUT:", error));
 
-    // Ensure glucose does not go below 0
-    if (glucose < 0) {
-        glucose = 0;
-    }
+    if (glucose < 0) glucose = 0;
 
-    // Update the glucose display AND color
     updateGlucoseDisplay();
 
-    // Check for game-ending conditions
-    if (glucose <= 45) { // Maak dit lager (was 55)
+    if (glucose <= 45) {
         endGame("THOMAS KREEG EEN ERNSTIGE HYPO");
         return;
     }
 
-    if (glucose >= 280) { // Maak dit hoger (was 250)
+    if (glucose >= 280) {
         endGame("THOMAS KREEG EEN ERNSTIGE HYPER");
         return;
     }
 
-    // Display feedback based on the choice made
     feedbackTextElement.textContent = currentEvent.feedback;
 
-    // Update feedback status based on the correctness of the choices
     if (choice.correct) {
-
         score += 100;
-
         feedbackStatusElement.textContent = "✓ GOEDE KEUZE";
         feedbackStatusElement.style.color = "#10b981";
-
     } else {
-
         score -= 25;
-
         feedbackStatusElement.textContent = "✗ SLECHTE KEUZE";
         feedbackStatusElement.style.color = "#ef4444";
     }
 
-    // Hide the choices and show the feedback card
     choicesContainer.style.display = "none";
     feedbackCard.style.display = "flex";
 }
 
-// NEXT EVENT
+// NEXT EVENT LIGT AANGEPAST VOOR DE KALIBRATIE
 nextBtn.addEventListener("click", () => {
-    // Verberg altijd eerst het feedback scherm
     feedbackCard.style.display = "none";
 
-    // 30% kans dat de pomp plots blokkeert (alleen tussen events door!)
-    if (Math.random() < 0.30) {
-        triggerQuest("pincode");
+    let randomKans = Math.random();
+
+    if (randomKans < 0.20) {
+        // 20% kans op Sensor Kalibratie (Kleurcode)
+        triggerSensorCalibration();
+    } else if (randomKans < 0.40) {
+        // 20% kans op de Pincode (Dossier)
+        triggerPincodeQuest();
     } else {
-        // Geen storing? Laad veilig de volgende situatie in
+        // 60% kans op normaal spelverloop
         triggerNextEvent();
     }
 });
 
 // LIGHT BUTTONS (Keyboard debug)
 document.addEventListener("keydown", (event) => {
-    if (gameState === "PLAYING") {
+    if (gameState === "PLAYING" && !isSidequestActive) {
         if (event.key === "1") choose(0);
         if (event.key === "2") choose(1);
         if (event.key === "3") choose(2);
     }
-
     if (gameState === "FEEDBACK") {
         if (event.key === " ") nextBtn.click();
     }
 });
 
-// ARCADE BUTTONS
+// ARCADE BUTTONS LIGT AANGEPAST VOOR DE KALIBRATIE
 setInterval(() => {
-    // 1. The button is always retrieved, regardless of which screen we're on.
-    // This ensures that the Flask server is always properly reset to -1.
     fetch(`${SERVER}/get_button`)
         .then(response => response.json())
         .then(data => {
+            const btn = data.button;
 
-            // 2. A response is sent only when the status is set to "PLAYING"
-            // Old clicks on the home screen now just disappear.
-            if (gameState === "PLAYING" && data.button !== -1) {
+            if (btn !== -1) {
 
-                switch (data.button) {
-                    case 0:
-                        choose(0);
-                        break;
-                    case 1:
-                        choose(1);
-                        break;
-                    case 2:
-                        choose(2);
-                        break;
+                // --- KRAKEN WE EEN CODE? ---
+                if (isSidequestActive) {
+                    enteredCode.push(btn); // Voeg de ingedrukte knop toe aan de lijst
+
+                    // We hebben 3 knoppen ingedrukt! Controleer ze.
+                    if (enteredCode.length === 3) {
+                        if (JSON.stringify(enteredCode) === JSON.stringify(sidequestCode)) {
+                            // CODE IS GOED!
+                            isSidequestActive = false;
+                            score += 100; // Dikke bonus voor samenwerking
+
+                            // Direct door naar een nieuwe echte missie
+                            alert("KALIBRATIE SUCCESVOL! Sensor is weer online.");
+                            triggerNextEvent();
+                        } else {
+                            // CODE IS FOUT!
+                            enteredCode = []; // Reset lijst
+                            timer -= 5; // Strafseconden
+                            timerElement.textContent = timer;
+                            alert("FOUTIEVE CODE! Probeer opnieuw. (-5s)");
+                        }
+                    }
+                    return; // Blokkeer de normale logica!
+                }
+
+                // --- NORMALE GAME LOGICA ---
+                if (gameState === "PLAYING") {
+                    switch (btn) {
+                        case 0: choose(0); break;
+                        case 1: choose(1); break;
+                        case 2: choose(2); break;
+                    }
                 }
             }
-
         })
         .catch(error => {
-            // Error messages ignored to keep the console clean
+            // Fouten genegeerd
         });
-
 }, 200);
 
 // ENDSCREEN
@@ -578,7 +526,6 @@ function endGame(message) {
     questOverlay.style.display = "none";
     feedbackCard.style.display = "none";
 
-    // Zet de telefoon weer op wachtstand!
     fetch(`${SERVER}/set_glucose/-1`);
 
     gameContainer.style.display = "none";
@@ -587,7 +534,6 @@ function endGame(message) {
 
     if (message.includes("VEILIG")) {
         score += 300;
-
         endTitle.textContent = "MISSIE GESLAAGD";
         endTitle.style.color = "#00ff99";
     } else {
@@ -595,30 +541,22 @@ function endGame(message) {
         endTitle.style.color = "#ff4444";
     }
 
-    // Toon de behaalde score
     endScore.textContent = `Score: ${score} punten`;
-
     fetch(`${SERVER}/save_score/${encodeURIComponent(teamName)}/${score}`);
 
-    // Aftellen naar het startscherm
     let countdown = 5;
-
     const countdownElement = document.getElementById("countdown");
     countdownElement.textContent = countdown;
 
     const countdownInterval = setInterval(() => {
-
         countdown--;
         countdownElement.textContent = countdown;
 
         if (countdown <= 0) {
             clearInterval(countdownInterval);
-
             fetch(`${SERVER}/set_glucose/-1`);
             fetch(`${SERVER}/set_event/0`);
-
             location.reload();
         }
-
     }, 1000);
 }

@@ -248,5 +248,71 @@
                 "correct": false
             }
         ]
+    },
+    {
+        "title": "POMP GEBLOKKEERD",
+        "trend": "⚠",
+        "type": "pincode",
+        "pin": "6162",
+        "questTitle": "DOSSIER: THOMAS",
+        "clues": [
+            "Aantal letters voornaam patiënt",
+            "Eerste twee cijfers max. veilige glucose (160)",
+            "Aantal pijltjes standaard hypo-alarm (↓↓)"
+        ]
+    },
+    {
+        "title": "POMP GEBLOKKEERD",
+        "trend": "⚠",
+        "type": "pincode",
+        "pin": "1515",
+        "questTitle": "PROTOCOL: HYPO",
+        "clues": [
+            "De 'gouden regel' bij een hypo:",
+            "Aantal gram snelle suikers dat je moet nemen",
+            "Aantal minuten wachten voor je opnieuw meet"
+        ]
+    },
+    {
+        "title": "POMP GEBLOKKEERD",
+        "trend": "⚠",
+        "type": "pincode",
+        "pin": "1234",
+        "questTitle": "SYSTEEM RESET",
+        "clues": [
+            "Fabrieks-override vereist.",
+            "Geef de standaard beveiligingscode in:",
+            "Een, Twee, Drie, Vier."
+        ]
+    },
+    {
+        "title": "SENSOR OFFLINE! Geef code door: ROOD - GEEL - GROEN",
+        "trend": "⚠",
+        "type": "sidequest",
+        "code": [
+            0,
+            1,
+            2
+        ]
+    },
+    {
+        "title": "SENSOR OFFLINE! Geef code door: GROEN - ROOD - GEEL",
+        "trend": "⚠",
+        "type": "sidequest",
+        "code": [
+            2,
+            0,
+            1
+        ]
+    },
+    {
+        "title": "SENSOR OFFLINE! Geef code door: GEEL - GROEN - ROOD",
+        "trend": "⚠",
+        "type": "sidequest",
+        "code": [
+            1,
+            2,
+            0
+        ]
     }
 ]

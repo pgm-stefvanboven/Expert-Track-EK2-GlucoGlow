@@ -102,6 +102,41 @@ function loadPhoneEvent() {
     situationElement.textContent = event.title;
     trendElement.textContent = event.trend;
 
+    // Is het een pincode quest?
+    if (event.type === "pincode") {
+        chatContainer.style.display = "none";
+        questScreen.style.display = "flex"; // Toon het medisch dossier
+
+        // Vul de hints in!
+        document.getElementById("quest-title").textContent = event.questTitle;
+        const cluesList = document.getElementById("phone-clues");
+        cluesList.innerHTML = ""; // Maak oude hints leeg
+
+        event.clues.forEach(clue => {
+            let li = document.createElement("li");
+            li.textContent = clue;
+            cluesList.appendChild(li);
+        });
+        return;
+    }
+
+    // Is het de kleuren-kalibratie missie?
+    if (event.type === "sidequest") {
+        questScreen.style.display = "none";
+        chatContainer.style.display = "flex";
+
+        document.body.style.backgroundColor = "#7f1d1d"; // Alarm Rood!
+        statusElement.textContent = "⚠ KALIBRATIE VEREIST";
+        statusElement.style.color = "#ffffff";
+        glucoseElement.textContent = "ERR";
+        return;
+    }
+
+    // NORMALE GAMEPLAY
+    questScreen.style.display = "none";
+    chatContainer.style.display = "flex";
+    document.body.style.backgroundColor = "#0b141a";
+
     if (event.trend === "↓↓" || event.trend === "↓") {
         statusElement.textContent = "⚠ RISICO OP HYPO";
     } else if (event.trend === "↑↑" || event.trend === "↑") {
