@@ -80,16 +80,16 @@ body {
 ========================================= */
 #start-screen,
 #end-screen {
-    padding: 30px;
+    padding: 15px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 25px;
+    gap: 12px;
     text-align: center;
 }
 
 #start-screen h1 {
-    font-size: 3.5rem;
+    font-size: 3rem;
     margin: 0;
     color: #60a5fa;
     text-shadow: 0 0 15px #3b82f6;
@@ -97,19 +97,19 @@ body {
 }
 
 .intro-text {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     color: #f3f4f6;
     margin: 0;
 }
 
 .roles {
     background: rgba(0, 0, 0, 0.3);
-    padding: 15px 30px;
+    padding: 10px 20px;
     border-radius: 10px;
     border: 1px solid #374151;
     display: flex;
-    gap: 40px;
-    font-size: 1.1rem;
+    gap: 30px;
+    font-size: 1rem;
     color: #d1d5db;
 }
 
@@ -122,18 +122,14 @@ body {
 }
 
 #highscore-box {
-    margin-top: 10px;
-    padding: 10px 20px;
-
+    margin-top: 0px;
+    padding: 8px 15px;
     border-radius: 10px;
     border: 2px solid #facc15;
-
     background: rgba(250, 204, 21, 0.08);
-
     color: #facc15;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: bold;
-
     text-align: center;
 }
 
@@ -163,6 +159,83 @@ body {
     font-weight: bold;
     color: #fcd34d;
     margin: 10px 0;
+}
+
+/* =========================================
+   TEAM OVERLAY
+========================================= */
+
+#team-overlay {
+    display: none;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 800px;
+    height: 400px;
+
+    background: rgba(13, 17, 23, 0.95);
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 200;
+}
+
+.team-card {
+    width: 420px;
+
+    padding: 30px;
+
+    border-radius: 15px;
+
+    background: #1f2937;
+
+    border: 2px solid #3b82f6;
+
+    text-align: center;
+}
+
+.team-card h2 {
+    margin-top: 0;
+    color: #60a5fa;
+}
+
+#teamNameInput {
+    width: 90%;
+
+    padding: 12px;
+
+    margin: 20px 0;
+
+    font-size: 1.2rem;
+
+    border-radius: 8px;
+
+    border: 2px solid #3b82f6;
+
+    background: #111827;
+
+    color: white;
+
+    text-align: center;
+}
+
+#teamOkBtn {
+    background: #2563eb;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 12px 40px;
+
+    font-size: 1.2rem;
+
+    cursor: pointer;
 }
 
 /* =========================================

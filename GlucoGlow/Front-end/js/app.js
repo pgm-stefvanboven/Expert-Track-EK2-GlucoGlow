@@ -10,6 +10,9 @@ let glucose = 75;
 let timer = 90;
 let score = 0;
 
+// TEAM NAME
+let teamName = "";
+
 // EVENTS
 let events = [];
 let currentEventIndex = 0;
@@ -33,6 +36,10 @@ function saveGameState() {
 const startScreen = document.getElementById("start-screen");
 const startBtn = document.getElementById("startBtn");
 const highscoreElement = document.getElementById("highscore");
+
+const teamOverlay = document.getElementById("team-overlay");
+const teamNameInput = document.getElementById("teamNameInput");
+const teamOkBtn = document.getElementById("teamOkBtn");
 
 // GAME
 const gameContainer = document.getElementById("game-container");
