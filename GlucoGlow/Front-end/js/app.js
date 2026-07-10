@@ -81,7 +81,8 @@ fetch("data/events.json")
 fetch(`${SERVER}/get_highscore`)
     .then(response => response.json())
     .then(data => {
-        highscoreElement.textContent = data.highscore;
+        highscoreElement.textContent =
+            `${data.team} - ${data.highscore}`;
     });
 
 // Shuffle events (Fisher-Yates)
@@ -449,7 +450,7 @@ function endGame(message) {
     // Toon de behaalde score
     endScore.textContent = `Score: ${score} punten`;
 
-    fetch(`${SERVER}/save_score/${score}`);
+    fetch(`${SERVER}/save_score/${encodeURIComponent(teamName)}/${score}`);
 
     // Aftellen naar het startscherm
     let countdown = 5;

@@ -109,8 +109,8 @@ def check_pin(pin):
         # Code is fout.
         return jsonify({"success": False, "message": "Foutieve code!"})
     
-@app.route("/save_score/<int:score>")
-def save_score(score):
+@app.route("/save_score/<team>/<int:score>")
+def save_score(team, score):
 
     bestand = os.path.join(
     os.path.dirname(__file__),
@@ -131,6 +131,7 @@ def save_score(score):
 
     # Nieuwe score toevoegen
     highscores.append({
+        "team": team,
         "score": score
     })
 
@@ -169,6 +170,7 @@ def get_highscore():
         return jsonify({"highscore": 0})
 
     return jsonify({
+        "team": highscores[0]["team"],
         "highscore": highscores[0]["score"]
     })
 
