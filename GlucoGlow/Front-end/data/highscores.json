@@ -1,22 +1,22 @@
 [
     {
+        "team": "Anoniem",
+        "score": 775
+    },
+    {
         "team": "Gluco heroes",
         "score": 700
     },
     {
+        "team": "Robben",
+        "score": 625
+    },
+    {
+        "team": "Idk",
+        "score": 375
+    },
+    {
         "team": "Hero",
         "score": 225
-    },
-    {
-        "team": "Hiro",
-        "score": 100
-    },
-    {
-        "team": "Glucohero",
-        "score": 75
-    },
-    {
-        "team": "Hiro",
-        "score": 0
     }
 ]
