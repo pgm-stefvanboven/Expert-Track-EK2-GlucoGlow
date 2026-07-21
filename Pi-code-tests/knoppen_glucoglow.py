@@ -16,7 +16,7 @@ pygame.joystick.init()
 
 print("🚀 ONZICHTBAAR SCRIPT GELADEN! Je kunt nu naar je browser gaan.")
 
-SERVER_URL = "http://10.45.239.212:5000/button/" 
+SERVER_URL = "http://10.91.88.212:5000/button/" 
 actieve_joysticks = {}
 
 while True:
