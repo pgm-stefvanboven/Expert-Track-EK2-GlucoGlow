@@ -55,16 +55,22 @@ def set_glucose(value):
         "glucose": numeric_value
     })
     
-@app.route("/set_event/<int:event_id>/<choices>")
-def set_event(event_id, choices):
-    game_state["currentEvent"] = event_id
+@app.route("/set_hidden_choices/<choices>")
+def set_hidden_choices(choices):
+
+    print("Hidden choices ontvangen:", choices)
 
     if choices == "none":
         game_state["hiddenChoices"] = []
     else:
         game_state["hiddenChoices"] = [int(x) for x in choices.split(",")]
 
-    return jsonify({"success": True})
+    print("Game state hiddenChoices:", game_state["hiddenChoices"])
+
+    return jsonify({
+        "success": True,
+        "hiddenChoices": game_state["hiddenChoices"]
+    })
 
 # Define route to handle button presses based on button_id
 @app.route("/button/<int:button_id>")
