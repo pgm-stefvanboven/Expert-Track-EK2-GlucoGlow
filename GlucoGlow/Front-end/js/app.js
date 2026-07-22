@@ -404,7 +404,19 @@ function loadEvent(event) {
     // Kies willekeurig één antwoord dat verborgen wordt
     hiddenChoices = [Math.floor(Math.random() * 3)];
 
-    fetch(`${SERVER}/set_hidden_choices/${hiddenChoices.join(",")}`);
+    console.log("Verstuur:", `${SERVER}/set_hidden_choices/${hiddenChoices.join(",")}`);
+
+    fetch(`${SERVER}/set_hidden_choices/${hiddenChoices.join(",")}`)
+        .then(response => {
+            console.log("Status:", response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Antwoord:", data);
+        })
+        .catch(error => {
+            console.error("FOUT BIJ SET_HIDDEN_CHOICES:", error);
+        });
 
     redBtn.textContent =
         hiddenChoices.includes(0) ? "???" : event.choices[0].text;
