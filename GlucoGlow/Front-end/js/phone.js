@@ -83,6 +83,10 @@ function updateFromServer() {
             // Update glucose waarden
             currentEvent = data.currentEvent;
             hiddenChoices = data.hiddenChoices || [];
+
+            console.log("Volledige serverdata:", data);
+            console.log("Hidden choices:", hiddenChoices);
+
             glucoseElement.textContent = data.glucose;
 
             if (data.glucose <= 75) {
