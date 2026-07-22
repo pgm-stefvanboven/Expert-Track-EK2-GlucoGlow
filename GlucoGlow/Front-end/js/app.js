@@ -386,8 +386,11 @@ function triggerPincodeQuest() {
         currentEventIndex = randomPinIndex;
         targetPin = events[randomPinIndex].pin;
 
-        fetch(`${SERVER}/set_event/${currentEventIndex}`);
-        fetch(`${SERVER}/set_quest/pincode`);
+        hiddenChoices = [Math.floor(Math.random() * 3)];
+
+        fetch(
+            `${SERVER}/set_event/${currentEventIndex}/${hiddenChoices.join(",")}`
+        );
     } else {
         targetPin = "6162"; // Fallback voor het geval JSON leeg is
     }
