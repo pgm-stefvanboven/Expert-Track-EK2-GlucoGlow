@@ -58,10 +58,14 @@ def set_glucose(value):
 @app.route("/set_hidden_choices/<choices>")
 def set_hidden_choices(choices):
 
+    print("Hidden choices ontvangen:", choices)
+
     if choices == "none":
         game_state["hiddenChoices"] = []
     else:
         game_state["hiddenChoices"] = [int(x) for x in choices.split(",")]
+
+    print("Game state hiddenChoices:", game_state["hiddenChoices"])
 
     return jsonify({
         "success": True,
