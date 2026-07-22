@@ -213,6 +213,9 @@ function triggerNextEvent() {
             .catch(error => console.error("Flask Event Fout:", error));
 
         fetch(`${SERVER}/set_quest/none`);
+
+        loadEvent(nextEvent);
+
     } else {
         endGame("THOMAS KWAM VEILIG THUIS");
     }
@@ -388,9 +391,8 @@ function triggerPincodeQuest() {
 
         hiddenChoices = [Math.floor(Math.random() * 3)];
 
-        fetch(
-            `${SERVER}/set_event/${currentEventIndex}/${hiddenChoices.join(",")}`
-        );
+        fetch(`${SERVER}/set_event/${currentEventIndex}`);
+        fetch(`${SERVER}/set_hidden_choices/${hiddenChoices.join(",")}`);
     } else {
         targetPin = "6162"; // Fallback voor het geval JSON leeg is
     }

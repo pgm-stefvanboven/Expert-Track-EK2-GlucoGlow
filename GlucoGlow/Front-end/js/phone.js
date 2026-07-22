@@ -161,7 +161,7 @@ function loadPhoneEvent() {
         hiddenMessage.style.display = "none";
     } else {
 
-        hiddenMessage.style.display = "block";
+        hiddenMessage.style.display = "flex";
 
         hiddenChoices.forEach(index => {
 
