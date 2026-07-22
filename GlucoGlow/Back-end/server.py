@@ -19,7 +19,8 @@ game_state = {
     "activeQuest": "none",
     "timer": 90,
     "game_over": False,
-    "win": False
+    "win": False,
+    "hiddenChoices": []
 }
 
 # Define route to get the current game state
@@ -52,6 +53,19 @@ def set_glucose(value):
     return jsonify({
         "success": True,
         "glucose": numeric_value
+    })
+    
+@app.route("/set_hidden_choices/<choices>")
+def set_hidden_choices(choices):
+
+    if choices == "none":
+        game_state["hiddenChoices"] = []
+    else:
+        game_state["hiddenChoices"] = [int(x) for x in choices.split(",")]
+
+    return jsonify({
+        "success": True,
+        "hiddenChoices": game_state["hiddenChoices"]
     })
 
 # Define route to handle button presses based on button_id

@@ -30,6 +30,7 @@ const bannedWords = [
 // EVENTS
 let events = [];
 let currentEventIndex = 0;
+let hiddenChoices = [];
 
 // We keep track of the exact state of the game
 let gameState = "START"; // Expected: "START", "PLAYING", "FEEDBACK", "END", "QUEST"
@@ -210,7 +211,8 @@ function triggerNextEvent() {
         fetch(`${SERVER}/set_event/${currentEventIndex}`)
             .then(response => response.json())
             .catch(error => console.error("Flask Event Fout:", error));
-        loadEvent(nextEvent);
+
+        fetch(`${SERVER}/set_quest/none`);
     } else {
         endGame("THOMAS KWAM VEILIG THUIS");
     }
@@ -240,6 +242,9 @@ function triggerSensorCalibration() {
 
     // Stuur het naar de server (en dus de telefoon)
     fetch(`${SERVER}/set_event/${currentEventIndex}`);
+
+    fetch(`${SERVER}/set_hidden_choices/none`);
+    fetch(`${SERVER}/set_quest/none`);
 
     gameState = "PLAYING";
 
@@ -356,6 +361,7 @@ function submitPin() {
         timer += 10;
         timerElement.textContent = timer;
         clearPin();
+        fetch(`${SERVER}/set_quest/none`);
         triggerNextEvent();
     } else {
         document.getElementById("pinFeedback").textContent = "FOUT! -5 SEC!";
@@ -381,6 +387,7 @@ function triggerPincodeQuest() {
         targetPin = events[randomPinIndex].pin;
 
         fetch(`${SERVER}/set_event/${currentEventIndex}`);
+        fetch(`${SERVER}/set_quest/pincode`);
     } else {
         targetPin = "6162"; // Fallback voor het geval JSON leeg is
     }
@@ -390,11 +397,23 @@ function triggerPincodeQuest() {
 }
 
 function loadEvent(event) {
+
     situationElement.textContent = event.title;
     trendElement.textContent = event.trend;
-    redBtn.textContent = event.choices[0].text;
-    yellowBtn.textContent = event.choices[1].text;
-    greenBtn.textContent = event.choices[2].text;
+
+    // Kies willekeurig één antwoord dat verborgen wordt
+    hiddenChoices = [Math.floor(Math.random() * 3)];
+
+    fetch(`${SERVER}/set_hidden_choices/${hiddenChoices.join(",")}`);
+
+    redBtn.textContent =
+        hiddenChoices.includes(0) ? "???" : event.choices[0].text;
+
+    yellowBtn.textContent =
+        hiddenChoices.includes(1) ? "???" : event.choices[1].text;
+
+    greenBtn.textContent =
+        hiddenChoices.includes(2) ? "???" : event.choices[2].text;
 
     feedbackCard.style.display = "none";
     choicesContainer.style.display = "flex";
@@ -533,6 +552,9 @@ function endGame(message) {
     feedbackCard.style.display = "none";
 
     fetch(`${SERVER}/set_glucose/-1`);
+
+    fetch(`${SERVER}/set_quest/none`);
+    fetch(`${SERVER}/set_hidden_choices/none`);
 
     gameContainer.style.display = "none";
     endScreen.style.display = "flex";

@@ -2,6 +2,7 @@ const SERVER = "http://10.91.88.212:5000";
 
 let events = [];
 let currentEvent = 0;
+let hiddenChoices = [];
 let wasPlaying = false; // Houdt bij of we hiervoor aan het spelen waren
 
 // SCHERMEN
@@ -19,6 +20,10 @@ const glucoseElement = document.getElementById("phone-glucose");
 const trendElement = document.getElementById("phone-trend");
 const statusElement = document.getElementById("phone-status");
 const situationElement = document.getElementById("phone-situation");
+
+// QUEST ELEMENTEN
+const hiddenMessage = document.getElementById("hidden-message");
+const hiddenAnswers = document.getElementById("hidden-answers");
 
 fetch("data/events.json")
     .then(response => response.json())
@@ -77,6 +82,7 @@ function updateFromServer() {
 
             // Update glucose waarden
             currentEvent = data.currentEvent;
+            hiddenChoices = data.hiddenChoices || [];
             glucoseElement.textContent = data.glucose;
 
             if (data.glucose <= 75) {
@@ -143,5 +149,25 @@ function loadPhoneEvent() {
         statusElement.textContent = "⚠ RISICO OP HYPER";
     } else {
         statusElement.textContent = "STABIEL";
+    }
+
+    hiddenAnswers.innerHTML = "";
+
+    if (hiddenChoices.length === 0) {
+        hiddenMessage.style.display = "none";
+    } else {
+
+        hiddenMessage.style.display = "block";
+
+        hiddenChoices.forEach(index => {
+
+            const kleur =
+                index === 0 ? "🔴" :
+                    index === 1 ? "🟡" :
+                        "🟢";
+
+            hiddenAnswers.innerHTML +=
+                `${kleur} ${event.choices[index].text}<br>`;
+        });
     }
 }
