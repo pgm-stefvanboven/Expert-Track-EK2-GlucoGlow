@@ -260,15 +260,28 @@ teamOkBtn.addEventListener("click", () => {
 
 // --- FYSIEKE ARCADE KNOPPEN (RASPBERRY PI) ---
 let previousHeldButton = -1;
+let lastButtonPressTime = 0;
+let holdGraceTimer = null;
 
 setInterval(() => {
     fetch(`${SERVER}/get_event`)
         .then(response => response.json())
         .then(data => {
             const currentHeldButton = data.held_button;
+            const now = Date.now();
 
             // 1. IS ER EEN KNOP NIEUW INGEDRUKT?
             if (currentHeldButton !== -1 && previousHeldButton === -1) {
+
+                // ANTI-STOTTER: Annuleer direct de "loslaat"-straf als we in een grace period zaten!
+                clearTimeout(holdGraceTimer);
+
+                // ANTI-SPAM: Voorkom dubbele inputs voor de code kraker (300ms vertraging)
+                if (now - lastButtonPressTime < 300) {
+                    previousHeldButton = currentHeldButton;
+                    return;
+                }
+                lastButtonPressTime = now;
 
                 // -- A) SIDEQUEST LOGICA: CODE KRAKEN --
                 if (isSidequestActive) {
@@ -297,17 +310,22 @@ setInterval(() => {
             // 2. IS DE KNOP LOSGELATEN?
             if (currentHeldButton === -1 && previousHeldButton !== -1) {
                 if (gameState === "PLAYING" && !isSidequestActive) {
-                    onButtonRelease();
+
+                    // Geef de hardware 300ms de tijd om de stotter te herstellen
+                    holdGraceTimer = setTimeout(() => {
+                        onButtonRelease();
+                    }, 300);
+
                 }
             }
 
-            // Update de status voor de volgende check (elke 150ms)
+            // Update de status voor de volgende check
             previousHeldButton = currentHeldButton;
         })
         .catch(error => {
-            // Fouten negeren we, zodat het script niet crasht bij een netwerk hapering
+            // Fouten negeren, zodat het script niet crasht bij een netwerk hapering
         });
-}, 150);
+}, 100);
 
 function startTimer() {
     timerInterval = setInterval(() => {
