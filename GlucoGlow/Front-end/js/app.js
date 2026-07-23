@@ -258,6 +258,57 @@ teamOkBtn.addEventListener("click", () => {
     startGame();
 });
 
+// --- FYSIEKE ARCADE KNOPPEN (RASPBERRY PI) ---
+let previousHeldButton = -1;
+
+setInterval(() => {
+    fetch(`${SERVER}/get_event`)
+        .then(response => response.json())
+        .then(data => {
+            const currentHeldButton = data.held_button;
+
+            // 1. IS ER EEN KNOP NIEUW INGEDRUKT?
+            if (currentHeldButton !== -1 && previousHeldButton === -1) {
+
+                // -- A) SIDEQUEST LOGICA: CODE KRAKEN --
+                if (isSidequestActive) {
+                    enteredCode.push(currentHeldButton);
+
+                    if (enteredCode.length === 3) {
+                        if (JSON.stringify(enteredCode) === JSON.stringify(sidequestCode)) {
+                            isSidequestActive = false;
+                            score += 100;
+                            alert("KALIBRATIE SUCCESVOL! Sensor is weer online.");
+                            triggerNextEvent();
+                        } else {
+                            enteredCode = [];
+                            timer -= 5;
+                            timerElement.textContent = timer;
+                            alert("FOUTIEVE CODE! Probeer opnieuw. (-5s)");
+                        }
+                    }
+                }
+                // -- B) NORMALE GAMEPLAY: START DE CO-OP HOLD --
+                else if (gameState === "PLAYING") {
+                    onButtonPress(currentHeldButton);
+                }
+            }
+
+            // 2. IS DE KNOP LOSGELATEN?
+            if (currentHeldButton === -1 && previousHeldButton !== -1) {
+                if (gameState === "PLAYING" && !isSidequestActive) {
+                    onButtonRelease();
+                }
+            }
+
+            // Update de status voor de volgende check (elke 150ms)
+            previousHeldButton = currentHeldButton;
+        })
+        .catch(error => {
+            // Fouten negeren we, zodat het script niet crasht bij een netwerk hapering
+        });
+}, 150);
+
 function startTimer() {
     timerInterval = setInterval(() => {
         if (gameState === "QUEST") {
