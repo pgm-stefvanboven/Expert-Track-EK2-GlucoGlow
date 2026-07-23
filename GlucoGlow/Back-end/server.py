@@ -130,9 +130,10 @@ def check_pin(pin):
         # Code is fout.
         return jsonify({"success": False, "message": "Foutieve code!"})
     
-@app.route("/save_score/<team>/<int:score>")
+@app.route("/save_score/<team>/<score>")
 def save_score(team, score):
     
+    # Zorg ervoor dat de score een integer is
     score = int(score)
 
     bestand = os.path.join(
