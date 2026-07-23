@@ -32,7 +32,7 @@
 
             <div class="date-divider">VANDAAG</div>
 
-            <div class="message received">
+            <div class="message received" id="normal-chat-bubble">
                 <div class="sender">Thomas</div>
                 <div class="bubble-text" id="phone-situation">...</div>
                 <div class="time">Zojuist</div>
@@ -50,13 +50,29 @@
                 <div class="time">Live data</div>
             </div>
 
-            <div class="message received" id="hidden-message" style="display:none;">
-                <div class="sender">Verborgen antwoorden</div>
-                <div class="bubble-text" id="hidden-answers"></div>
-                <div class="time">Zojuist</div>
+            <!-- NIEUWE CO-OP WIDGET (Verborgen tot Speler 1 een knop vasthoudt) -->
+            <div class="message system" id="action-widget"
+                style="display:none; border: 2px solid #00a884; margin-top: 15px; box-shadow: 0 0 15px rgba(0, 168, 132, 0.4);">
+                <div class="sender" style="color: #00ff99;">⚡ ACTIE BEVESTIGEN</div>
+                <div class="bubble-widget">
+                    <p id="action-text" style="font-size: 0.95rem; margin-bottom:15px; color: #e9edef;">Patiënt houdt
+                        knop vast! Tap razendsnel om actie te voltooien!</p>
+
+                    <div
+                        style="width: 100%; height: 25px; background: #333; border-radius: 12px; margin-bottom: 15px; overflow: hidden; border: 1px solid #555;">
+                        <div id="action-progress"
+                            style="width: 0%; height: 100%; background: #10b981; transition: width 0.1s ease-out;">
+                        </div>
+                    </div>
+
+                    <button id="tapBtn"
+                        style="padding: 15px; width: 100%; background: #00a884; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 1.2rem; cursor: pointer;">
+                        TAP (0/10)
+                    </button>
+                </div>
             </div>
 
-            <div class="action-hint">Geef deze info door aan de beslisser!</div>
+            <div class="action-hint">Samenwerking vereist!</div>
         </div>
     </div>
 
@@ -71,7 +87,6 @@
 
         <div
             style="background-color: #111b21; padding: 20px; border-radius: 10px; border: 1px solid #202c33; margin-bottom: 20px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
-            <!-- TITEL WORDT DYNAMISCH INGEVULD -->
             <h3 id="quest-title"
                 style="margin-top: 0; color: #00a884; border-bottom: 1px dashed #202c33; padding-bottom: 10px;">
                 DOSSIER INLADEN...
@@ -83,7 +98,6 @@
 
         <div style="background-color: #3b2c00; padding: 20px; border-radius: 10px; border-left: 5px solid #f59e0b;">
             <p style="margin: 0 0 10px 0; color: #fcd34d; font-weight: bold;">OVERRIDE PROTOCOL:</p>
-            <!-- HINTS WORDEN HIER DYNAMISCH INGEVULD -->
             <ul id="phone-clues"
                 style="margin: 0; padding-left: 20px; color: #fde68a; font-size: 1.1rem; line-height: 1.6;">
             </ul>

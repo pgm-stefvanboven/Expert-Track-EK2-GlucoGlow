@@ -9,13 +9,10 @@ fetch(`${SERVER}/set_glucose/-1`);
 let glucose = 75;
 let timer = 90;
 let score = 0;
-
 let targetPin = "";
-
-// TEAM NAME
 let teamName = "";
 
-// SIDEQUEST: SENSOR KALIBRATIE VARIABELEN
+// SIDEQUEST & CO-OP VARIABELEN
 let isSidequestActive = false;
 let sidequestCode = [];
 let enteredCode = [];
@@ -30,29 +27,19 @@ const bannedWords = [
 // EVENTS
 let events = [];
 let currentEventIndex = 0;
-let hiddenChoices = [];
-
-// We keep track of the exact state of the game
 let gameState = "START"; // Expected: "START", "PLAYING", "FEEDBACK", "END", "QUEST"
-
-// SET EVENT
 let timerInterval;
 
-// LOAD DATA
-function saveGameState() {
-    fetch("data/gameState.json")
-        .then(response => response.json())
-        .then(data => {
-            data.currentEvent = currentEventIndex;
-        });
-}
+// NIEUWE CO-OP STATUSSEN
+let waitingForPhone = false;
+let currentChoiceIndex = -1;
+let phoneCheckInterval;
 
-// STARTSCREEN
+// SCHERM ELEMENTEN
 const startScreen = document.getElementById("start-screen");
 const startBtn = document.getElementById("startBtn");
 const highscoreElement = document.getElementById("highscore");
 
-// TEAM NAME
 const teamOverlay = document.getElementById("team-overlay");
 const teamNameInput = document.getElementById("teamNameInput");
 const teamOkBtn = document.getElementById("teamOkBtn");
@@ -63,7 +50,6 @@ const spaceBtn = document.getElementById("spaceBtn");
 const charCounter = document.getElementById("charCounter");
 const teamFeedback = document.getElementById("teamFeedback");
 
-// GAME
 const gameContainer = document.getElementById("game-container");
 const glucoseElement = document.getElementById("glucose");
 const timerElement = document.getElementById("timer");
@@ -74,20 +60,17 @@ const redBtn = document.getElementById("redBtn");
 const yellowBtn = document.getElementById("yellowBtn");
 const greenBtn = document.getElementById("greenBtn");
 
-// QUEST ELEMENTS
 const questOverlay = document.getElementById("quest-overlay");
 const pinInput = document.getElementById("pinInput");
 const pinSubmitBtn = document.getElementById("pinSubmitBtn");
 const pinFeedback = document.getElementById("pinFeedback");
 const questTimerDisplay = document.getElementById("quest-timer-display");
 
-// FEEDBACK
 const feedbackCard = document.getElementById("feedback-card");
 const feedbackStatusElement = document.getElementById("feedback-status");
 const feedbackTextElement = document.getElementById("feedback-text");
 const nextBtn = document.getElementById("nextBtn");
 
-// ENDSCREEN
 const endScreen = document.getElementById("end-screen");
 const endTitle = document.getElementById("end-title");
 const endMessage = document.getElementById("end-message");
@@ -96,29 +79,16 @@ const endScore = document.getElementById("end-score");
 // LOADING DATA
 fetch("data/events.json")
     .then(response => response.json())
-    .then(data => {
-        events = data;
-    });
+    .then(data => { events = data; });
 
 fetch(`${SERVER}/get_highscore`)
     .then(response => response.json())
     .then(data => {
-        highscoreElement.textContent =
-            `${data.team} - ${data.highscore}`;
+        highscoreElement.textContent = `${data.team} - ${data.highscore}`;
     });
 
-// Shuffle events (Fisher-Yates)
-function shuffleEvents(array) {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-}
-
+// TEAM NAAM LOGICA
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
 letters.split("").forEach(letter => {
     const button = document.createElement("button");
     button.className = "key";
@@ -160,14 +130,8 @@ function updateTeamDisplay() {
 }
 
 function formatTeamName(name) {
-    return name
-        .trim()
-        .replace(/\s+/g, " ")
-        .split(" ")
-        .map(word =>
-            word.charAt(0).toUpperCase() +
-            word.slice(1).toLowerCase()
-        )
+    return name.trim().replace(/\s+/g, " ").split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join(" ");
 }
 
@@ -187,9 +151,7 @@ function updateGlucoseDisplay() {
 
 function getValidEvent() {
     const validEvents = events.filter(event => {
-        // Zorg dat we sidequests hier uitsluiten voor de normale rotatie
         if (event.type === "sidequest") return false;
-
         const pastBijGlucose = glucose >= event.minGlucose && glucose <= event.maxGlucose;
         const isNietGespeeld = !event.played;
         return pastBijGlucose && isNietGespeeld;
@@ -213,45 +175,35 @@ function triggerNextEvent() {
             .catch(error => console.error("Flask Event Fout:", error));
 
         fetch(`${SERVER}/set_quest/none`);
-
         loadEvent(nextEvent);
-
     } else {
         endGame("THOMAS KWAM VEILIG THUIS");
     }
 }
 
-// --- DE NIEUWE SENSOR KALIBRATIE FUNCTIE ---
 function triggerSensorCalibration() {
     isSidequestActive = true;
     enteredCode = [];
 
-    // Zoek alle sidequests in de ingeladen events
     let sidequestIndexes = [];
     for (let i = 0; i < events.length; i++) {
         if (events[i].type === "sidequest") sidequestIndexes.push(i);
     }
 
-    // Als je nog geen sidequests in events.json hebt gezet, val dan veilig terug naar normaal
     if (sidequestIndexes.length === 0) {
         triggerNextEvent();
         return;
     }
 
-    // Kies willekeurig één van de sidequest codes
     let randomSqIndex = sidequestIndexes[Math.floor(Math.random() * sidequestIndexes.length)];
     currentEventIndex = randomSqIndex;
     sidequestCode = events[randomSqIndex].code;
 
-    // Stuur het naar de server (en dus de telefoon)
     fetch(`${SERVER}/set_event/${currentEventIndex}`);
-
-    fetch(`${SERVER}/set_hidden_choices/none`);
     fetch(`${SERVER}/set_quest/none`);
 
     gameState = "PLAYING";
 
-    // Verander het grote scherm om Speler 2 te instrueren
     situationElement.textContent = "⚠ SENSOR OFFLINE ⚠";
     trendElement.textContent = "";
     redBtn.textContent = "WACHTEN";
@@ -263,30 +215,23 @@ function triggerSensorCalibration() {
 
 function startGame() {
     startScreen.style.display = "none";
-
-    // Reset het spectator dashboard
     fetch(`${SERVER}/reset_game`).catch(e => console.log(e));
-
     gameContainer.style.display = "flex";
 
     events.forEach(e => e.played = false);
-
     const minGlucose = 80;
     const maxGlucose = 130;
     glucose = Math.floor(Math.random() * (maxGlucose - minGlucose + 1)) + minGlucose;
-
     timer = 90;
     score = 0;
-    isSidequestActive = false; // Zeker weten dat dit gereset is
+    isSidequestActive = false;
 
     fetch(`${SERVER}/set_glucose/${glucose}`);
-
     gameState = "PLAYING";
     timerElement.textContent = timer;
 
     updateGlucoseDisplay();
     triggerNextEvent();
-
     startTimer();
 }
 
@@ -298,10 +243,9 @@ startBtn.addEventListener("click", () => {
 });
 
 teamOkBtn.addEventListener("click", () => {
-    if (teamName.trim() === "") {
-        teamName = "Anoniem";
-    }
+    if (teamName.trim() === "") teamName = "Anoniem";
     teamName = formatTeamName(teamName);
+
     if (!isValidTeamName(teamName)) {
         teamFeedback.textContent = "Teamnaam niet geldig.";
         setTimeout(() => { teamFeedback.textContent = ""; }, 5000);
@@ -314,7 +258,6 @@ teamOkBtn.addEventListener("click", () => {
     startGame();
 });
 
-// TIMER FIX
 function startTimer() {
     timerInterval = setInterval(() => {
         if (gameState === "QUEST") {
@@ -358,7 +301,6 @@ function clearPin() {
 function submitPin() {
     if (currentPin.length !== 4) return;
 
-    // Check lokaal in plaats van via de Flask server
     if (currentPin === targetPin) {
         questOverlay.style.display = "none";
         timer += 10;
@@ -374,7 +316,6 @@ function submitPin() {
     }
 }
 
-// NIEUWE QUEST TRIGGER (Vervangt de oude triggerQuest)
 function triggerPincodeQuest() {
     gameState = "QUEST";
     clearPin();
@@ -388,13 +329,9 @@ function triggerPincodeQuest() {
         let randomPinIndex = pinIndexes[Math.floor(Math.random() * pinIndexes.length)];
         currentEventIndex = randomPinIndex;
         targetPin = events[randomPinIndex].pin;
-
-        hiddenChoices = [Math.floor(Math.random() * 3)];
-
         fetch(`${SERVER}/set_event/${currentEventIndex}`);
-        fetch(`${SERVER}/set_hidden_choices/${hiddenChoices.join(",")}`);
     } else {
-        targetPin = "6162"; // Fallback voor het geval JSON leeg is
+        targetPin = "6162";
     }
 
     feedbackCard.style.display = "none";
@@ -402,44 +339,72 @@ function triggerPincodeQuest() {
 }
 
 function loadEvent(event) {
-
     situationElement.textContent = event.title;
     trendElement.textContent = event.trend;
 
-    // Kies willekeurig één antwoord dat verborgen wordt
-    hiddenChoices = [Math.floor(Math.random() * 3)];
-
-    console.log("Verstuur:", `${SERVER}/set_hidden_choices/${hiddenChoices.join(",")}`);
-
-    fetch(`${SERVER}/set_hidden_choices/${hiddenChoices.join(",")}`)
-        .then(response => {
-            console.log("Status:", response.status);
-            return response.json();
-        })
-        .then(data => {
-            console.log("Antwoord:", data);
-        })
-        .catch(error => {
-            console.error("FOUT BIJ SET_HIDDEN_CHOICES:", error);
-        });
-
-    redBtn.textContent =
-        hiddenChoices.includes(0) ? "???" : event.choices[0].text;
-
-    yellowBtn.textContent =
-        hiddenChoices.includes(1) ? "???" : event.choices[1].text;
-
-    greenBtn.textContent =
-        hiddenChoices.includes(2) ? "???" : event.choices[2].text;
+    redBtn.textContent = event.choices[0].text;
+    yellowBtn.textContent = event.choices[1].text;
+    greenBtn.textContent = event.choices[2].text;
 
     feedbackCard.style.display = "none";
     choicesContainer.style.display = "flex";
     gameState = "PLAYING";
 }
 
-function choose(choiceIndex) {
-    if (gameState !== "PLAYING") return;
+// --- DE NIEUWE CO-OP 3-FASEN LOGICA ---
 
+function onButtonPress(choiceIndex) {
+    if (gameState !== "PLAYING" || waitingForPhone) return;
+
+    currentChoiceIndex = choiceIndex;
+    waitingForPhone = true;
+
+    // 1. Vertel de server dat de knop fysiek wordt ingedrukt
+    fetch(`${SERVER}/button_down/${choiceIndex}`).catch(e => console.log(e));
+
+    // 2. Pas het scherm aan: De piloot moet nu vasthouden!
+    choicesContainer.style.display = "none";
+    situationElement.innerHTML = `
+        <span style="color: #00ff99; font-size: 1.5rem; text-shadow: 0 0 10px rgba(0,255,153,0.8);">
+            ⚡ ACTIE GESELECTEERD ⚡<br>
+            HOUD DE KNOP VAST!<br>
+            <span style="color: #e9edef; font-size: 1.1rem;">Zorgverlener: Voer de toediening uit op de GSM!</span>
+        </span>`;
+
+    // 3. Poll de server om te kijken of de GSM-speler klaar is
+    phoneCheckInterval = setInterval(() => {
+        fetch(`${SERVER}/get_event`)
+            .then(res => res.json())
+            .then(data => {
+                // We wachten op een signaal "action_completed" van de server
+                if (data.action_completed && waitingForPhone) {
+                    clearInterval(phoneCheckInterval);
+                    waitingForPhone = false;
+
+                    // Reset het signaal op de server voor de volgende ronde
+                    fetch(`${SERVER}/reset_action`);
+                    processChoiceResult(currentChoiceIndex);
+                }
+            }).catch(e => console.log(e));
+    }, 300);
+}
+
+function onButtonRelease() {
+    if (gameState !== "PLAYING" || !waitingForPhone) return;
+
+    // Als de speler loslaat voordat de GSM klaar is, breekt de actie af!
+    fetch(`${SERVER}/button_up`).catch(e => console.log(e));
+
+    clearInterval(phoneCheckInterval);
+    waitingForPhone = false;
+
+    // Herstel het originele scherm
+    const currentEvent = events[currentEventIndex];
+    situationElement.textContent = currentEvent.title;
+    choicesContainer.style.display = "flex";
+}
+
+function processChoiceResult(choiceIndex) {
     gameState = "FEEDBACK";
 
     const currentEvent = events[currentEventIndex];
@@ -452,7 +417,6 @@ function choose(choiceIndex) {
         .catch(error => console.error("FOUT:", error));
 
     if (glucose < 0) glucose = 0;
-
     updateGlucoseDisplay();
 
     if (glucose <= 45) {
@@ -481,86 +445,43 @@ function choose(choiceIndex) {
     feedbackCard.style.display = "flex";
 }
 
-// NEXT EVENT LIGT AANGEPAST VOOR DE KALIBRATIE
+// LOKAAL TESTEN: KEYBOARD SUPPORT
+document.addEventListener("keydown", (event) => {
+    if (gameState === "PLAYING" && !isSidequestActive) {
+        // Zorg dat inhouden niet de actie 100x vuurt
+        if (event.repeat) return;
+
+        if (event.key === "1") onButtonPress(0);
+        if (event.key === "2") onButtonPress(1);
+        if (event.key === "3") onButtonPress(2);
+    }
+    if (gameState === "FEEDBACK" && event.key === " ") {
+        nextBtn.click();
+    }
+});
+
+document.addEventListener("keyup", (event) => {
+    if (gameState === "PLAYING" && !isSidequestActive) {
+        if (event.key === "1" || event.key === "2" || event.key === "3") {
+            onButtonRelease();
+        }
+    }
+});
+
 nextBtn.addEventListener("click", () => {
     feedbackCard.style.display = "none";
-
     let randomKans = Math.random();
 
     if (randomKans < 0.20) {
-        // 20% kans op Sensor Kalibratie (Kleurcode)
         triggerSensorCalibration();
     } else if (randomKans < 0.40) {
-        // 20% kans op de Pincode (Dossier)
         triggerPincodeQuest();
     } else {
-        // 60% kans op normaal spelverloop
         triggerNextEvent();
     }
 });
 
-// LIGHT BUTTONS (Keyboard debug)
-document.addEventListener("keydown", (event) => {
-    if (gameState === "PLAYING" && !isSidequestActive) {
-        if (event.key === "1") choose(0);
-        if (event.key === "2") choose(1);
-        if (event.key === "3") choose(2);
-    }
-    if (gameState === "FEEDBACK") {
-        if (event.key === " ") nextBtn.click();
-    }
-});
-
-// ARCADE BUTTONS LIGT AANGEPAST VOOR DE KALIBRATIE
-setInterval(() => {
-    fetch(`${SERVER}/get_button`)
-        .then(response => response.json())
-        .then(data => {
-            const btn = data.button;
-
-            if (btn !== -1) {
-
-                // --- KRAKEN WE EEN CODE? ---
-                if (isSidequestActive) {
-                    enteredCode.push(btn); // Voeg de ingedrukte knop toe aan de lijst
-
-                    // We hebben 3 knoppen ingedrukt! Controleer ze.
-                    if (enteredCode.length === 3) {
-                        if (JSON.stringify(enteredCode) === JSON.stringify(sidequestCode)) {
-                            // CODE IS GOED!
-                            isSidequestActive = false;
-                            score += 100; // Dikke bonus voor samenwerking
-
-                            // Direct door naar een nieuwe echte missie
-                            alert("KALIBRATIE SUCCESVOL! Sensor is weer online.");
-                            triggerNextEvent();
-                        } else {
-                            // CODE IS FOUT!
-                            enteredCode = []; // Reset lijst
-                            timer -= 5; // Strafseconden
-                            timerElement.textContent = timer;
-                            alert("FOUTIEVE CODE! Probeer opnieuw. (-5s)");
-                        }
-                    }
-                    return; // Blokkeer de normale logica!
-                }
-
-                // --- NORMALE GAME LOGICA ---
-                if (gameState === "PLAYING") {
-                    switch (btn) {
-                        case 0: choose(0); break;
-                        case 1: choose(1); break;
-                        case 2: choose(2); break;
-                    }
-                }
-            }
-        })
-        .catch(error => {
-            // Fouten genegeerd
-        });
-}, 200);
-
-// ENDSCREEN
+// EINDE SPEL LOGICA
 function endGame(message) {
     gameState = "END";
     clearInterval(timerInterval);
@@ -569,9 +490,7 @@ function endGame(message) {
     feedbackCard.style.display = "none";
 
     fetch(`${SERVER}/set_glucose/-1`);
-
     fetch(`${SERVER}/set_quest/none`);
-    fetch(`${SERVER}/set_hidden_choices/none`);
 
     gameContainer.style.display = "none";
     endScreen.style.display = "flex";
@@ -605,16 +524,9 @@ function endGame(message) {
             fetch(`${SERVER}/set_glucose/-1`);
             fetch(`${SERVER}/set_event/0`);
 
-            // Stuur het reset-signaal naar de server en wacht op antwoord
             fetch(`${SERVER}/reset_game`)
-                .then(() => {
-                    // Herlaad pas als de server de reset succesvol heeft ontvangen
-                    location.reload();
-                })
-                .catch(() => {
-                    // Mocht er een netwerkfout zijn, herlaad dan alsnog als fallback
-                    location.reload();
-                });
+                .then(() => location.reload())
+                .catch(() => location.reload());
         }
     }, 1000);
 }

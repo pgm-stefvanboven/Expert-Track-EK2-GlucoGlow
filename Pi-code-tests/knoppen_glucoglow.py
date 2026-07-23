@@ -16,7 +16,8 @@ pygame.joystick.init()
 
 print("🚀 ONZICHTBAAR SCRIPT GELADEN! Je kunt nu naar je browser gaan.")
 
-SERVER_URL = "http://10.91.88.212:5000/button/" 
+# Basis URL van je Flask server
+BASE_URL = "http://10.91.88.212:5000" 
 actieve_joysticks = {}
 
 while True:
@@ -39,13 +40,25 @@ while True:
                     del actieve_joysticks[event.instance_id]
                 print("USB verbinding verbroken! Wachten op herstel...")
 
-            # --- BUTTONS LOGIC ---
+            # --- 1. BUTTON VASTHOUDEN (HOLD) ---
             elif event.type == pygame.JOYBUTTONDOWN:
                 knop_id = event.button
-                print(f"Knop {knop_id} ingedrukt!")
+                print(f"👇 Knop {knop_id} INGEDRUKT!")
                 
                 try:
-                    requests.get(f"{SERVER_URL}{knop_id}", timeout=1)
+                    # Stuur signaal naar de nieuwe button_down route
+                    requests.get(f"{BASE_URL}/button_down/{knop_id}", timeout=1)
+                except Exception:
+                    pass
+
+            # --- 2. BUTTON LOSLATEN (RELEASE) ---
+            elif event.type == pygame.JOYBUTTONUP:
+                knop_id = event.button
+                print(f"☝️ Knop {knop_id} LOSGELATEN!")
+                
+                try:
+                    # Stuur signaal dat de speler heeft losgelaten
+                    requests.get(f"{BASE_URL}/button_up", timeout=1)
                 except Exception:
                     pass
 

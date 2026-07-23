@@ -2,8 +2,7 @@ const SERVER = "http://10.91.88.212:5000";
 
 let events = [];
 let currentEvent = 0;
-let hiddenChoices = [];
-let wasPlaying = false; // Houdt bij of we hiervoor aan het spelen waren
+let wasPlaying = false;
 
 // SCHERMEN
 const waitingScreen = document.getElementById("waiting-screen");
@@ -20,10 +19,16 @@ const glucoseElement = document.getElementById("phone-glucose");
 const trendElement = document.getElementById("phone-trend");
 const statusElement = document.getElementById("phone-status");
 const situationElement = document.getElementById("phone-situation");
+const normalChatBubble = document.getElementById("normal-chat-bubble");
 
-// QUEST ELEMENTEN
-const hiddenMessage = document.getElementById("hidden-message");
-const hiddenAnswers = document.getElementById("hidden-answers");
+// ACTIE WIDGET ELEMENTEN (Tap Minigame)
+const actionWidget = document.getElementById("action-widget");
+const actionProgress = document.getElementById("action-progress");
+const tapBtn = document.getElementById("tapBtn");
+
+let isActionActive = false;
+let taps = 0;
+const requiredTaps = 10; // Pas dit aan om het makkelijker of moeilijker te maken
 
 fetch("data/events.json")
     .then(response => response.json())
@@ -40,14 +45,11 @@ function updateFromServer() {
             // Controle: Is het spel niet bezig? (-1)
             if (data.glucose === -1) {
                 chatContainer.style.display = "none";
-                questScreen.style.display = "none"; // Zorg dat de quest ook verborgen is
+                questScreen.style.display = "none";
                 waitingScreen.style.display = "flex";
 
-                // Als we hiervóór aan het spelen waren, is de missie zojuist geëindigd!
                 if (wasPlaying) {
-                    wasPlaying = false; // Reset de status
-
-                    // Pas het scherm aan voor een mooiere afsluiting
+                    wasPlaying = false;
                     waitingSpinner.style.display = "none";
                     waitingTitle.textContent = "MISSIE AFGELOPEN";
                     waitingText.textContent = "Kijk naar het grote scherm voor de uitslag!";
@@ -61,32 +63,23 @@ function updateFromServer() {
                 return;
             }
 
-            // --- Vanaf hier is het spel wél bezig ---
             wasPlaying = true;
-
             waitingSpinner.style.display = "block";
             waitingTitle.textContent = "STAND-BY";
             waitingText.textContent = "Wachten op connectie met spelsysteem...";
             waitingScreen.style.display = "none";
 
-            // HIER GEBEURT DE QUEST MAGIC: Check of er een quest actief is
+            // QUEST MAGIC
             if (data.activeQuest === "pincode") {
-                // Verberg de chat, toon het medisch dossier!
                 chatContainer.style.display = "none";
                 questScreen.style.display = "flex";
             } else {
-                // Geen quest? Dan gewoon de normale chat tonen.
                 questScreen.style.display = "none";
                 chatContainer.style.display = "flex";
             }
 
-            // Update glucose waarden
+            // Update waarden
             currentEvent = data.currentEvent;
-            hiddenChoices = data.hiddenChoices || [];
-
-            console.log("Volledige serverdata:", data);
-            console.log("Hidden choices:", hiddenChoices);
-
             glucoseElement.textContent = data.glucose;
 
             if (data.glucose <= 75) {
@@ -98,6 +91,28 @@ function updateFromServer() {
             } else {
                 glucoseElement.style.color = "#00a884";
                 statusElement.style.color = "#00a884";
+            }
+
+            // --- NIEUWE CO-OP ACTIE LOGICA ---
+            if (data.held_button !== -1 && !data.action_completed) {
+                // Speler 1 houdt de knop vast! Start de minigame!
+                if (!isActionActive) {
+                    isActionActive = true;
+                    taps = 0;
+                    actionProgress.style.width = "0%";
+                    tapBtn.textContent = `TAP (0/${requiredTaps})`;
+                    tapBtn.style.background = "#00a884";
+
+                    normalChatBubble.style.opacity = "0.5"; // Dim de normale tekst
+                    actionWidget.style.display = "block";
+                }
+            } else {
+                // Speler 1 heeft losgelaten, of de actie is al klaar
+                if (isActionActive) {
+                    isActionActive = false;
+                    actionWidget.style.display = "none";
+                    normalChatBubble.style.opacity = "1"; // Tekst weer normaal
+                }
             }
 
             loadPhoneEvent();
@@ -112,15 +127,13 @@ function loadPhoneEvent() {
     situationElement.textContent = event.title;
     trendElement.textContent = event.trend;
 
-    // Is het een pincode quest?
     if (event.type === "pincode") {
         chatContainer.style.display = "none";
-        questScreen.style.display = "flex"; // Toon het medisch dossier
+        questScreen.style.display = "flex";
 
-        // Vul de hints in!
         document.getElementById("quest-title").textContent = event.questTitle;
         const cluesList = document.getElementById("phone-clues");
-        cluesList.innerHTML = ""; // Maak oude hints leeg
+        cluesList.innerHTML = "";
 
         event.clues.forEach(clue => {
             let li = document.createElement("li");
@@ -130,19 +143,18 @@ function loadPhoneEvent() {
         return;
     }
 
-    // Is het de kleuren-kalibratie missie?
     if (event.type === "sidequest") {
         questScreen.style.display = "none";
         chatContainer.style.display = "flex";
 
-        document.body.style.backgroundColor = "#7f1d1d"; // Alarm Rood!
+        document.body.style.backgroundColor = "#7f1d1d";
         statusElement.textContent = "⚠ KALIBRATIE VEREIST";
         statusElement.style.color = "#ffffff";
         glucoseElement.textContent = "ERR";
         return;
     }
 
-    // NORMALE GAMEPLAY
+    // NORMALE GAMEPLAY UI
     questScreen.style.display = "none";
     chatContainer.style.display = "flex";
     document.body.style.backgroundColor = "#0b141a";
@@ -154,24 +166,38 @@ function loadPhoneEvent() {
     } else {
         statusElement.textContent = "STABIEL";
     }
+}
 
-    hiddenAnswers.innerHTML = "";
+// --- DE TAP-GAME FUNCTIES ---
 
-    if (hiddenChoices.length === 0) {
-        hiddenMessage.style.display = "none";
-    } else {
+function handleTap() {
+    // Taps tellen alleen als de arcade-knop fysiek wordt ingehouden!
+    if (!isActionActive) return;
 
-        hiddenMessage.style.display = "flex";
+    taps++;
+    let percentage = (taps / requiredTaps) * 100;
+    actionProgress.style.width = percentage + "%";
+    tapBtn.textContent = `TAP (${taps}/${requiredTaps})`;
 
-        hiddenChoices.forEach(index => {
+    if (taps >= requiredTaps) {
+        // ACTIE VOLTOOID!
+        isActionActive = false;
+        tapBtn.style.background = "#10b981";
+        tapBtn.textContent = "SUCCES!";
 
-            const kleur =
-                index === 0 ? "🔴" :
-                    index === 1 ? "🟡" :
-                        "🟢";
+        // Vertel de server dat de GSM de taak heeft volbracht
+        fetch(`${SERVER}/complete_action`);
 
-            hiddenAnswers.innerHTML +=
-                `${kleur} ${event.choices[index].text}<br>`;
-        });
+        setTimeout(() => {
+            actionWidget.style.display = "none";
+            normalChatBubble.style.opacity = "1";
+        }, 1500);
     }
 }
+
+// Werkt voor mobiel én laptop browsers
+tapBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    handleTap();
+});
+tapBtn.addEventListener("mousedown", handleTap);
