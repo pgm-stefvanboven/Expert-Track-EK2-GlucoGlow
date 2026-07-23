@@ -132,6 +132,8 @@ def check_pin(pin):
     
 @app.route("/save_score/<team>/<int:score>")
 def save_score(team, score):
+    
+    score = int(score)
 
     bestand = os.path.join(
     os.path.dirname(__file__),
