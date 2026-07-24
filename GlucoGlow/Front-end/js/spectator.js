@@ -1,4 +1,4 @@
-const SERVER_URL = "http://10.91.88.212:5000";
+const SERVER_URL = "http://192.168.0.252:5000";
 
 // Haal de HTML-elementen op
 const glucoseValue = document.getElementById("glucose-value");

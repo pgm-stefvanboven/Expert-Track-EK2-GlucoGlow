@@ -1,7 +1,7 @@
 console.log("APPJS GELADEN");
 alert("APPJS GELADEN");
 
-const SERVER = "http://10.91.88.212:5000";
+const SERVER = "http://192.168.0.252:5000";
 
 fetch(`${SERVER}/set_glucose/-1`);
 
