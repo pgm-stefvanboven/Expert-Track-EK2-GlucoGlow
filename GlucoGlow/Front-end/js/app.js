@@ -53,6 +53,10 @@ const teamFeedback = document.getElementById("teamFeedback");
 
 const gameContainer = document.getElementById("game-container");
 const glucoseElement = document.getElementById("glucose");
+
+glucoseElement.style.cursor = "pointer";
+glucoseElement.addEventListener("click", triggerGlucoseScan);
+
 const timerElement = document.getElementById("timer");
 const trendElement = document.getElementById("trend");
 const situationElement = document.getElementById("situation");

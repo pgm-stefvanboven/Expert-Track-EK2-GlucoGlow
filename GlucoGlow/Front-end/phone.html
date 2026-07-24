@@ -18,9 +18,9 @@
         <p id="waiting-text">Wachten op connectie met spelsysteem...</p>
     </div>
 
-    <div id="chat-container">
+    <div id="chat-container" style="display: none; flex-direction: column; height: 100dvh; max-height: 100vh;">
 
-        <div class="chat-header">
+        <div class="chat-header" style="flex-shrink: 0;">
             <div class="avatar">T</div>
             <div class="header-info">
                 <div class="name">Thomas</div>
@@ -28,8 +28,9 @@
             </div>
         </div>
 
-        <!-- ID TOEGEVOEGD OM BERICHTEN TE INJECTEREN -->
-        <div class="chat-history" id="chat-history-box" style="overflow-y: auto;">
+        <!-- STRIKTE FLEXBOX VOOR SCROLLEN -->
+        <div class="chat-history" id="chat-history-box"
+            style="flex: 1 1 auto; overflow-y: auto; min-height: 0; padding-bottom: 20px;">
 
             <div class="date-divider">VANDAAG</div>
 
@@ -51,21 +52,30 @@
                 <div class="time">Live data</div>
             </div>
 
-            <!-- NIEUWE CO-OP WIDGET (Verborgen tot Speler 1 een knop vasthoudt) -->
+            <!-- NIEUWE WAARSCHUWING (Als patiënt te vroeg op de knop drukt) -->
+            <div class="message system" id="early-hold-warning"
+                style="display:none; border: 2px solid #ef4444; margin-top: 15px; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);">
+                <div class="sender" style="color: #ef4444;">⚠️ ACTIE GEBLOKKEERD</div>
+                <div class="bubble-widget">
+                    <p style="font-size: 0.95rem; margin:0; color: #e9edef;">Patiënt probeert een actie uit te
+                        voeren!<br><br><b style="color:#ef4444;">Vul eerst de glucosewaarde in om het systeem te
+                            ontgrendelen.</b></p>
+                </div>
+            </div>
+
+            <!-- CO-OP WIDGET (TAP MINIGAME) -->
             <div class="message system" id="action-widget"
                 style="display:none; border: 2px solid #00a884; margin-top: 15px; box-shadow: 0 0 15px rgba(0, 168, 132, 0.4);">
                 <div class="sender" style="color: #00ff99;">⚡ ACTIE BEVESTIGEN</div>
                 <div class="bubble-widget">
                     <p id="action-text" style="font-size: 0.95rem; margin-bottom:15px; color: #e9edef;">Patiënt houdt
                         knop vast! Tap razendsnel om actie te voltooien!</p>
-
                     <div
                         style="width: 100%; height: 25px; background: #333; border-radius: 12px; margin-bottom: 15px; overflow: hidden; border: 1px solid #555;">
                         <div id="action-progress"
                             style="width: 0%; height: 100%; background: #10b981; transition: width 0.1s ease-out;">
                         </div>
                     </div>
-
                     <button id="tapBtn"
                         style="padding: 15px; width: 100%; background: #00a884; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 1.2rem; cursor: pointer;">
                         TAP (0/10)
@@ -76,13 +86,13 @@
             <div class="action-hint" id="action-hint-text">Samenwerking vereist!</div>
         </div>
 
-        <!-- NIEUW: DE CHAT INPUT BALK -->
+        <!-- DE CHAT INPUT BALK (Vastgezet aan de onderkant) -->
         <div id="chat-input-area"
-            style="display: flex; padding: 10px 15px; background-color: #202c33; border-top: 1px solid #2a3942; align-items: center; gap: 10px;">
-            <input type="number" id="glucose-input" placeholder="Typ de doorgegeven glucosewaarde..."
-                style="flex: 1; padding: 12px 15px; border-radius: 20px; border: none; background-color: #2a3942; color: #e9edef; font-size: 1rem; outline: none;">
+            style="display: flex; flex-shrink: 0; padding: 15px; background-color: #202c33; border-top: 1px solid #2a3942; align-items: center; gap: 10px;">
+            <input type="number" id="glucose-input" placeholder="Typ glucosewaarde..."
+                style="flex: 1; min-width: 0; padding: 12px 15px; border-radius: 20px; border: none; background-color: #2a3942; color: #e9edef; font-size: 1rem; outline: none;">
             <button id="send-glucose-btn"
-                style="background-color: #00a884; color: white; border: none; border-radius: 50%; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; cursor: pointer; padding-left: 4px;">
+                style="background-color: #00a884; color: white; border: none; border-radius: 50%; width: 45px; height: 45px; min-width: 45px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; cursor: pointer; padding-left: 4px;">
                 ➤
             </button>
         </div>

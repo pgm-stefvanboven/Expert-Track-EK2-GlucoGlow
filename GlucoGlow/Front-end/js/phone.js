@@ -22,6 +22,7 @@ const situationElement = document.getElementById("phone-situation");
 const normalChatBubble = document.getElementById("normal-chat-bubble");
 const chatHistoryBox = document.getElementById("chat-history-box");
 const actionHintText = document.getElementById("action-hint-text");
+const earlyHoldWarning = document.getElementById("early-hold-warning");
 
 // NIEUWE CHAT INPUT ELEMENTEN (FASE 2)
 const chatInputArea = document.getElementById("chat-input-area");
@@ -113,24 +114,35 @@ function updateFromServer() {
                 statusElement.style.color = "#f59e0b";
             }
 
-            // --- NIEUWE CO-OP ACTIE LOGICA (FASE 3) ---
-            if (data.held_button !== -1 && !data.action_completed && diagnosisCompleted) {
-                // Speler 1 houdt de knop vast EN de diagnose is klaar!
-                if (!isActionActive) {
-                    isActionActive = true;
-                    taps = 0;
-                    actionProgress.style.width = "0%";
-                    tapBtn.textContent = `TAP (0/${requiredTaps})`;
-                    tapBtn.style.background = "#00a884";
+            // --- NIEUWE CO-OP ACTIE LOGICA ---
+            if (data.held_button !== -1 && !data.action_completed) {
 
-                    normalChatBubble.style.opacity = "0.5";
-                    actionWidget.style.display = "block";
-                    actionHintText.style.display = "none";
+                // Heeft Speler 2 de glucosewaarde al ingevuld?
+                if (diagnosisCompleted) {
+                    earlyHoldWarning.style.display = "none"; // Verberg waarschuwing
 
+                    if (!isActionActive) {
+                        isActionActive = true;
+                        taps = 0;
+                        actionProgress.style.width = "0%";
+                        tapBtn.textContent = `TAP (0/${requiredTaps})`;
+                        tapBtn.style.background = "#00a884";
+
+                        normalChatBubble.style.opacity = "0.5";
+                        actionWidget.style.display = "block";
+                        actionHintText.style.display = "none";
+
+                        chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
+                    }
+                } else {
+                    // Speler 1 drukt al op een knop, maar diagnose is nog niet gedaan!
+                    earlyHoldWarning.style.display = "block";
                     chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
                 }
             } else {
                 // Speler 1 heeft losgelaten, of de actie is al klaar
+                earlyHoldWarning.style.display = "none";
+
                 if (isActionActive) {
                     isActionActive = false;
                     actionWidget.style.display = "none";
