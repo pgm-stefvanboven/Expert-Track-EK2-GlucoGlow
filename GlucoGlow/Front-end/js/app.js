@@ -11,6 +11,7 @@ let timer = 90;
 let score = 0;
 let targetPin = "";
 let teamName = "";
+let isGlucoseVisible = false; // NIEUW: Houdt bij of de waarde zichtbaar is
 
 // SIDEQUEST & CO-OP VARIABELEN
 let isSidequestActive = false;
@@ -135,18 +136,38 @@ function formatTeamName(name) {
         .join(" ");
 }
 
+// --- NIEUW: GLUCOSE VERBERGEN OF TONEN ---
 function updateGlucoseDisplay() {
-    glucoseElement.textContent = glucose;
-    if (glucose <= 75) {
-        glucoseElement.style.color = "#ef4444";
-        glucoseElement.style.textShadow = "0 0 15px rgba(239, 68, 68, 0.8)";
-    } else if (glucose >= 160) {
-        glucoseElement.style.color = "#f59e0b";
-        glucoseElement.style.textShadow = "0 0 15px rgba(245, 158, 11, 0.8)";
+    if (isGlucoseVisible) {
+        glucoseElement.textContent = glucose;
+        if (glucose <= 75) {
+            glucoseElement.style.color = "#ef4444";
+            glucoseElement.style.textShadow = "0 0 15px rgba(239, 68, 68, 0.8)";
+        } else if (glucose >= 160) {
+            glucoseElement.style.color = "#f59e0b";
+            glucoseElement.style.textShadow = "0 0 15px rgba(245, 158, 11, 0.8)";
+        } else {
+            glucoseElement.style.color = "#10b981";
+            glucoseElement.style.textShadow = "0 0 15px rgba(16, 185, 129, 0.8)";
+        }
     } else {
-        glucoseElement.style.color = "#10b981";
-        glucoseElement.style.textShadow = "0 0 15px rgba(16, 185, 129, 0.8)";
+        glucoseElement.textContent = "SCAN";
+        glucoseElement.style.color = "#00a884";
+        glucoseElement.style.textShadow = "0 0 15px rgba(0, 168, 132, 0.6)";
     }
+}
+
+// --- NIEUW: SCAN FUNCTIE (2 SECONDEN ZICHTBAAR) ---
+function triggerGlucoseScan() {
+    if (isGlucoseVisible || gameState !== "PLAYING" || waitingForPhone) return;
+
+    isGlucoseVisible = true;
+    updateGlucoseDisplay();
+
+    setTimeout(() => {
+        isGlucoseVisible = false;
+        updateGlucoseDisplay();
+    }, 2000);
 }
 
 function getValidEvent() {
@@ -230,6 +251,7 @@ function startGame() {
     gameState = "PLAYING";
     timerElement.textContent = timer;
 
+    isGlucoseVisible = false; // Reset scan status
     updateGlucoseDisplay();
     triggerNextEvent();
     startTimer();
@@ -273,18 +295,20 @@ setInterval(() => {
             // 1. IS ER EEN KNOP NIEUW INGEDRUKT?
             if (currentHeldButton !== -1 && previousHeldButton === -1) {
 
-                // ANTI-STOTTER: Annuleer direct de "loslaat"-straf als we in een grace period zaten!
                 clearTimeout(holdGraceTimer);
 
-                // ANTI-SPAM: Voorkom dubbele inputs voor de code kraker (300ms vertraging)
                 if (now - lastButtonPressTime < 300) {
                     previousHeldButton = currentHeldButton;
                     return;
                 }
                 lastButtonPressTime = now;
 
+                // --- DE NIEUWE SCAN KNOP (Knop index 3) ---
+                if (currentHeldButton === 3) {
+                    triggerGlucoseScan();
+                }
                 // -- A) SIDEQUEST LOGICA: CODE KRAKEN --
-                if (isSidequestActive) {
+                else if (isSidequestActive) {
                     enteredCode.push(currentHeldButton);
 
                     if (enteredCode.length === 3) {
@@ -310,21 +334,15 @@ setInterval(() => {
             // 2. IS DE KNOP LOSGELATEN?
             if (currentHeldButton === -1 && previousHeldButton !== -1) {
                 if (gameState === "PLAYING" && !isSidequestActive) {
-
-                    // Geef de hardware 300ms de tijd om de stotter te herstellen
                     holdGraceTimer = setTimeout(() => {
                         onButtonRelease();
                     }, 300);
-
                 }
             }
 
-            // Update de status voor de volgende check
             previousHeldButton = currentHeldButton;
         })
-        .catch(error => {
-            // Fouten negeren, zodat het script niet crasht bij een netwerk hapering
-        });
+        .catch(error => { });
 }, 100);
 
 function startTimer() {
@@ -417,6 +435,11 @@ function loadEvent(event) {
 
     feedbackCard.style.display = "none";
     choicesContainer.style.display = "flex";
+
+    // Verberg glucose aan het begin van elk nieuw event
+    isGlucoseVisible = false;
+    updateGlucoseDisplay();
+
     gameState = "PLAYING";
 }
 
@@ -428,10 +451,8 @@ function onButtonPress(choiceIndex) {
     currentChoiceIndex = choiceIndex;
     waitingForPhone = true;
 
-    // 1. Vertel de server dat de knop fysiek wordt ingedrukt
     fetch(`${SERVER}/button_down/${choiceIndex}`).catch(e => console.log(e));
 
-    // 2. Pas het scherm aan: De piloot moet nu vasthouden!
     choicesContainer.style.display = "none";
     situationElement.innerHTML = `
         <span style="color: #00ff99; font-size: 1.5rem; text-shadow: 0 0 10px rgba(0,255,153,0.8);">
@@ -440,17 +461,14 @@ function onButtonPress(choiceIndex) {
             <span style="color: #e9edef; font-size: 1.1rem;">Zorgverlener: Voer de toediening uit op de GSM!</span>
         </span>`;
 
-    // 3. Poll de server om te kijken of de GSM-speler klaar is
     phoneCheckInterval = setInterval(() => {
         fetch(`${SERVER}/get_event`)
             .then(res => res.json())
             .then(data => {
-                // We wachten op een signaal "action_completed" van de server
                 if (data.action_completed && waitingForPhone) {
                     clearInterval(phoneCheckInterval);
                     waitingForPhone = false;
 
-                    // Reset het signaal op de server voor de volgende ronde
                     fetch(`${SERVER}/reset_action`);
                     processChoiceResult(currentChoiceIndex);
                 }
@@ -461,13 +479,11 @@ function onButtonPress(choiceIndex) {
 function onButtonRelease() {
     if (gameState !== "PLAYING" || !waitingForPhone) return;
 
-    // Als de speler loslaat voordat de GSM klaar is, breekt de actie af!
     fetch(`${SERVER}/button_up`).catch(e => console.log(e));
 
     clearInterval(phoneCheckInterval);
     waitingForPhone = false;
 
-    // Herstel het originele scherm
     const currentEvent = events[currentEventIndex];
     situationElement.textContent = currentEvent.title;
     choicesContainer.style.display = "flex";
@@ -486,6 +502,9 @@ function processChoiceResult(choiceIndex) {
         .catch(error => console.error("FOUT:", error));
 
     if (glucose < 0) glucose = 0;
+
+    // Laat de glucose altijd zien in het feedbackscherm
+    isGlucoseVisible = true;
     updateGlucoseDisplay();
 
     if (glucose <= 45) {
@@ -517,12 +536,14 @@ function processChoiceResult(choiceIndex) {
 // LOKAAL TESTEN: KEYBOARD SUPPORT
 document.addEventListener("keydown", (event) => {
     if (gameState === "PLAYING" && !isSidequestActive) {
-        // Zorg dat inhouden niet de actie 100x vuurt
         if (event.repeat) return;
 
         if (event.key === "1") onButtonPress(0);
         if (event.key === "2") onButtonPress(1);
         if (event.key === "3") onButtonPress(2);
+
+        // Druk op 4 of S om de SCAN te simuleren
+        if (event.key === "4" || event.key.toLowerCase() === "s") triggerGlucoseScan();
     }
     if (gameState === "FEEDBACK" && event.key === " ") {
         nextBtn.click();

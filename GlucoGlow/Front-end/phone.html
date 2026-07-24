@@ -28,7 +28,8 @@
             </div>
         </div>
 
-        <div class="chat-history">
+        <!-- ID TOEGEVOEGD OM BERICHTEN TE INJECTEREN -->
+        <div class="chat-history" id="chat-history-box" style="overflow-y: auto;">
 
             <div class="date-divider">VANDAAG</div>
 
@@ -42,10 +43,10 @@
                 <div class="sender">GlucoGlow Sensor Alert</div>
                 <div class="bubble-widget">
                     <div class="sensor-row">
-                        <span id="phone-glucose">--</span>
+                        <span id="phone-glucose">???</span>
                         <span id="phone-trend">-</span>
                     </div>
-                    <div id="phone-status">STABIEL</div>
+                    <div id="phone-status">⚠ VRAAG DATA AAN PATIËNT</div>
                 </div>
                 <div class="time">Live data</div>
             </div>
@@ -72,10 +73,23 @@
                 </div>
             </div>
 
-            <div class="action-hint">Samenwerking vereist!</div>
+            <div class="action-hint" id="action-hint-text">Samenwerking vereist!</div>
         </div>
+
+        <!-- NIEUW: DE CHAT INPUT BALK -->
+        <div id="chat-input-area"
+            style="display: flex; padding: 10px 15px; background-color: #202c33; border-top: 1px solid #2a3942; align-items: center; gap: 10px;">
+            <input type="number" id="glucose-input" placeholder="Typ de doorgegeven glucosewaarde..."
+                style="flex: 1; padding: 12px 15px; border-radius: 20px; border: none; background-color: #2a3942; color: #e9edef; font-size: 1rem; outline: none;">
+            <button id="send-glucose-btn"
+                style="background-color: #00a884; color: white; border: none; border-radius: 50%; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; cursor: pointer; padding-left: 4px;">
+                ➤
+            </button>
+        </div>
+
     </div>
 
+    <!-- QUEST SCHERM BLIJFT HETZELFDE -->
     <div id="quest-screen"
         style="display: none; flex-direction: column; height: 100vh; background-color: #0b141a; color: #e9edef; padding: 20px; overflow-y: auto; z-index: 200; position: absolute; top: 0; left: 0; width: 100%; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
 
