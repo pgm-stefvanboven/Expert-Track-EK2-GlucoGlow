@@ -407,8 +407,14 @@ function triggerPincodeQuest() {
         currentEventIndex = randomPinIndex;
         targetPin = events[randomPinIndex].pin;
         fetch(`${SERVER}/set_event/${currentEventIndex}`);
+
+        // VOEG DEZE REGEL TOE:
+        fetch(`${SERVER}/set_quest/pincode`);
     } else {
         targetPin = "6162";
+
+        // VOEG HEM HIER OOK TOE ALS FALLBACK:
+        fetch(`${SERVER}/set_quest/pincode`);
     }
 
     feedbackCard.style.display = "none";

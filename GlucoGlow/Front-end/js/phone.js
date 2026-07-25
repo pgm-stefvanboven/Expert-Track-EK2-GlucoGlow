@@ -84,7 +84,7 @@ function updateFromServer() {
                 document.querySelectorAll(".dynamic-bubble").forEach(el => el.remove());
             }
 
-            if (data.activeQuest === "pincode") {
+            if (data.activeQuest === "pincode" || (events[currentEvent] && events[currentEvent].type === "pincode")) {
                 chatContainer.style.display = "none";
                 questScreen.style.display = "flex";
             } else if (events[currentEvent] && events[currentEvent].type === "sidequest") {
@@ -125,7 +125,7 @@ function updateFromServer() {
                         taps = 0;
                         actionProgress.style.width = "0%";
                         tapBtn.textContent = `TAP (0/${requiredTaps})`;
-                        tapBtn.style.background = "#00a884";
+                        tapBtn.style.background = "linear-gradient(180deg, #34d399 0%, #059669 100%)";
 
                         normalChatBubble.style.opacity = "0.5";
                         actionWidget.style.display = "block";
@@ -241,7 +241,7 @@ glucoseInput.addEventListener("keypress", function (e) {
     if (e.key === 'Enter') handleGlucoseSubmit();
 });
 
-glucoseInput.addEventListener('blur', function() {
+glucoseInput.addEventListener('blur', function () {
     window.scrollTo(0, 0);
 });
 
