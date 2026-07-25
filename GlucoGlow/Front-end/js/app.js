@@ -11,27 +11,19 @@ let timer = 90;
 let score = 0;
 let targetPin = "";
 let teamName = "";
-let isGlucoseVisible = false; // NIEUW: Houdt bij of de waarde zichtbaar is
+let isGlucoseVisible = false;
+
+// NIEUW: De geschuffelde keuzes van deze ronde
+let currentShuffledChoices = [];
 
 // SIDEQUEST & CO-OP VARIABELEN
 let isSidequestActive = false;
 let sidequestCode = [];
 let enteredCode = [];
-
-// BANNED WORDS
-const bannedWords = [
-    "fuck", "fck", "shit", "bitch", "porno", "sex", "seks", "kut", "lul",
-    "kanker", "kkr", "homo", "hoer", "slet", "wijf", "seksueel",
-    "sexywijf", "gay", "nigger", "nigga", "hitler", "nazi", "kaka"
-];
-
-// EVENTS
 let events = [];
 let currentEventIndex = 0;
-let gameState = "START"; // Expected: "START", "PLAYING", "FEEDBACK", "END", "QUEST"
+let gameState = "START";
 let timerInterval;
-
-// NIEUWE CO-OP STATUSSEN
 let waitingForPhone = false;
 let currentChoiceIndex = -1;
 let phoneCheckInterval;
@@ -53,17 +45,16 @@ const teamFeedback = document.getElementById("teamFeedback");
 
 const gameContainer = document.getElementById("game-container");
 const glucoseElement = document.getElementById("glucose");
-
-glucoseElement.style.cursor = "pointer";
-glucoseElement.addEventListener("click", triggerGlucoseScan);
-
 const timerElement = document.getElementById("timer");
-const trendElement = document.getElementById("trend");
 const situationElement = document.getElementById("situation");
 const choicesContainer = document.getElementById("choices");
 const redBtn = document.getElementById("redBtn");
 const yellowBtn = document.getElementById("yellowBtn");
 const greenBtn = document.getElementById("greenBtn");
+
+// Maak de scan-knop aanklikbaar met de muis/touch (én de fysieke knop blijft werken!)
+glucoseElement.style.cursor = "pointer";
+glucoseElement.addEventListener("click", triggerGlucoseScan);
 
 const questOverlay = document.getElementById("quest-overlay");
 const pinInput = document.getElementById("pinInput");
@@ -80,6 +71,8 @@ const endScreen = document.getElementById("end-screen");
 const endTitle = document.getElementById("end-title");
 const endMessage = document.getElementById("end-message");
 const endScore = document.getElementById("end-score");
+
+const bannedWords = ["fuck", "fck", "shit", "bitch", "porno", "sex", "seks", "kut", "lul", "kanker", "kkr", "homo", "hoer", "slet", "wijf", "seksueel", "sexywijf", "gay", "nigger", "nigga", "hitler", "nazi", "kaka"];
 
 // LOADING DATA
 fetch("data/events.json")
@@ -140,7 +133,6 @@ function formatTeamName(name) {
         .join(" ");
 }
 
-// --- NIEUW: GLUCOSE VERBERGEN OF TONEN ---
 function updateGlucoseDisplay() {
     if (isGlucoseVisible) {
         glucoseElement.textContent = glucose;
@@ -161,13 +153,10 @@ function updateGlucoseDisplay() {
     }
 }
 
-// --- NIEUW: SCAN FUNCTIE (2 SECONDEN ZICHTBAAR) ---
 function triggerGlucoseScan() {
     if (isGlucoseVisible || gameState !== "PLAYING" || waitingForPhone) return;
-
     isGlucoseVisible = true;
     updateGlucoseDisplay();
-
     setTimeout(() => {
         isGlucoseVisible = false;
         updateGlucoseDisplay();
@@ -230,7 +219,6 @@ function triggerSensorCalibration() {
     gameState = "PLAYING";
 
     situationElement.textContent = "⚠ SENSOR OFFLINE ⚠";
-    trendElement.textContent = "";
     redBtn.textContent = "WACHTEN";
     yellowBtn.textContent = "OP";
     greenBtn.textContent = "CODE";
@@ -255,7 +243,7 @@ function startGame() {
     gameState = "PLAYING";
     timerElement.textContent = timer;
 
-    isGlucoseVisible = false; // Reset scan status
+    isGlucoseVisible = false;
     updateGlucoseDisplay();
     triggerNextEvent();
     startTimer();
@@ -296,7 +284,6 @@ setInterval(() => {
             const currentHeldButton = data.held_button;
             const now = Date.now();
 
-            // 1. IS ER EEN KNOP NIEUW INGEDRUKT?
             if (currentHeldButton !== -1 && previousHeldButton === -1) {
 
                 clearTimeout(holdGraceTimer);
@@ -307,35 +294,37 @@ setInterval(() => {
                 }
                 lastButtonPressTime = now;
 
-                // --- DE NIEUWE SCAN KNOP (Knop index 3) ---
                 if (currentHeldButton === 3) {
                     triggerGlucoseScan();
                 }
-                // -- A) SIDEQUEST LOGICA: CODE KRAKEN --
                 else if (isSidequestActive) {
                     enteredCode.push(currentHeldButton);
 
                     if (enteredCode.length === 3) {
                         if (JSON.stringify(enteredCode) === JSON.stringify(sidequestCode)) {
+                            // GEEN ALERT MEER, MAAR IN-GAME FEEDBACK
                             isSidequestActive = false;
+                            gameState = "TRANSITION"; // Blokkeer andere knoppen
                             score += 100;
-                            alert("KALIBRATIE SUCCESVOL! Sensor is weer online.");
-                            triggerNextEvent();
+                            situationElement.innerHTML = `<span style="color: #10b981; font-weight: bold; font-size: 1.5rem;">✓ KALIBRATIE SUCCESVOL!<br>Sensor is weer online.</span>`;
+                            setTimeout(triggerNextEvent, 2000);
                         } else {
+                            // GEEN ALERT MEER
                             enteredCode = [];
                             timer -= 5;
                             timerElement.textContent = timer;
-                            alert("FOUTIEVE CODE! Probeer opnieuw. (-5s)");
+                            situationElement.innerHTML = `<span style="color: #ef4444; font-weight: bold; font-size: 1.5rem;">❌ FOUTIEVE CODE! (-5 sec)</span>`;
+                            setTimeout(() => {
+                                if (isSidequestActive) situationElement.textContent = "⚠ SENSOR OFFLINE ⚠";
+                            }, 1500);
                         }
                     }
                 }
-                // -- B) NORMALE GAMEPLAY: START DE CO-OP HOLD --
                 else if (gameState === "PLAYING") {
                     onButtonPress(currentHeldButton);
                 }
             }
 
-            // 2. IS DE KNOP LOSGELATEN?
             if (currentHeldButton === -1 && previousHeldButton !== -1) {
                 if (gameState === "PLAYING" && !isSidequestActive) {
                     holdGraceTimer = setTimeout(() => {
@@ -343,15 +332,13 @@ setInterval(() => {
                     }, 300);
                 }
             }
-
             previousHeldButton = currentHeldButton;
-        })
-        .catch(error => { });
+        }).catch(error => { });
 }, 100);
 
 function startTimer() {
     timerInterval = setInterval(() => {
-        if (gameState === "QUEST") {
+        if (gameState === "QUEST" || gameState === "TRANSITION") {
             timer -= 2;
         } else {
             timer -= 1;
@@ -367,7 +354,6 @@ function startTimer() {
 
         timerElement.textContent = timer;
         if (questTimerDisplay) questTimerDisplay.textContent = timer;
-
         fetch(`${SERVER}/set_timer/${timer}`).catch(e => console.log(e));
     }, 1000);
 }
@@ -431,23 +417,22 @@ function triggerPincodeQuest() {
 
 function loadEvent(event) {
     situationElement.textContent = event.title;
-    trendElement.textContent = event.trend;
 
-    redBtn.textContent = event.choices[0].text;
-    yellowBtn.textContent = event.choices[1].text;
-    greenBtn.textContent = event.choices[2].text;
+    // SHUFFLE DE KNOPPEN! Rood is niet altijd correct meer.
+    currentShuffledChoices = [...event.choices];
+    currentShuffledChoices.sort(() => Math.random() - 0.5);
+
+    redBtn.textContent = currentShuffledChoices[0].text;
+    yellowBtn.textContent = currentShuffledChoices[1].text;
+    greenBtn.textContent = currentShuffledChoices[2].text;
 
     feedbackCard.style.display = "none";
     choicesContainer.style.display = "flex";
 
-    // Verberg glucose aan het begin van elk nieuw event
     isGlucoseVisible = false;
     updateGlucoseDisplay();
-
     gameState = "PLAYING";
 }
-
-// --- DE NIEUWE CO-OP 3-FASEN LOGICA ---
 
 function onButtonPress(choiceIndex) {
     if (gameState !== "PLAYING" || waitingForPhone) return;
@@ -472,7 +457,6 @@ function onButtonPress(choiceIndex) {
                 if (data.action_completed && waitingForPhone) {
                     clearInterval(phoneCheckInterval);
                     waitingForPhone = false;
-
                     fetch(`${SERVER}/reset_action`);
                     processChoiceResult(currentChoiceIndex);
                 }
@@ -484,7 +468,6 @@ function onButtonRelease() {
     if (gameState !== "PLAYING" || !waitingForPhone) return;
 
     fetch(`${SERVER}/button_up`).catch(e => console.log(e));
-
     clearInterval(phoneCheckInterval);
     waitingForPhone = false;
 
@@ -497,29 +480,18 @@ function processChoiceResult(choiceIndex) {
     gameState = "FEEDBACK";
 
     const currentEvent = events[currentEventIndex];
-    const choice = currentEvent.choices[choiceIndex];
+    // Gebruik de actuele geschuffelde keuze!
+    const choice = currentShuffledChoices[choiceIndex];
 
     glucose += choice.effect;
-
-    fetch(`${SERVER}/set_glucose/${glucose}`)
-        .then(response => response.json())
-        .catch(error => console.error("FOUT:", error));
+    fetch(`${SERVER}/set_glucose/${glucose}`).catch(e => console.log(e));
 
     if (glucose < 0) glucose = 0;
-
-    // Laat de glucose altijd zien in het feedbackscherm
     isGlucoseVisible = true;
     updateGlucoseDisplay();
 
-    if (glucose <= 45) {
-        endGame("THOMAS KREEG EEN ERNSTIGE HYPO");
-        return;
-    }
-
-    if (glucose >= 280) {
-        endGame("THOMAS KREEG EEN ERNSTIGE HYPER");
-        return;
-    }
+    if (glucose <= 45) { endGame("THOMAS KREEG EEN ERNSTIGE HYPO"); return; }
+    if (glucose >= 280) { endGame("THOMAS KREEG EEN ERNSTIGE HYPER"); return; }
 
     feedbackTextElement.textContent = currentEvent.feedback;
 
@@ -537,16 +509,12 @@ function processChoiceResult(choiceIndex) {
     feedbackCard.style.display = "flex";
 }
 
-// LOKAAL TESTEN: KEYBOARD SUPPORT
 document.addEventListener("keydown", (event) => {
     if (gameState === "PLAYING" && !isSidequestActive) {
         if (event.repeat) return;
-
         if (event.key === "1") onButtonPress(0);
         if (event.key === "2") onButtonPress(1);
         if (event.key === "3") onButtonPress(2);
-
-        // Druk op 4 of S om de SCAN te simuleren
         if (event.key === "4" || event.key.toLowerCase() === "s") triggerGlucoseScan();
     }
     if (gameState === "FEEDBACK" && event.key === " ") {
@@ -565,27 +533,18 @@ document.addEventListener("keyup", (event) => {
 nextBtn.addEventListener("click", () => {
     feedbackCard.style.display = "none";
     let randomKans = Math.random();
-
-    if (randomKans < 0.20) {
-        triggerSensorCalibration();
-    } else if (randomKans < 0.40) {
-        triggerPincodeQuest();
-    } else {
-        triggerNextEvent();
-    }
+    if (randomKans < 0.20) triggerSensorCalibration();
+    else if (randomKans < 0.40) triggerPincodeQuest();
+    else triggerNextEvent();
 });
 
-// EINDE SPEL LOGICA
 function endGame(message) {
     gameState = "END";
     clearInterval(timerInterval);
-
     questOverlay.style.display = "none";
     feedbackCard.style.display = "none";
-
     fetch(`${SERVER}/set_glucose/-1`);
     fetch(`${SERVER}/set_quest/none`);
-
     gameContainer.style.display = "none";
     endScreen.style.display = "flex";
     endMessage.textContent = message;
@@ -608,19 +567,14 @@ function endGame(message) {
     let countdown = 5;
     const countdownElement = document.getElementById("countdown");
     countdownElement.textContent = countdown;
-
     const countdownInterval = setInterval(() => {
         countdown--;
         countdownElement.textContent = countdown;
-
         if (countdown <= 0) {
             clearInterval(countdownInterval);
             fetch(`${SERVER}/set_glucose/-1`);
             fetch(`${SERVER}/set_event/0`);
-
-            fetch(`${SERVER}/reset_game`)
-                .then(() => location.reload())
-                .catch(() => location.reload());
+            fetch(`${SERVER}/reset_game`).then(() => location.reload()).catch(() => location.reload());
         }
     }, 1000);
 }

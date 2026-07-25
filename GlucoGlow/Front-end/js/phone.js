@@ -4,35 +4,29 @@ let events = [];
 let currentEvent = 0;
 let wasPlaying = false;
 
-// SCHERMEN
 const waitingScreen = document.getElementById("waiting-screen");
 const chatContainer = document.getElementById("chat-container");
 const questScreen = document.getElementById("quest-screen");
 
-// WACHTSCHERM ELEMENTEN
 const waitingSpinner = document.getElementById("waiting-spinner");
 const waitingTitle = document.getElementById("waiting-title");
 const waitingText = document.getElementById("waiting-text");
 
-// CHAT ELEMENTEN
 const glucoseElement = document.getElementById("phone-glucose");
-const trendElement = document.getElementById("phone-trend");
 const statusElement = document.getElementById("phone-status");
 const situationElement = document.getElementById("phone-situation");
 const normalChatBubble = document.getElementById("normal-chat-bubble");
 const chatHistoryBox = document.getElementById("chat-history-box");
 const actionHintText = document.getElementById("action-hint-text");
-const earlyHoldWarning = document.getElementById("early-hold-warning");
 
-// NIEUWE CHAT INPUT ELEMENTEN (FASE 2)
 const chatInputArea = document.getElementById("chat-input-area");
 const glucoseInput = document.getElementById("glucose-input");
 const sendGlucoseBtn = document.getElementById("send-glucose-btn");
+const earlyHoldWarning = document.getElementById("early-hold-warning");
 
 let currentSecretGlucose = 0;
 let diagnosisCompleted = false;
 
-// ACTIE WIDGET ELEMENTEN (Tap Minigame - FASE 3)
 const actionWidget = document.getElementById("action-widget");
 const actionProgress = document.getElementById("action-progress");
 const tapBtn = document.getElementById("tapBtn");
@@ -53,7 +47,6 @@ function updateFromServer() {
         .then(response => response.json())
         .then(data => {
 
-            // Controle: Is het spel niet bezig? (-1)
             if (data.glucose === -1) {
                 chatContainer.style.display = "none";
                 questScreen.style.display = "none";
@@ -80,19 +73,28 @@ function updateFromServer() {
             waitingText.textContent = "Wachten op connectie met spelsysteem...";
             waitingScreen.style.display = "none";
 
-            // QUEST MAGIC
+            // HARD RESET: Check direct of het grote scherm naar een nieuw event is gesprongen
+            if (data.currentEvent !== currentEvent) {
+                currentEvent = data.currentEvent;
+                diagnosisCompleted = false;
+                isActionActive = false;
+                actionWidget.style.display = "none";
+                earlyHoldWarning.style.display = "none";
+                chatInputArea.style.display = "flex";
+                document.querySelectorAll(".dynamic-bubble").forEach(el => el.remove());
+            }
+
             if (data.activeQuest === "pincode") {
                 chatContainer.style.display = "none";
                 questScreen.style.display = "flex";
+            } else if (events[currentEvent] && events[currentEvent].type === "sidequest") {
+                questScreen.style.display = "none";
+                chatContainer.style.display = "flex";
             } else {
                 questScreen.style.display = "none";
                 chatContainer.style.display = "flex";
             }
 
-            // Update waarden
-            currentEvent = data.currentEvent;
-
-            // --- GEHEIM HOUDEN VAN DE GLUCOSE ---
             currentSecretGlucose = data.glucose;
 
             if (diagnosisCompleted) {
@@ -114,13 +116,10 @@ function updateFromServer() {
                 statusElement.style.color = "#f59e0b";
             }
 
-            // --- NIEUWE CO-OP ACTIE LOGICA ---
+            // CO-OP WAARSCHUWING EN ACTIE
             if (data.held_button !== -1 && !data.action_completed) {
-
-                // Heeft Speler 2 de glucosewaarde al ingevuld?
                 if (diagnosisCompleted) {
-                    earlyHoldWarning.style.display = "none"; // Verberg waarschuwing
-
+                    earlyHoldWarning.style.display = "none";
                     if (!isActionActive) {
                         isActionActive = true;
                         taps = 0;
@@ -131,18 +130,14 @@ function updateFromServer() {
                         normalChatBubble.style.opacity = "0.5";
                         actionWidget.style.display = "block";
                         actionHintText.style.display = "none";
-
                         chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
                     }
                 } else {
-                    // Speler 1 drukt al op een knop, maar diagnose is nog niet gedaan!
                     earlyHoldWarning.style.display = "block";
                     chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
                 }
             } else {
-                // Speler 1 heeft losgelaten, of de actie is al klaar
                 earlyHoldWarning.style.display = "none";
-
                 if (isActionActive) {
                     isActionActive = false;
                     actionWidget.style.display = "none";
@@ -160,27 +155,12 @@ function loadPhoneEvent() {
     const event = events[currentEvent];
     if (!event) return;
 
-    // Alleen updaten als er een NIEUWE situatie is
-    if (situationElement.textContent !== event.title) {
-        situationElement.textContent = event.title;
-        trendElement.textContent = event.trend;
-
-        // Reset de Diagnose Fase
-        diagnosisCompleted = false;
-        chatInputArea.style.display = "flex";
-
-        // Verwijder oude chatberichten van de vorige situatie
-        document.querySelectorAll(".dynamic-bubble").forEach(el => el.remove());
-    }
+    situationElement.textContent = event.title;
 
     if (event.type === "pincode") {
-        chatContainer.style.display = "none";
-        questScreen.style.display = "flex";
-
         document.getElementById("quest-title").textContent = event.questTitle;
         const cluesList = document.getElementById("phone-clues");
         cluesList.innerHTML = "";
-
         event.clues.forEach(clue => {
             let li = document.createElement("li");
             li.textContent = clue;
@@ -190,9 +170,6 @@ function loadPhoneEvent() {
     }
 
     if (event.type === "sidequest") {
-        questScreen.style.display = "none";
-        chatContainer.style.display = "flex";
-
         document.body.style.backgroundColor = "#7f1d1d";
         statusElement.textContent = "⚠ KALIBRATIE VEREIST";
         statusElement.style.color = "#ffffff";
@@ -200,22 +177,17 @@ function loadPhoneEvent() {
         return;
     }
 
-    // NORMALE GAMEPLAY UI
-    questScreen.style.display = "none";
-    chatContainer.style.display = "flex";
     document.body.style.backgroundColor = "#0b141a";
 }
 
-// --- FASE 1 & 2: INFORMATIE DELEN & DIAGNOSE ---
 function handleGlucoseSubmit() {
     if (diagnosisCompleted || !wasPlaying) return;
 
     const ingevoerdeWaarde = parseInt(glucoseInput.value);
-    glucoseInput.value = ""; // Maak veld leeg
+    glucoseInput.value = "";
 
     if (isNaN(ingevoerdeWaarde)) return;
 
-    // 1. Visueel chatberichtje van Speler 2
     const gestuurdBericht = document.createElement("div");
     gestuurdBericht.className = "message sent dynamic-bubble";
     gestuurdBericht.style.alignSelf = "flex-end";
@@ -228,37 +200,30 @@ function handleGlucoseSubmit() {
     chatHistoryBox.insertBefore(gestuurdBericht, actionWidget);
     chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
 
-    // 2. Check of de waarde klopt
     if (ingevoerdeWaarde === currentSecretGlucose) {
         diagnosisCompleted = true;
-
-        // Update het status widget bovenaan
         glucoseElement.textContent = currentSecretGlucose;
-        statusElement.textContent = "STABIEL"; // Wordt bij de volgende server-poll overschreven met de juiste kleur
+        statusElement.textContent = "STABIEL";
 
-        // Zoek het correcte advies in de JSON
         const event = events[currentEvent];
+        // TOEGANKELIJKHEID FIX: We gebruiken de letterlijke tekst van de juiste keuze
         let correcteKeuze = event.choices.find(c => c.correct);
         let advies = correcteKeuze ? correcteKeuze.text : "Volg medisch protocol.";
 
-        // Laat de assistent antwoorden
         const assistentAntwoord = document.createElement("div");
         assistentAntwoord.className = "message system dynamic-bubble";
         assistentAntwoord.innerHTML = `
             <div class="bubble-widget" style="background: #1f2c34; border: 1px solid #00a884; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
                 <span style="color: #00a884; font-weight: bold;">✓ Waarde geverifieerd.</span><br><br>
-                <span style="color: #fde68a;">AANBEVOLEN BEHANDELING:</span><br>
+                <span style="color: #fde68a;">AANBEVOLEN ACTIE:</span><br>
                 <b style="font-size: 1.1rem; color: #e9edef;">${advies}</b>
             </div>`;
 
         chatHistoryBox.insertBefore(assistentAntwoord, actionWidget);
         chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
-
-        // Verberg de input balk
         chatInputArea.style.display = "none";
 
     } else {
-        // Foute invoer
         const assistentFout = document.createElement("div");
         assistentFout.className = "message system dynamic-bubble";
         assistentFout.innerHTML = `
@@ -276,7 +241,6 @@ glucoseInput.addEventListener("keypress", function (e) {
     if (e.key === 'Enter') handleGlucoseSubmit();
 });
 
-// --- FASE 3: DE TAP-GAME LOGICA ---
 function handleTap() {
     if (!isActionActive) return;
 
@@ -290,7 +254,6 @@ function handleTap() {
         tapBtn.style.background = "#10b981";
         tapBtn.textContent = "SUCCES!";
 
-        // Vertel de server dat de GSM de taak heeft volbracht
         fetch(`${SERVER}/complete_action`);
 
         setTimeout(() => {
