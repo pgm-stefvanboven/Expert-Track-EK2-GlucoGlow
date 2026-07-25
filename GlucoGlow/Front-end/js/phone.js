@@ -241,6 +241,10 @@ glucoseInput.addEventListener("keypress", function (e) {
     if (e.key === 'Enter') handleGlucoseSubmit();
 });
 
+glucoseInput.addEventListener('blur', function() {
+    window.scrollTo(0, 0);
+});
+
 function handleTap() {
     if (!isActionActive) return;
 
