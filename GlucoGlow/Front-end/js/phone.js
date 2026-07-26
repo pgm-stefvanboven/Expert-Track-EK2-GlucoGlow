@@ -3,6 +3,7 @@ const SERVER = "http://192.168.0.252:5000";
 let events = [];
 let currentEvent = 0;
 let wasPlaying = false;
+let isTransitioning = false;
 
 const waitingScreen = document.getElementById("waiting-screen");
 const chatContainer = document.getElementById("chat-container");
@@ -43,6 +44,8 @@ fetch("data/events.json")
     });
 
 function updateFromServer() {
+    if (isTransitioning) return;
+
     fetch(`${SERVER}/get_event`)
         .then(response => response.json())
         .then(data => {
@@ -255,6 +258,7 @@ function handleTap() {
 
     if (taps >= requiredTaps) {
         isActionActive = false;
+        isTransitioning = true;
         tapBtn.style.background = "#10b981";
         tapBtn.textContent = "SUCCES!";
 
@@ -264,6 +268,8 @@ function handleTap() {
             actionWidget.style.display = "none";
             normalChatBubble.style.opacity = "1";
             actionHintText.style.display = "block";
+
+            isTransitioning = false;
         }, 1500);
     }
 }
