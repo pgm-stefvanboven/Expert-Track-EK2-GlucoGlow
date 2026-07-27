@@ -171,8 +171,54 @@ function loadPhoneEvent() {
     const event = events[currentEvent];
     if (!event) return;
 
-    situationElement.textContent = event.title;
+    // 1. Selecteer de DOM elementen
+    const headerName = document.getElementById("header-name");
+    const headerAvatar = document.getElementById("header-avatar");
+    const dynamicHeader = document.getElementById("dynamic-header");
+    const headerStatusText = document.getElementById("header-status-text");
 
+    // 2. Bepaal de afzender (Source)
+    if (event.source === "mama") {
+        headerName.textContent = "Mama";
+        headerAvatar.textContent = "👩";
+        headerStatusText.textContent = "Online";
+    } else if (event.source === "school") {
+        headerName.textContent = "School";
+        headerAvatar.textContent = "🏫";
+        headerStatusText.textContent = "Melding";
+    } else if (event.source === "sensor") {
+        headerName.textContent = "Sensor Systeem";
+        headerAvatar.textContent = "📱";
+        headerStatusText.textContent = "Live Data";
+    } else {
+        // Fallback (Thomas)
+        headerName.textContent = "Thomas";
+        headerAvatar.textContent = "💬";
+        headerStatusText.textContent = "Online";
+    }
+
+    // 3. Bepaal de themaskleur (Theme)
+    const themeColors = {
+        "sport": "#15803d",       // Groen
+        "school": "#0369a1",      // Blauw
+        "party": "#7e22ce",       // Paars
+        "emergency": "#b91c1c",   // Rood
+        "travel": "#ca8a04",      // Geel/Oranje
+        "home": "#0f766e",        // Teal
+        "sick": "#c2410c",        // Warm oranje
+        "system": "#374151",      // Donkergrijs
+        "error": "#ef4444"        // Felrood
+    };
+
+    // Pak de kleur uit de lijst, of gebruik je standaard donkere kleur als fallback
+    const headerColor = themeColors[event.theme] || "#202c33";
+    dynamicHeader.style.backgroundColor = headerColor;
+
+    // 4. Update de situatie-tekst met het specifieke event-icoon
+    const eventIcon = event.icon ? `${event.icon} ` : "";
+    situationElement.innerHTML = `<b>${eventIcon}</b> ${event.title}`;
+
+    // --- Bestaande logica voor sidequests en pincodes ---
     if (event.type === "pincode") {
         document.getElementById("quest-title").textContent = event.questTitle;
         const cluesList = document.getElementById("phone-clues");

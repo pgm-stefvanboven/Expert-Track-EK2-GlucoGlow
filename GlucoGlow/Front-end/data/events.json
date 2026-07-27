@@ -1,11 +1,14 @@
 [
     {
         "id": 1,
-        "title": "Thomas moest sprinten voor de bus.",
+        "source": "thomas",
+        "title": "Ik moest keihard sprinten voor de bus!",
+        "icon": "🏃",
+        "theme": "sport",
         "minGlucose": 70,
         "maxGlucose": 110,
         "trend": "↓↓",
-        "feedback": "Door de inspanning verbruikten zijn spieren extra glucose. Een snelle suikerbron helpt een hypo voorkomen bij een snel dalende trend.",
+        "feedback": "✅ Oef, net op tijd! Je spieren verbruiken extra suiker bij het sprinten. Dit voorkomt een hypo.",
         "choices": [
             {
                 "text": "Geef Dextro",
@@ -13,12 +16,12 @@
                 "correct": true
             },
             {
-                "text": "Doe niets",
+                "text": "Wacht af tot hij weer rustig ademt",
                 "effect": -40,
                 "correct": false
             },
             {
-                "text": "Controleer sensor opnieuw",
+                "text": "Geef een vezelrijke koek",
                 "effect": -15,
                 "correct": false
             }
@@ -26,11 +29,14 @@
     },
     {
         "id": 2,
-        "title": "Thomas ziet op school dat zijn brooddoos leeg is, hij spoot wel reeds zijn insuline in.",
+        "source": "school",
+        "title": "Thomas is zijn lunch vergeten. Hij heeft zijn insuline al toegediend.",
+        "icon": "🏫",
+        "theme": "school",
         "minGlucose": 75,
         "maxGlucose": 130,
         "trend": "↓",
-        "feedback": "Zonder koolhydraten blijft de glucose dalen terwijl de insuline actief blijft.",
+        "feedback": "⚠ Dat was nipt! De insuline werkt al, dus er móét gegeten worden om een crash te voorkomen.",
         "choices": [
             {
                 "text": "Koop iets met koolhydraten",
@@ -38,12 +44,12 @@
                 "correct": true
             },
             {
-                "text": "Eet de vezelrijke koek uit je boekentas",
+                "text": "Wacht 15 minuten en kijk wat de waarde doet",
                 "effect": -25,
                 "correct": false
             },
             {
-                "text": "Wacht tot thuis",
+                "text": "Eet een suikervrije snack uit de automaat",
                 "effect": -45,
                 "correct": false
             }
@@ -51,11 +57,14 @@
     },
     {
         "id": 3,
-        "title": "Thomas krijgt onverwacht sportles.",
+        "source": "school",
+        "title": "Onverwacht een extra uur sportles.",
+        "icon": "⚽",
+        "theme": "sport",
         "minGlucose": 80,
         "maxGlucose": 140,
         "trend": "↓",
-        "feedback": "Sport verhoogt het glucoseverbruik. Extra koolhydraten kunnen nodig zijn om stabiel te blijven.",
+        "feedback": "💪 Slim! Sporten kost veel energie. Een snack vooraf houdt de suikerspiegel mooi stabiel.",
         "choices": [
             {
                 "text": "Neem een snack vooraf",
@@ -63,12 +72,12 @@
                 "correct": true
             },
             {
-                "text": "Doe niets",
+                "text": "Koppel de pomp tijdelijk volledig los",
                 "effect": -25,
                 "correct": false
             },
             {
-                "text": "Neem extra insuline",
+                "text": "Drink enkel water en begin aan de opwarming",
                 "effect": -35,
                 "correct": false
             }
@@ -76,24 +85,27 @@
     },
     {
         "id": 4,
-        "title": "Thomas voelt zich plots trillerig en begint te zweten.",
+        "source": "sensor",
+        "title": "Snelle daling gedetecteerd. Patiënt vertoont trillen en zweten.",
+        "icon": "🚨",
+        "theme": "emergency",
         "minGlucose": 50,
         "maxGlucose": 69,
         "trend": "↓↓",
-        "feedback": "Trillen en zweten zijn typische signalen van een hypo.",
+        "feedback": "🚑 Correct. Bij acute hyposignalen zijn snelle suikers onmiddellijk noodzakelijk.",
         "choices": [
             {
-                "text": "Geef snelwerkende suikers",
+                "text": "Geef direct snelwerkende suikers",
                 "effect": 50,
                 "correct": true
             },
             {
-                "text": "Laat hem rusten",
+                "text": "Wacht 15 minuten op de volgende meting",
                 "effect": -25,
                 "correct": false
             },
             {
-                "text": "Geef insuline",
+                "text": "Geef een glas water en laat de patiënt liggen",
                 "effect": -45,
                 "correct": false
             }
@@ -101,61 +113,70 @@
     },
     {
         "id": 5,
-        "title": "Thomas heeft veel stress voor een examen.",
+        "source": "thomas",
+        "title": "Ik ben zó zenuwachtig voor dit examen...",
+        "icon": "📚",
+        "theme": "school",
         "minGlucose": 140,
         "maxGlucose": 220,
         "trend": "↑",
-        "feedback": "Stress kan zorgen voor hoge glycemiewaarden doordat stresshormonen de glucose beïnvloeden. Eerst meten is cruciaal.",
+        "feedback": "👍 Goed meegedacht! Stress verhoogt de glucose. Eerst meten voorkomt dat je blind insuline bijspuit.",
         "choices": [
             {
-                "text": "Controleer de sensor",
+                "text": "Meet eerst zijn glucosewaarde",
                 "effect": 0,
                 "correct": true
             },
             {
-                "text": "Negeer de situatie",
+                "text": "Laat hem even rondwandelen om te kalmeren",
                 "effect": 20,
                 "correct": false
             },
             {
-                "text": "Geef Dextro zonder te meten",
-                "effect": 60,
+                "text": "Dien preventief een grote dosis insuline toe",
+                "effect": -60,
                 "correct": false
             }
         ]
     },
     {
         "id": 6,
-        "title": "Thomas drinkt enkele glazen droge schuimwijn op een feestje.",
+        "source": "thomas",
+        "title": "Ik heb op het feestje een paar glazen schuimwijn gedronken.",
+        "icon": "🥂",
+        "theme": "party",
         "minGlucose": 90,
         "maxGlucose": 150,
         "trend": "→",
-        "feedback": "Alcohol kan uren later een hypo veroorzaken doordat de lever minder glucose afgeeft.",
+        "feedback": "😌 Dat voorkomt problemen. Alcohol verhoogt later de kans op een hypo. Extra meten is cruciaal.",
         "choices": [
             {
-                "text": "Controleer extra tijdens de avond",
+                "text": "Controleer extra tijdens de avond en voor het slapen",
                 "effect": 0,
                 "correct": true
             },
             {
-                "text": "Doe niets",
-                "effect": -25,
+                "text": "Drink tussendoor energiedrankjes om wakker te blijven",
+                "effect": 35,
                 "correct": false
             },
             {
-                "text": "Neem extra insuline",
-                "effect": -35,
+                "text": "Spuit extra insuline voor de zoete smaak van de wijn",
+                "effect": -55,
                 "correct": false
             }
         ]
     },
     {
         "id": 7,
-        "title": "Thomas komt thuis na een drukke dag.",
+        "source": "mama",
+        "title": "Thomas heeft zo'n drukke dag gehad, ik hoop dat alles goed gaat.",
+        "icon": "🏠",
+        "theme": "home",
         "minGlucose": 80,
         "maxGlucose": 180,
         "trend": "→",
-        "feedback": "Regelmatig controleren helpt onverwachte schommelingen voorkomen.",
+        "feedback": "✅ Rust in de tent. Na een chaotische dag voorkomt een extra controle schommelingen in de nacht.",
         "choices": [
             {
                 "text": "Controleer zijn glucose",
@@ -163,24 +184,27 @@
                 "correct": true
             },
             {
-                "text": "Ga meteen slapen",
+                "text": "Wacht rustig tot de sensor zelf alarm slaat",
                 "effect": -30,
                 "correct": false
             },
             {
-                "text": "Neem insuline zonder meting",
-                "effect": -50,
+                "text": "Eet direct een stevige maaltijd om aan te sterken",
+                "effect": 40,
                 "correct": false
             }
         ]
     },
     {
         "id": 8,
-        "title": "Thomas heeft een lichte verkoudheid.",
+        "source": "thomas",
+        "title": "Ik voel me belabberd. Ik heb keelpijn en lichte koorts.",
+        "icon": "🤒",
+        "theme": "sick",
         "minGlucose": 100,
         "maxGlucose": 200,
         "trend": "↑",
-        "feedback": "Ziekte kan de glucose beïnvloeden. Extra controles zijn belangrijk.",
+        "feedback": "🩺 Verstandig. Ziekte maakt glucosewaarden onvoorspelbaar. Vaker meten is dan de enige oplossing.",
         "choices": [
             {
                 "text": "Controleer vaker zijn glucose",
@@ -188,37 +212,40 @@
                 "correct": true
             },
             {
-                "text": "Negeer de situatie",
+                "text": "Drink veel kruidenthee en meet morgenochtend weer",
                 "effect": 20,
                 "correct": false
             },
             {
-                "text": "Geef extra insuline zonder meting",
-                "effect": -60,
+                "text": "Verlaag de basale insuline preventief",
+                "effect": 40,
                 "correct": false
             }
         ]
     },
     {
         "id": 9,
-        "title": "Thomas heeft een feestje met veel zoetigheden.",
+        "source": "thomas",
+        "title": "Er is hier op het verjaardagsfeestje écht véél taart!",
+        "icon": "🍰",
+        "theme": "party",
         "minGlucose": 90,
         "maxGlucose": 160,
         "trend": "→",
-        "feedback": "Het is belangrijk om de inname van koolhydraten te controleren en de insuline aan te passen.",
+        "feedback": "🎉 Perfect opgelost. Zolang je de koolhydraten telt en de insuline aanpast, kan een stukje taart prima.",
         "choices": [
             {
-                "text": "Controleer zijn glucose en pas insuline aan",
+                "text": "Controleer de waarde en pas insuline aan op de taart",
                 "effect": 0,
                 "correct": true
             },
             {
-                "text": "Laat hem alles eten zonder controle",
-                "effect": 30,
+                "text": "Kies uitsluitend voor de suikervrije hapjes",
+                "effect": -20,
                 "correct": false
             },
             {
-                "text": "Geef extra insuline zonder meting",
+                "text": "Spuit vooraf blind een extra grote dosis insuline",
                 "effect": -50,
                 "correct": false
             }
@@ -226,31 +253,36 @@
     },
     {
         "id": 10,
-        "title": "Thomas heeft een lange autorit voor de boeg.",
+        "source": "mama",
+        "title": "Thomas, vergeet je snacks niet. We moeten drie uur rijden.",
+        "icon": "🚗",
+        "theme": "travel",
         "minGlucose": 80,
         "maxGlucose": 150,
         "trend": "→",
-        "feedback": "Tijdens lange ritten is het belangrijk om regelmatig te controleren en snacks bij de hand te hebben.",
+        "feedback": "🚗 Veilig op weg! Een hypo achter het stuur is levensgevaarlijk. Altijd meten voor vertrek.",
         "choices": [
             {
-                "text": "Controleer zijn glucose voor vertrek en neem snacks mee",
+                "text": "Controleer zijn glucose voor vertrek en leg snacks klaar",
                 "effect": 0,
                 "correct": true
             },
             {
-                "text": "Negeer de situatie en vertrek",
-                "effect": -30,
+                "text": "Neem voor de zekerheid een extra grote snack vooraf",
+                "effect": 40,
                 "correct": false
             },
             {
-                "text": "Geef extra insuline zonder meting",
-                "effect": -50,
+                "text": "Vertrek direct, onderweg kunnen we altijd nog stoppen",
+                "effect": -30,
                 "correct": false
             }
         ]
     },
     {
         "title": "POMP GEBLOKKEERD",
+        "icon": "🔒",
+        "theme": "system",
         "trend": "⚠",
         "type": "pincode",
         "pin": "6162",
@@ -263,6 +295,8 @@
     },
     {
         "title": "POMP GEBLOKKEERD",
+        "icon": "🔒",
+        "theme": "system",
         "trend": "⚠",
         "type": "pincode",
         "pin": "1515",
@@ -275,11 +309,13 @@
         ]
     },
     {
-        "title": "POMP GEBLOKKEERD",
+        "title": "SYSTEEM RESET",
+        "icon": "🔒",
+        "theme": "system",
         "trend": "⚠",
         "type": "pincode",
         "pin": "1234",
-        "questTitle": "SYSTEEM RESET",
+        "questTitle": "FABRIEKS OVERRIDE",
         "clues": [
             "Fabrieks-override vereist.",
             "Geef de standaard beveiligingscode in:",
@@ -288,6 +324,8 @@
     },
     {
         "title": "SENSOR OFFLINE! Geef code door: ROOD - GEEL - GROEN",
+        "icon": "📶",
+        "theme": "error",
         "trend": "⚠",
         "type": "sidequest",
         "code": [
@@ -298,6 +336,8 @@
     },
     {
         "title": "SENSOR OFFLINE! Geef code door: GROEN - ROOD - GEEL",
+        "icon": "📶",
+        "theme": "error",
         "trend": "⚠",
         "type": "sidequest",
         "code": [
@@ -308,6 +348,8 @@
     },
     {
         "title": "SENSOR OFFLINE! Geef code door: GEEL - GROEN - ROOD",
+        "icon": "📶",
+        "theme": "error",
         "trend": "⚠",
         "type": "sidequest",
         "code": [
