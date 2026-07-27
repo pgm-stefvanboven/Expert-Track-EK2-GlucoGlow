@@ -89,7 +89,7 @@ function updateFromServer() {
                 currentEvent = data.currentEvent;
                 diagnosisCompleted = false;
                 isActionActive = false;
-                waitingForPi = true;
+                waitingForPi = false;
 
                 actionWidget.style.display = "none";
                 earlyHoldWarning.style.display = "none";
