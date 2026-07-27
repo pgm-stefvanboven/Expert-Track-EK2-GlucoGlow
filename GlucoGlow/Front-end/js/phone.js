@@ -4,15 +4,19 @@ let events = [];
 let currentEvent = 0;
 let wasPlaying = false;
 let isTransitioning = false;
+let waitingForPi = false;
 
+// DOM ELEMENTS
 const waitingScreen = document.getElementById("waiting-screen");
 const chatContainer = document.getElementById("chat-container");
 const questScreen = document.getElementById("quest-screen");
 
+// Waiting screen elements
 const waitingSpinner = document.getElementById("waiting-spinner");
 const waitingTitle = document.getElementById("waiting-title");
 const waitingText = document.getElementById("waiting-text");
 
+// Phone screen elements
 const glucoseElement = document.getElementById("phone-glucose");
 const statusElement = document.getElementById("phone-status");
 const situationElement = document.getElementById("phone-situation");
@@ -20,6 +24,7 @@ const normalChatBubble = document.getElementById("normal-chat-bubble");
 const chatHistoryBox = document.getElementById("chat-history-box");
 const actionHintText = document.getElementById("action-hint-text");
 
+// Chat input elements
 const chatInputArea = document.getElementById("chat-input-area");
 const glucoseInput = document.getElementById("glucose-input");
 const sendGlucoseBtn = document.getElementById("send-glucose-btn");
@@ -28,6 +33,7 @@ const earlyHoldWarning = document.getElementById("early-hold-warning");
 let currentSecretGlucose = 0;
 let diagnosisCompleted = false;
 
+// Action widget elements
 const actionWidget = document.getElementById("action-widget");
 const actionProgress = document.getElementById("action-progress");
 const tapBtn = document.getElementById("tapBtn");
@@ -36,6 +42,7 @@ let isActionActive = false;
 let taps = 0;
 const requiredTaps = 10;
 
+// Load events from JSON file
 fetch("data/events.json")
     .then(response => response.json())
     .then(data => {
@@ -43,6 +50,7 @@ fetch("data/events.json")
         setInterval(updateFromServer, 500);
     });
 
+// Update the phone screen based on server data
 function updateFromServer() {
     if (isTransitioning) return;
 
@@ -76,16 +84,21 @@ function updateFromServer() {
             waitingText.textContent = "Wachten op connectie met spelsysteem...";
             waitingScreen.style.display = "none";
 
-            // HARD RESET: Check direct of het grote scherm naar een nieuw event is gesprongen
+            // 1. HARD RESET: Check right away to see if the PI screen has switched to a new event
             if (data.currentEvent !== currentEvent) {
                 currentEvent = data.currentEvent;
                 diagnosisCompleted = false;
                 isActionActive = false;
+                waitingForPi = true;
+
                 actionWidget.style.display = "none";
                 earlyHoldWarning.style.display = "none";
                 chatInputArea.style.display = "flex";
                 document.querySelectorAll(".dynamic-bubble").forEach(el => el.remove());
             }
+
+            // 2. Wait for the PI screen to confirm that the action is complete
+            if (waitingForPi) return;
 
             if (data.activeQuest === "pincode" || (events[currentEvent] && events[currentEvent].type === "pincode")) {
                 chatContainer.style.display = "none";
@@ -259,6 +272,9 @@ function handleTap() {
     if (taps >= requiredTaps) {
         isActionActive = false;
         isTransitioning = true;
+        waitingForPi = true;
+
+
         tapBtn.style.background = "#10b981";
         tapBtn.textContent = "SUCCES!";
 
