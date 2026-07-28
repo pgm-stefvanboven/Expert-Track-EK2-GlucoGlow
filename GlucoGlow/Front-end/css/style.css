@@ -10,7 +10,6 @@ body {
     touch-action: manipulation;
     box-sizing: border-box;
     background: #081018;
-    /* Diepere medische dashboard kleur */
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
@@ -148,12 +147,18 @@ button {
     max-width: 92vw;
     max-height: 92vh;
     overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     padding: 22px 30px;
     border-radius: 12px;
     background: #0a1118;
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
     text-align: center;
+}
+
+.team-card::-webkit-scrollbar {
+    display: none;
 }
 
 .team-card h2 {
@@ -244,6 +249,10 @@ button {
 .keyboard-actions #teamOkBtn {
     background: #3b82f6;
     /* Blauwe accentkleur voor de OK knop */
+}
+
+.keyboard-actions #teamOkBtn:active {
+    background: #2563eb;
 }
 
 /* =========================================
@@ -511,8 +520,7 @@ button {
 
 /* BIG BUTTONS */
 #startBtn,
-#nextBtn,
-#teamOkBtn {
+#nextBtn {
     background: #3b82f6;
     color: white;
     border: none;
@@ -526,8 +534,7 @@ button {
 }
 
 #startBtn:active,
-#nextBtn:active,
-#teamOkBtn:active {
+#nextBtn:active {
     background: #2563eb;
 }
 
