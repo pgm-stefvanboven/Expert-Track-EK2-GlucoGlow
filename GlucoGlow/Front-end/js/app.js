@@ -139,21 +139,24 @@ function formatTeamName(name) {
 
 function updateGlucoseDisplay() {
     if (isGlucoseVisible) {
+        glucoseElement.classList.remove('scan-active');
         glucoseElement.textContent = glucose;
+
         if (glucose <= 75) {
-            glucoseElement.style.color = "#ef4444";
-            glucoseElement.style.textShadow = "0 0 15px rgba(239, 68, 68, 0.8)";
+            glucoseElement.style.color = "#dc4b52";
+            glucoseElement.style.textShadow = "0 0 15px rgba(220, 75, 82, 0.6)";
         } else if (glucose >= 160) {
-            glucoseElement.style.color = "#f59e0b";
-            glucoseElement.style.textShadow = "0 0 15px rgba(245, 158, 11, 0.8)";
+            glucoseElement.style.color = "#eab308";
+            glucoseElement.style.textShadow = "0 0 15px rgba(234, 179, 8, 0.6)";
         } else {
-            glucoseElement.style.color = "#10b981";
-            glucoseElement.style.textShadow = "0 0 15px rgba(16, 185, 129, 0.8)";
+            glucoseElement.style.color = "#16c784";
+            glucoseElement.style.textShadow = "0 0 15px rgba(22, 199, 132, 0.6)";
         }
     } else {
         glucoseElement.textContent = "SCAN";
-        glucoseElement.style.color = "#00a884";
-        glucoseElement.style.textShadow = "0 0 15px rgba(0, 168, 132, 0.6)";
+        glucoseElement.style.color = "";
+        glucoseElement.style.textShadow = "";
+        glucoseElement.classList.add('scan-active'); // Voegt de pulserende glow toe
     }
 }
 
@@ -426,12 +429,10 @@ function triggerPincodeQuest() {
 }
 
 function loadEvent(event) {
-    // 1. Vul de tekst en iconen in
     situationElement.textContent = event.title;
     piIcon.textContent = event.icon || "⚠";
     piThemeText.textContent = (event.theme || "MELDING").toUpperCase();
 
-    // 2. Bepaal de afzender
     if (event.source === "mama") {
         piSourceLabel.textContent = "👩 MAMA";
     } else if (event.source === "school") {
@@ -442,21 +443,22 @@ function loadEvent(event) {
         piSourceLabel.textContent = "💬 THOMAS";
     }
 
-    // 3. Geef het streepje de juiste themaskleur
+    // Thema kleur nu op de linker border (border-left)
     const themeColors = {
-        "sport": "#15803d",
-        "school": "#0369a1",
-        "party": "#7e22ce",
-        "emergency": "#ef4444",
-        "travel": "#ca8a04",
-        "home": "#0f766e",
-        "sick": "#c2410c",
+        "sport": "#16c784",
+        "school": "#3b82f6",
+        "party": "#9333ea",
+        "emergency": "#dc4b52",
+        "travel": "#eab308",
+        "home": "#06b6d4",
+        "sick": "#ea580c",
         "system": "#8b5cf6",
-        "error": "#ef4444"
+        "error": "#dc4b52"
     };
-    piHeader.style.borderBottomColor = themeColors[event.theme] || "#ffffff";
 
-    // SHUFFLE DE KNOPPEN! Rood is niet altijd correct meer.
+    // Voegt de gekleurde balk toe aan de linkerkant
+    piHeader.style.borderLeftColor = themeColors[event.theme] || "#ffffff";
+
     currentShuffledChoices = [...event.choices];
     currentShuffledChoices.sort(() => Math.random() - 0.5);
 

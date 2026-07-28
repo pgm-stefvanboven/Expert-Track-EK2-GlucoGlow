@@ -43,7 +43,6 @@
 
     <!-- SPEL -->
     <div id="game-container">
-        <h1>GLUCOGLOW</h1>
         <div id="top-bar">
             <div id="glucose-container">
                 <span class="label">Glucose</span>
@@ -55,47 +54,32 @@
             </div>
         </div>
 
-        <div id="pi-header"
-            style="border-bottom: 4px solid white; padding-bottom: 10px; margin-bottom: 15px; width: 100%;">
-            <h2 id="pi-theme-title" style="text-transform: uppercase; letter-spacing: 2px; margin: 0;">
+        <div id="pi-header">
+            <h2 id="pi-theme-title">
                 <span id="pi-icon">🏃</span> <span id="pi-theme-text">SPORT</span>
             </h2>
         </div>
 
-        <div id="pi-content" style="margin-bottom: 30px; width: 100%; padding-top: 15px;">
-            <h3 id="pi-source-label" style="color: #a0aec0; font-size: 1.2rem; margin: 0 0 15px 0;">💬 THOMAS</h3>
-            <p id="pi-situation-text" style="font-size: 2rem; margin: 0; font-weight: bold; line-height: 1.3;"></p>
+        <div id="pi-content">
+            <h3 id="pi-source-label">💬 THOMAS</h3>
+            <p id="pi-situation-text"></p>
         </div>
 
-        <div id="choices" style="display: flex; gap: 20px; align-items: stretch; width: 100%;">
-            <div id="redBtn" class="choice-box"
-                style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px;">
-            </div>
-            <div id="yellowBtn" class="choice-box"
-                style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px;">
-            </div>
-            <div id="greenBtn" class="choice-box"
-                style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px;">
-            </div>
+        <div id="choices">
+            <div id="redBtn" class="choice-box"></div>
+            <div id="yellowBtn" class="choice-box"></div>
+            <div id="greenBtn" class="choice-box"></div>
         </div>
 
-        <div id="quest-overlay"
-            style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(11, 20, 26, 0.95); z-index: 100; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(5px);">
-            <div
-                style="background-color: #1e293b; padding: 30px; border-radius: 20px; border: 2px solid #ef4444; box-shadow: 0 0 50px rgba(239, 68, 68, 0.4); width: 90%; max-width: 500px;">
-                <h2 style="color: #ef4444; font-size: 1.5rem; margin-top: 0; text-transform: uppercase;">POMP
-                    VERGRENDELD</h2>
-                <div id="quest-timer-display"
-                    style="font-size: 2.8rem; color: #ef4444; font-weight: bold; margin: 10px 0; font-family: monospace;">
-                    90</div>
-                <div id="pinDisplay"
-                    style="font-size: 2rem; padding: 10px; width: 200px; margin: 0 auto 20px auto; text-align: center; border-radius: 10px; border: 2px solid #334155; background: #0f172a; color: #38bdf8; letter-spacing: 10px; font-family: monospace; min-height: 55px;">
-                </div>
-                <p id="pinFeedback"
-                    style="color: #f59e0b; font-weight: bold; height: 20px; margin: 0 0 15px 0; font-size: 1.1rem;"></p>
+        <!-- SIDEQUEST OVERLAY -->
+        <div id="quest-overlay">
+            <div class="quest-box">
+                <h2>POMP VERGRENDELD</h2>
+                <div id="quest-timer-display">90</div>
+                <div id="pinDisplay"></div>
+                <p id="pinFeedback"></p>
 
-                <div id="numpad"
-                    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 240px; margin: 0 auto;">
+                <div id="numpad">
                     <button class="num-btn" onclick="addPin('1')">1</button>
                     <button class="num-btn" onclick="addPin('2')">2</button>
                     <button class="num-btn" onclick="addPin('3')">3</button>
@@ -105,32 +89,14 @@
                     <button class="num-btn" onclick="addPin('7')">7</button>
                     <button class="num-btn" onclick="addPin('8')">8</button>
                     <button class="num-btn" onclick="addPin('9')">9</button>
-                    <button class="num-btn clear-btn" onclick="clearPin()" style="background-color: #ef4444;">C</button>
+                    <button class="num-btn clear-btn" onclick="clearPin()">C</button>
                     <button class="num-btn" onclick="addPin('0')">0</button>
-                    <button class="num-btn submit-btn" onclick="submitPin()"
-                        style="background-color: #10b981;">OK</button>
+                    <button class="num-btn submit-btn" onclick="submitPin()">OK</button>
                 </div>
             </div>
         </div>
 
-        <style>
-            .num-btn {
-                background-color: #334155;
-                color: white;
-                font-size: 1.3rem;
-                padding: 10px;
-                border: none;
-                border-radius: 10px;
-                cursor: pointer;
-                font-weight: bold;
-            }
-
-            .num-btn:active {
-                background-color: #475569;
-                transform: scale(0.95);
-            }
-        </style>
-
+        <!-- FEEDBACK SCHERM -->
         <div id="feedback-card">
             <h2 id="feedback-status"></h2>
             <p id="feedback-text"></p>

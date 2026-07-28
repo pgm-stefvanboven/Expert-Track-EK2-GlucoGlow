@@ -7,33 +7,10 @@ body {
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
-    -webkit-touch-callout: none;
-    -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
-}
-
-* {
-    user-select: none;
-    -webkit-user-select: none;
     box-sizing: border-box;
-}
-
-button {
-    outline: none;
-}
-
-img {
-    pointer-events: none;
-    -webkit-user-drag: none;
-}
-
-/* =========================================
-   2. BASIC STYLING
-========================================= */
-body {
-    margin: 0;
-    background: #05080f;
-    /* Dieper zwart/blauw voor buiten de game */
+    background: #081018;
+    /* Diepere medische dashboard kleur */
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
@@ -42,16 +19,19 @@ body {
     min-height: 100vh;
 }
 
-#start-screen,
-#game-container,
-#end-screen,
-#team-overlay {
-    display: none;
-    /* Standaard verborgen, JS regelt de rest */
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+button {
+    outline: none;
+    font-family: inherit;
 }
 
 /* =========================================
-   3. CONTAINERS (STRICT 800x400)
+   2. CONTAINERS
 ========================================= */
 #start-screen,
 #game-container,
@@ -59,59 +39,199 @@ body {
     width: 800px;
     height: 400px;
     background: #0a1118;
-    /* Donkerblauwe achtergrond zoals in mock-up */
-    border: 2px solid #1e3a8a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
-    box-shadow: 0 0 20px rgba(30, 58, 138, 0.3);
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
     position: relative;
-    display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 20px 40px;
+    display: none;
 }
 
-/* =========================================
-   4. STARTSCHERM & EINDSCHERM
-========================================= */
-#start-screen,
-#end-screen {
+#start-screen {
+    display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
     text-align: center;
 }
 
-#start-screen h1,
-#game-container h1 {
-    font-size: 2.2rem;
+/* =========================================
+   STARTSCHERM & GLOW EFFECT
+========================================= */
+#start-screen h1 {
+    font-size: 4rem;
     margin: 0 0 10px 0;
-    color: #60a5fa;
-    text-shadow: 0 0 12px rgba(96, 165, 250, 0.7);
+    color: #ffffff;
+    text-shadow:
+        0 0 10px rgba(255, 255, 255, 0.8),
+        0 0 20px #60a5fa,
+        0 0 40px #3b82f6,
+        0 0 60px #1d4ed8;
     letter-spacing: 3px;
     text-transform: uppercase;
 }
 
-#start-screen h1 {
-    font-size: 3rem;
+.intro-text {
+    font-size: 1.15rem;
+    margin: 0;
+    color: #e5e7eb;
+}
+
+.roles {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 1.1rem;
+    margin: 15px 0;
+    color: #cbd5e1;
+}
+
+.roles p {
+    margin: 0;
+}
+
+#highscore-box {
+    margin: 10px 0 15px 0;
+    font-size: 1.1rem;
+    color: #94a3b8;
 }
 
 /* =========================================
-   5. GAMESCREEN LAYOUT
+   TEAM OVERLAY & TOETSENBORD
 ========================================= */
-#game-container {
-    justify-content: space-between;
-    /* Verdeelt de elementen mooi over de 400px hoogte */
+#team-overlay {
+    display: none;
+    /* Wordt via JS op 'flex' gezet */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(8, 16, 24, 0.95);
+    justify-content: center;
     align-items: center;
+    z-index: 200;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
 }
 
+.team-card {
+    width: 460px;
+    padding: 30px;
+    border-radius: 12px;
+    background: #0a1118;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    text-align: center;
+}
+
+.team-card h2 {
+    margin-top: 0;
+    color: #93c5fd;
+    letter-spacing: 2px;
+}
+
+#teamDisplayContainer {
+    position: relative;
+    width: 100%;
+    margin: 20px auto;
+}
+
+#teamDisplay {
+    width: 100%;
+    min-height: 55px;
+    background: #111827;
+    border: 2px solid #3b82f6;
+    border-radius: 8px;
+    color: white;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    letter-spacing: 2px;
+}
+
+#charCounter {
+    position: absolute;
+    top: 18px;
+    right: 15px;
+    font-size: 0.85rem;
+    color: #9ca3af;
+}
+
+#teamFeedback {
+    height: 20px;
+    margin: 8px 0 0 0;
+    color: #ef4444;
+    font-size: 0.95rem;
+    font-weight: bold;
+}
+
+/* Toetsenbord Grid */
+#keyboard {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.key {
+    background: #1f2937;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 12px 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.1s, transform 0.1s;
+}
+
+.key:active {
+    background: #374151;
+    transform: scale(0.92);
+}
+
+.keyboard-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.keyboard-actions button {
+    background: #1f2937;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.keyboard-actions button:active {
+    transform: scale(0.95);
+}
+
+.keyboard-actions #teamOkBtn {
+    background: #3b82f6;
+    /* Blauwe accentkleur voor de OK knop */
+    padding: 12px 40px;
+}
+
+/* =========================================
+   3. TOP BAR & DASHBOARD
+========================================= */
 #top-bar {
-    width: 90%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
-    background: #111827;
-    padding: 8px 30px;
-    border-radius: 10px;
-    border: 1px solid #1f2937;
-    margin-bottom: 10px;
+    background: linear-gradient(180deg, #172033, #101827);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.35);
+    padding: 15px 28px;
+    border-radius: 12px;
+    margin-bottom: 30px;
 }
 
 #glucose-container,
@@ -127,359 +247,255 @@ body {
     color: #9ca3af;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
+}
+
+#glucose,
+#timer {
+    font-size: 2.7rem;
+    font-weight: bold;
+    line-height: 1;
 }
 
 #glucose {
-    font-size: 2.5rem;
-    font-weight: bold;
+    letter-spacing: 2px;
     color: #10b981;
-    /* Default groen voor SCAN */
-    text-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
-    line-height: 1;
 }
 
 #timer {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #facc15;
-    text-shadow: 0 0 15px rgba(250, 204, 21, 0.6);
-    line-height: 1;
+    color: #eab308;
 }
 
-/* Headers en Tekst in de game */
+/* SCAN Animatie */
+.scan-active {
+    color: #ffffff !important;
+    animation: scanGlow 1.2s infinite;
+}
+
+@keyframes scanGlow {
+    0% {
+        text-shadow: 0 0 5px #00ffc8;
+    }
+
+    50% {
+        text-shadow: 0 0 20px #00ffc8, 0 0 35px #00ffc8;
+    }
+
+    100% {
+        text-shadow: 0 0 5px #00ffc8;
+    }
+}
+
+/* =========================================
+   4. CONTENT HIERARCHIE
+========================================= */
 #pi-header {
-    width: 90%;
-    border-bottom: 3px solid #15803d;
-    /* Groene lijn zoals mock-up, JS overschrijft dit evt */
-    padding-bottom: 8px;
-    margin-bottom: 10px;
+    width: 100%;
+    border-left: 6px solid transparent;
+    /* Wordt via JS ingevuld */
+    padding-left: 12px;
+    margin-bottom: 24px;
     display: flex;
     align-items: center;
 }
 
 #pi-theme-title {
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1rem;
+    font-weight: 600;
     letter-spacing: 2px;
     color: #f3f4f6;
     margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    text-transform: uppercase;
 }
 
 #pi-content {
-    width: 90%;
-    margin-bottom: 15px;
-    flex-grow: 1;
-    /* Neemt resterende ruimte in */
+    width: 100%;
+    margin-bottom: 30px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: flex-start;
 }
 
 #pi-source-label {
     color: #9ca3af;
-    font-size: 1rem;
-    margin: 0 0 5px 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.7;
+    margin: 0 0 16px 0;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 #pi-situation-text {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.25;
+    max-width: 90%;
     margin: 0;
-    font-weight: bold;
-    line-height: 1.3;
     color: #ffffff;
 }
 
 /* =========================================
-   6. CHOICEBOXES (KEUZEKNOPPEN)
+   5. KEUZEKNOPPEN
 ========================================= */
 #choices {
     display: flex;
-    gap: 15px;
-    width: 90%;
-    justify-content: center;
-    height: 80px;
-    /* Vaste hoogte voor uniformiteit */
+    gap: 18px;
+    width: 100%;
+    align-items: stretch;
 }
 
 .choice-box {
     flex: 1;
+    height: 95px;
+    border-radius: 12px;
+    padding: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 10px 15px;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    transition: transform 0.1s ease, filter 0.1s ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    transition: transform 0.15s, filter 0.15s;
 }
 
 .choice-box:active {
     transform: scale(0.97);
-    filter: brightness(0.9);
+    filter: brightness(0.92);
 }
 
 #redBtn {
-    background: #ef4444;
-    /* Vlakke kleur i.p.v. gradient */
+    background: #dc4b52;
     color: white;
 }
 
 #yellowBtn {
-    background: #facc15;
-    color: #000000;
-    /* Zwarte tekst voor betere leesbaarheid op geel */
+    background: #eab308;
+    color: #111827;
 }
 
 #greenBtn {
-    background: #10b981;
+    background: #16c784;
     color: white;
 }
 
 /* =========================================
-   7. BIG BUTTONS (START, VOLGENDE)
+   6. OVERLAYS & COMPONENTEN
 ========================================= */
+#quest-overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(11, 20, 26, 0.95);
+    z-index: 100;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.quest-box {
+    background-color: #1e293b;
+    padding: 30px;
+    border-radius: 12px;
+    border: 2px solid #ef4444;
+    box-shadow: 0 0 50px rgba(239, 68, 68, 0.4);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.quest-box h2 {
+    color: #ef4444;
+    font-size: 1.5rem;
+    margin-top: 0;
+    text-transform: uppercase;
+}
+
+#quest-timer-display {
+    font-size: 2.8rem;
+    color: #ef4444;
+    font-weight: bold;
+    margin: 10px 0;
+    font-family: monospace;
+}
+
+#pinDisplay {
+    font-size: 2rem;
+    padding: 10px;
+    width: 200px;
+    margin: 0 auto 20px auto;
+    border-radius: 12px;
+    border: 2px solid #334155;
+    background: #0f172a;
+    color: #38bdf8;
+    letter-spacing: 10px;
+    font-family: monospace;
+    min-height: 55px;
+}
+
+.num-btn {
+    background-color: #334155;
+    color: white;
+    font-size: 1.3rem;
+    padding: 10px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.num-btn:active {
+    background-color: #475569;
+    transform: scale(0.95);
+}
+
+.clear-btn {
+    background-color: #dc4b52;
+}
+
+.submit-btn {
+    background-color: #16c784;
+}
+
+#numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 240px;
+    margin: 0 auto;
+}
+
+#pinFeedback {
+    color: #f59e0b;
+    font-weight: bold;
+    height: 20px;
+    margin: 0 0 15px 0;
+}
+
+/* BIG BUTTONS */
 #startBtn,
 #nextBtn,
 #teamOkBtn {
-    background: #2563eb;
+    background: #3b82f6;
     color: white;
     border: none;
-    border-radius: 8px;
-    padding: 12px 40px;
-    font-size: 1.2rem;
+    border-radius: 12px;
+    padding: 12px 55px;
+    font-size: 1.25rem;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     transition: background 0.2s;
+    margin-top: 10px;
 }
 
 #startBtn:active,
 #nextBtn:active,
 #teamOkBtn:active {
-    background: #1d4ed8;
-    transform: translateY(2px);
-}
-
-/* =========================================
-   TEAM OVERLAY
-========================================= */
-
-#team-overlay {
-    display: none;
-
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    width: 800px;
-    height: 400px;
-
-    background: rgba(13, 17, 23, 0.95);
-
-    justify-content: center;
-    align-items: center;
-
-    z-index: 200;
-}
-
-.team-card {
-    width: 420px;
-
-    padding: 30px;
-
-    border-radius: 15px;
-
-    background: #1f2937;
-
-    border: 2px solid #3b82f6;
-
-    text-align: center;
-}
-
-.team-card h2 {
-    margin-top: 0;
-    color: #60a5fa;
-}
-
-#teamNameInput {
-    width: 90%;
-
-    padding: 12px;
-
-    margin: 20px 0;
-
-    font-size: 1.2rem;
-
-    border-radius: 8px;
-
-    border: 2px solid #3b82f6;
-
-    background: #111827;
-
-    color: white;
-
-    text-align: center;
-}
-
-#teamOkBtn {
     background: #2563eb;
-
-    color: white;
-
-    border: none;
-
-    border-radius: 8px;
-
-    padding: 12px 40px;
-
-    font-size: 1.2rem;
-
-    cursor: pointer;
-}
-
-#teamDisplayContainer {
-    position: relative;
-    width: 320px;
-    margin: 15px auto;
-}
-
-#charCounter {
-    position: absolute;
-
-    top: 12px;
-    right: 10px;
-
-    font-size: .8rem;
-    color: #9ca3af;
-}
-
-#teamFeedback {
-    height: 20px;
-    margin: 8px 0;
-
-    color: #ef4444;
-
-    font-size: .95rem;
-
-    font-weight: bold;
-
-    text-align: center;
-}
-
-#teamDisplay {
-    width: 320px;
-    min-height: 45px;
-
-    background: #111827;
-    border: 2px solid #3b82f6;
-    border-radius: 8px;
-
-    margin: 15px auto;
-
-    color: white;
-    font-size: 1.4rem;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#keyboard {
-    display: grid;
-
-    grid-template-columns: repeat(7, 1fr);
-
-    gap: 8px;
-
-    width: 340px;
-
-    margin: 20px auto;
-}
-
-.key {
-    background: #334155;
-
-    color: white;
-
-    border: none;
-
-    border-radius: 8px;
-
-    padding: 12px;
-
-    font-size: 1rem;
-
-    cursor: pointer;
-}
-
-.key:active {
-    background: #475569;
-}
-
-.keyboard-actions {
-    display: flex;
-
-    justify-content: center;
-
-    gap: 10px;
-
-    margin-top: 15px;
-}
-
-.keyboard-actions button {
-    padding: 10px 20px;
-
-    font-size: 1rem;
-
-    border: none;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-}
-
-/* =========================================
-   8. FLOATING FEEDBACK CARD (POP-UP)
-========================================= */
-#feedback-card {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 75%;
-    background: #111827;
-    border: 2px solid #93c5fd;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-    text-align: center;
-
-    /* Floating overlay styling */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -40%);
-    z-index: 10;
-}
-
-#feedback-status {
-    margin: 0 0 10px 0;
-    font-size: 1.5rem;
-    letter-spacing: 1px;
-}
-
-#feedback-text {
-    font-size: 1.1rem;
-    color: #e5e7eb;
-    margin: 0 0 15px 0;
-    line-height: 1.4;
 }
