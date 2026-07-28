@@ -46,7 +46,11 @@ const teamFeedback = document.getElementById("teamFeedback");
 const gameContainer = document.getElementById("game-container");
 const glucoseElement = document.getElementById("glucose");
 const timerElement = document.getElementById("timer");
-const situationElement = document.getElementById("situation");
+const situationElement = document.getElementById("pi-situation-text");
+const piHeader = document.getElementById("pi-header");
+const piIcon = document.getElementById("pi-icon");
+const piThemeText = document.getElementById("pi-theme-text");
+const piSourceLabel = document.getElementById("pi-source-label");
 const choicesContainer = document.getElementById("choices");
 const redBtn = document.getElementById("redBtn");
 const yellowBtn = document.getElementById("yellowBtn");
@@ -422,7 +426,35 @@ function triggerPincodeQuest() {
 }
 
 function loadEvent(event) {
+    // 1. Vul de tekst en iconen in
     situationElement.textContent = event.title;
+    piIcon.textContent = event.icon || "⚠";
+    piThemeText.textContent = (event.theme || "MELDING").toUpperCase();
+
+    // 2. Bepaal de afzender
+    if (event.source === "mama") {
+        piSourceLabel.textContent = "👩 MAMA";
+    } else if (event.source === "school") {
+        piSourceLabel.textContent = "🏫 SCHOOL";
+    } else if (event.source === "sensor") {
+        piSourceLabel.textContent = "📱 SENSOR";
+    } else {
+        piSourceLabel.textContent = "💬 THOMAS";
+    }
+
+    // 3. Geef het streepje de juiste themaskleur
+    const themeColors = {
+        "sport": "#15803d",
+        "school": "#0369a1",
+        "party": "#7e22ce",
+        "emergency": "#ef4444",
+        "travel": "#ca8a04",
+        "home": "#0f766e",
+        "sick": "#c2410c",
+        "system": "#8b5cf6",
+        "error": "#ef4444"
+    };
+    piHeader.style.borderBottomColor = themeColors[event.theme] || "#ffffff";
 
     // SHUFFLE DE KNOPPEN! Rood is niet altijd correct meer.
     currentShuffledChoices = [...event.choices];

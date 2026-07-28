@@ -113,53 +113,47 @@ function updateFromServer() {
 
             currentSecretGlucose = data.glucose;
 
-            if (diagnosisCompleted) {
-                glucoseElement.textContent = currentSecretGlucose;
-                if (data.glucose <= 75) {
-                    glucoseElement.style.color = "#ef4444";
-                    statusElement.style.color = "#ef4444";
-                } else if (data.glucose >= 160) {
-                    glucoseElement.style.color = "#f59e0b";
-                    statusElement.style.color = "#f59e0b";
-                } else {
-                    glucoseElement.style.color = "#00a884";
-                    statusElement.style.color = "#00a884";
-                }
-            } else {
-                glucoseElement.textContent = "???";
-                glucoseElement.style.color = "#e9edef";
-                statusElement.textContent = "⚠ VRAAG DATA AAN PATIËNT";
-                statusElement.style.color = "#f59e0b";
-            }
+            // CO-OP ACTIE
 
-            // CO-OP WAARSCHUWING EN ACTIE
             if (data.held_button !== -1 && !data.action_completed) {
+
                 if (diagnosisCompleted) {
+
                     earlyHoldWarning.style.display = "none";
+
                     if (!isActionActive) {
                         isActionActive = true;
                         taps = 0;
                         actionProgress.style.width = "0%";
                         tapBtn.textContent = `TAP (0/${requiredTaps})`;
-                        tapBtn.style.background = "linear-gradient(180deg, #34d399 0%, #059669 100%)";
+                        tapBtn.style.background =
+                            "linear-gradient(180deg, #34d399 0%, #059669 100%)";
 
                         normalChatBubble.style.opacity = "0.5";
                         actionWidget.style.display = "block";
                         actionHintText.style.display = "none";
+
                         chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
                     }
+
                 } else {
+
                     earlyHoldWarning.style.display = "block";
                     chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
+
                 }
+
             } else {
+
                 earlyHoldWarning.style.display = "none";
+
                 if (isActionActive) {
                     isActionActive = false;
                     actionWidget.style.display = "none";
                     normalChatBubble.style.opacity = "1";
                     actionHintText.style.display = "block";
                 }
+
             }
 
             loadPhoneEvent();
