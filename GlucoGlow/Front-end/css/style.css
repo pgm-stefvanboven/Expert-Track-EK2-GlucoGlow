@@ -56,6 +56,9 @@ button {
     align-items: center;
     text-align: center;
     gap: 14px;
+    height: auto;
+    min-height: 400px;
+    padding: 40px 40px 35px 40px;
     background: radial-gradient(circle, #111827 0%, #05080f 100%);
 }
 
@@ -92,14 +95,35 @@ button {
 }
 
 #highscore-box {
-    font-size: 1.15rem;
-    font-weight: bold;
-    color: #93c5fd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
     margin: 6px 0 0 0;
-    padding: 10px 26px;
+    padding: 18px 32px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 12px;
     border: 1px solid rgba(147, 197, 253, 0.3);
+}
+
+.highscore-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #93c5fd;
+}
+
+.highscore-name {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #e5e7eb;
+}
+
+.highscore-points {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #facc15;
 }
 
 /* =========================================

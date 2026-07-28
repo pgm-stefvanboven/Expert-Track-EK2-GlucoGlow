@@ -87,6 +87,10 @@ fetch("data/events.json?v=" + new Date().getTime())
 fetch(`${SERVER}/get_highscore`)
     .then(response => response.json())
     .then(data => {
+        if (!highscoreNameElement || !highscorePointsElement) {
+            console.warn("Highscore elements niet gevonden in de HTML (highscoreName / highscorePoints).");
+            return;
+        }
         highscoreNameElement.textContent = data.team;
         highscorePointsElement.textContent = data.highscore;
     });
