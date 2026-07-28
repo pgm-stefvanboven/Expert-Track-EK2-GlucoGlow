@@ -77,7 +77,7 @@ const endTitle = document.getElementById("end-title");
 const endMessage = document.getElementById("end-message");
 const endScore = document.getElementById("end-score");
 
-const bannedWords = ["fuck", "fck", "shit", "bitch", "porno", "sex", "seks", "kut", "lul", "kanker", "kkr", "homo", "hoer", "slet", "wijf", "seksueel", "sexywijf", "gay", "nigger", "nigga", "hitler", "nazi", "kaka"];
+const bannedWords = ["fuck", "fck", "shit", "bitch", "porno", "sex", "seks", "kut", "lul", "kanker", "kkr", "homo", "hoer", "slet", "wijf", "seksueel", "sexywijf", "gay", "nigger", "nigga", "hitler", "nazi", "kaka", "Loser", "loser", ];
 
 // LOADING DATA
 fetch("data/events.json?v=" + new Date().getTime())
