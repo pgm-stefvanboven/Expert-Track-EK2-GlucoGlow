@@ -46,13 +46,16 @@ button {
     flex-direction: column;
     padding: 20px 40px;
     display: none;
+    overflow: hidden;
 }
 
 #start-screen {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
+    background: radial-gradient(circle, #111827 0%, #05080f 100%);
 }
 
 /* =========================================
@@ -101,17 +104,15 @@ button {
 ========================================= */
 #team-overlay {
     display: none;
-    /* Wordt via JS op 'flex' gezet */
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: rgba(8, 16, 24, 0.95);
     justify-content: center;
     align-items: center;
     z-index: 200;
-    border-radius: 12px;
     backdrop-filter: blur(4px);
 }
 
@@ -138,17 +139,11 @@ button {
 }
 
 #teamDisplay {
-    width: 100%;
-    min-height: 55px;
-    background: #111827;
+    background: #0f172a;
     border: 2px solid #3b82f6;
-    border-radius: 8px;
-    color: white;
-    font-size: 1.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    letter-spacing: 2px;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+    height: 60px;
+    font-size: 1.8rem;
 }
 
 #charCounter {
@@ -176,20 +171,20 @@ button {
 }
 
 .key {
-    background: #1f2937;
+    background: #334155;
+    padding: 14px 0;
+    font-size: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 5px 0 #0f172a;
+    transition: all 0.1s;
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 6px;
-    padding: 12px 0;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.1s, transform 0.1s;
 }
 
 .key:active {
-    background: #374151;
-    transform: scale(0.92);
+    background: #475569;
+    transform: translateY(5px);
+    box-shadow: 0 0 0 #0f172a;
 }
 
 .keyboard-actions {
@@ -225,13 +220,14 @@ button {
 #top-bar {
     width: 100%;
     display: flex;
+    flex-shrink: 0;
     justify-content: space-between;
     background: linear-gradient(180deg, #172033, #101827);
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 5px 25px rgba(0, 0, 0, 0.35);
     padding: 15px 28px;
     border-radius: 12px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 #glucose-container,
@@ -289,50 +285,49 @@ button {
 /* =========================================
    4. CONTENT HIERARCHIE
 ========================================= */
-#pi-header {
-    width: 100%;
-    border-left: 6px solid transparent;
-    /* Wordt via JS ingevuld */
-    padding-left: 12px;
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-}
-
-#pi-theme-title {
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-    color: #f3f4f6;
-    margin: 0;
-    text-transform: uppercase;
-}
-
 #pi-content {
     width: 100%;
-    margin-bottom: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    margin-bottom: 10px;
 }
 
-#pi-source-label {
-    color: #9ca3af;
-    font-size: 0.9rem;
-    font-weight: 600;
-    opacity: 0.7;
-    margin: 0 0 16px 0;
+#event-header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 22px;
+
+    border-left: 4px solid;
+    padding-left: 12px;
+}
+
+.event-theme {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 1rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    color: #f3f4f6;
+}
+
+#pi-icon {
+    opacity: .9;
+}
+
+.event-source {
+    font-size: 0.82rem;
+    opacity: .65;
+    letter-spacing: .5px;
+    margin-left: 6px;
+    margin-top: 2px;
 }
 
 #pi-situation-text {
-    font-size: 2.2rem;
-    font-weight: 800;
-    line-height: 1.25;
-    max-width: 90%;
-    margin: 0;
-    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.3;
 }
 
 /* =========================================
@@ -340,30 +335,34 @@ button {
 ========================================= */
 #choices {
     display: flex;
-    gap: 18px;
+    flex-shrink: 0;
+    gap: 15px;
     width: 100%;
     align-items: stretch;
+    height: 90px;
 }
 
 .choice-box {
     flex: 1;
-    height: 95px;
-    border-radius: 12px;
-    padding: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    font-size: 0.95rem;
-    font-weight: 600;
+    padding: 10px 15px;
+    font-size: 1.05rem;
+    line-height: 1.3;
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.2);
+    transition: transform 0.1s, box-shadow 0.1s;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-    transition: transform 0.15s, filter 0.15s;
+    text-align: center;
+    font-weight: 600;
+    line-height: 1.35;
 }
 
 .choice-box:active {
-    transform: scale(0.97);
-    filter: brightness(0.92);
+    transform: translateY(8px);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.2);
 }
 
 #redBtn {
@@ -498,4 +497,46 @@ button {
 #nextBtn:active,
 #teamOkBtn:active {
     background: #2563eb;
+}
+
+/* =========================================
+   7. END SCREEN
+========================================= */
+
+#end-screen {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: radial-gradient(circle, #111827 0%, #05080f 100%);
+}
+
+#end-title {
+    font-size: 3.5rem;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+#end-message {
+    font-size: 1.8rem;
+    color: #cbd5e1;
+    margin: 0 0 20px 0;
+}
+
+#end-score {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #facc15;
+    margin: 0 0 30px 0;
+    padding: 15px 30px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(250, 204, 21, 0.3);
+}
+
+#restartCountdown {
+    color: #64748b;
+    font-size: 1.1rem;
 }

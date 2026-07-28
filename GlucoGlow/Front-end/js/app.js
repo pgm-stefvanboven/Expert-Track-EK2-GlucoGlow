@@ -431,17 +431,28 @@ function triggerPincodeQuest() {
 function loadEvent(event) {
     situationElement.textContent = event.title;
     piIcon.textContent = event.icon || "⚠";
-    piThemeText.textContent = (event.theme || "MELDING").toUpperCase();
 
+    // 1. Bepaal de afzender tekst
+    let afzenderTekst = "";
     if (event.source === "mama") {
-        piSourceLabel.textContent = "👩 MAMA";
+        afzenderTekst = "👩 MAMA";
     } else if (event.source === "school") {
-        piSourceLabel.textContent = "🏫 SCHOOL";
+        afzenderTekst = "🏫 SCHOOL";
     } else if (event.source === "sensor") {
-        piSourceLabel.textContent = "📱 SENSOR";
+        afzenderTekst = "📱 SENSOR";
     } else {
-        piSourceLabel.textContent = "💬 THOMAS";
+        afzenderTekst = "💬 THOMAS";
     }
+
+    // 2. Bepaal de thema tekst
+    let themaTekst = (event.theme || "MELDING").toUpperCase();
+
+    // 3. Update de UI elementen
+    // Thema
+    piThemeText.textContent = themaTekst;
+
+    // Afzender
+    piSourceLabel.textContent = afzenderTekst;
 
     // Thema kleur nu op de linker border (border-left)
     const themeColors = {
@@ -457,7 +468,8 @@ function loadEvent(event) {
     };
 
     // Voegt de gekleurde balk toe aan de linkerkant
-    piHeader.style.borderLeftColor = themeColors[event.theme] || "#ffffff";
+    const eventHeader = document.getElementById("event-header");
+    eventHeader.style.borderLeftColor = themeColors[event.theme] || "#ffffff";
 
     currentShuffledChoices = [...event.choices];
     currentShuffledChoices.sort(() => Math.random() - 0.5);
