@@ -1,24 +1,21 @@
 /* =========================================
    1. RESET & GLOBAL STYLING
 ========================================= */
-
 html,
 body {
     margin: 0;
     overflow: hidden;
-
     user-select: none;
     -webkit-user-select: none;
-
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
-
     touch-action: manipulation;
 }
 
 * {
     user-select: none;
     -webkit-user-select: none;
+    box-sizing: border-box;
 }
 
 button {
@@ -33,10 +30,10 @@ img {
 /* =========================================
    2. BASIC STYLING
 ========================================= */
-
 body {
     margin: 0;
-    background: #0d1117;
+    background: #05080f;
+    /* Dieper zwart/blauw voor buiten de game */
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
@@ -45,18 +42,12 @@ body {
     min-height: 100vh;
 }
 
-/* Only startscreen visible when the game is not running */
-
-#start-screen {
-    display: flex;
-}
-
-#game-container {
+#start-screen,
+#game-container,
+#end-screen,
+#team-overlay {
     display: none;
-}
-
-#end-screen {
-    display: none;
+    /* Standaard verborgen, JS regelt de rest */
 }
 
 /* =========================================
@@ -67,98 +58,215 @@ body {
 #end-screen {
     width: 800px;
     height: 400px;
-    box-sizing: border-box;
-    background: radial-gradient(circle at top, #1f2937, #111827);
-    border: 2px solid #3b82f6;
-    border-radius: 15px;
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+    background: #0a1118;
+    /* Donkerblauwe achtergrond zoals in mock-up */
+    border: 2px solid #1e3a8a;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(30, 58, 138, 0.3);
     position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
 }
 
 /* =========================================
-   4. STARTSCREEN & ENDSCREEN LAYOUT
+   4. STARTSCHERM & EINDSCHERM
 ========================================= */
 #start-screen,
 #end-screen {
-    padding: 15px;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
     text-align: center;
+}
+
+#start-screen h1,
+#game-container h1 {
+    font-size: 2.2rem;
+    margin: 0 0 10px 0;
+    color: #60a5fa;
+    text-shadow: 0 0 12px rgba(96, 165, 250, 0.7);
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
 #start-screen h1 {
     font-size: 3rem;
-    margin: 0;
-    color: #60a5fa;
-    text-shadow: 0 0 15px #3b82f6;
-    letter-spacing: 4px;
 }
 
-.intro-text {
+/* =========================================
+   5. GAMESCREEN LAYOUT
+========================================= */
+#game-container {
+    justify-content: space-between;
+    /* Verdeelt de elementen mooi over de 400px hoogte */
+    align-items: center;
+}
+
+#top-bar {
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    background: #111827;
+    padding: 8px 30px;
+    border-radius: 10px;
+    border: 1px solid #1f2937;
+    margin-bottom: 10px;
+}
+
+#glucose-container,
+#timer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.label {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 2px;
+}
+
+#glucose {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #10b981;
+    /* Default groen voor SCAN */
+    text-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+    line-height: 1;
+}
+
+#timer {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #facc15;
+    text-shadow: 0 0 15px rgba(250, 204, 21, 0.6);
+    line-height: 1;
+}
+
+/* Headers en Tekst in de game */
+#pi-header {
+    width: 90%;
+    border-bottom: 3px solid #15803d;
+    /* Groene lijn zoals mock-up, JS overschrijft dit evt */
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+#pi-theme-title {
     font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 2px;
     color: #f3f4f6;
     margin: 0;
-}
-
-.roles {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 10px 20px;
-    border-radius: 10px;
-    border: 1px solid #374151;
     display: flex;
-    gap: 30px;
+    align-items: center;
+    gap: 8px;
+}
+
+#pi-content {
+    width: 90%;
+    margin-bottom: 15px;
+    flex-grow: 1;
+    /* Neemt resterende ruimte in */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#pi-source-label {
+    color: #9ca3af;
     font-size: 1rem;
-    color: #d1d5db;
+    margin: 0 0 5px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.roles p {
+#pi-situation-text {
+    font-size: 1.8rem;
     margin: 0;
+    font-weight: bold;
+    line-height: 1.3;
+    color: #ffffff;
 }
 
-.roles strong {
-    color: #60a5fa;
+/* =========================================
+   6. CHOICEBOXES (KEUZEKNOPPEN)
+========================================= */
+#choices {
+    display: flex;
+    gap: 15px;
+    width: 90%;
+    justify-content: center;
+    height: 80px;
+    /* Vaste hoogte voor uniformiteit */
 }
 
-#highscore-box {
-    margin-top: 0px;
-    padding: 8px 15px;
-    border-radius: 10px;
-    border: 2px solid #facc15;
-    background: rgba(250, 204, 21, 0.08);
-    color: #facc15;
+.choice-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s ease, filter 0.1s ease;
+}
+
+.choice-box:active {
+    transform: scale(0.97);
+    filter: brightness(0.9);
+}
+
+#redBtn {
+    background: #ef4444;
+    /* Vlakke kleur i.p.v. gradient */
+    color: white;
+}
+
+#yellowBtn {
+    background: #facc15;
+    color: #000000;
+    /* Zwarte tekst voor betere leesbaarheid op geel */
+}
+
+#greenBtn {
+    background: #10b981;
+    color: white;
+}
+
+/* =========================================
+   7. BIG BUTTONS (START, VOLGENDE)
+========================================= */
+#startBtn,
+#nextBtn,
+#teamOkBtn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 40px;
     font-size: 1.2rem;
     font-weight: bold;
-    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: background 0.2s;
 }
 
-.record-score {
-    margin-top: 6px;
-    font-size: 2rem;
-    font-weight: bold;
-    color: #facc15;
-}
-
-#end-title {
-    font-size: 3rem;
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-}
-
-#end-message {
-    font-size: 1.5rem;
-    color: #e5e7eb;
-    margin: 0;
-}
-
-#end-score {
-    font-size: 1.6rem;
-    font-weight: bold;
-    color: #fcd34d;
-    margin: 10px 0;
+#startBtn:active,
+#nextBtn:active,
+#teamOkBtn:active {
+    background: #1d4ed8;
+    transform: translateY(2px);
 }
 
 /* =========================================
@@ -337,172 +445,6 @@ body {
     border-radius: 8px;
 
     cursor: pointer;
-}
-
-/* =========================================
-   5. GAMESCREEN LAYOUT
-========================================= */
-#game-container {
-    display: none;
-
-    padding: 15px;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-#game-container h1 {
-    font-size: 2.2rem;
-    margin: 0;
-    color: #60a5fa;
-    text-shadow: 0 0 10px #3b82f6;
-    letter-spacing: 2px;
-}
-
-#top-bar {
-    width: 85%;
-    display: flex;
-    justify-content: space-between;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 10px 25px;
-    border-radius: 12px;
-    border: 1px solid #374151;
-}
-
-#glucose-container,
-#timer-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.label {
-    font-size: 0.9rem;
-    color: #9ca3af;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-#glucose {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #ef4444;
-    text-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
-}
-
-#timer {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #fcd34d;
-    text-shadow: 0 0 10px rgba(252, 211, 77, 0.7);
-}
-
-#trend {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #60a5fa;
-    text-shadow: 0 0 10px #60a5fa;
-    height: 35px;
-}
-
-#situation {
-    font-size: 1.2rem;
-    text-align: center;
-    width: 85%;
-    max-width: 600px;
-    margin: 0 auto;
-    color: #f3f4f6;
-    min-height: 50px;
-    line-height: 1.4;
-}
-
-/* =========================================
-   6. CHOICEBOXES (GAMESCREEN)
-========================================= */
-#choices {
-    display: flex;
-    gap: 15px;
-    width: 90%;
-    justify-content: center;
-}
-
-/* In-game choiceboxes */
-.choice-box {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 10px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: white;
-    word-wrap: break-word;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-#redBtn {
-    background: linear-gradient(135deg, #ef4444, #b91c1c);
-    color: white;
-}
-
-#yellowBtn {
-    background: linear-gradient(135deg, #facc15, #ca8a04);
-    color: #111;
-}
-
-#greenBtn {
-    background: linear-gradient(135deg, #10b981, #047857);
-    color: white;
-}
-
-/* =========================================
-   7. BIG BUTTONS (START, NEXT)
-========================================= */
-#startBtn,
-#nextBtn {
-    flex: none;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 15px 50px;
-    font-size: 1.3rem;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    transition: all 0.2s ease-in-out;
-}
-
-#restartCountdown {
-    margin-top: 15px;
-    font-size: 1.2rem;
-    color: #d1d5db;
-    text-align: center;
-}
-
-#startBtn {
-    margin-top: 10px;
-}
-
-#nextBtn {
-    padding: 10px 30px;
-    font-size: 1.2rem;
-}
-
-#startBtn:hover,
-#nextBtn:hover {
-    transform: translateY(-3px);
-    filter: brightness(1.2);
-    box-shadow: 0 8px 15px rgba(59, 130, 246, 0.6);
-}
-
-#startBtn:active,
-#nextBtn:active {
-    transform: translateY(0);
 }
 
 /* =========================================
