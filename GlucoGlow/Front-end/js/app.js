@@ -31,7 +31,8 @@ let phoneCheckInterval;
 // SCHERM ELEMENTEN
 const startScreen = document.getElementById("start-screen");
 const startBtn = document.getElementById("startBtn");
-const highscoreElement = document.getElementById("highscore");
+const highscoreNameElement = document.getElementById("highscoreName");
+const highscorePointsElement = document.getElementById("highscorePoints");
 
 const teamOverlay = document.getElementById("team-overlay");
 const teamNameInput = document.getElementById("teamNameInput");
@@ -86,7 +87,8 @@ fetch("data/events.json?v=" + new Date().getTime())
 fetch(`${SERVER}/get_highscore`)
     .then(response => response.json())
     .then(data => {
-        highscoreElement.textContent = `${data.team} - ${data.highscore}`;
+        highscoreNameElement.textContent = data.team;
+        highscorePointsElement.textContent = data.highscore;
     });
 
 // TEAM NAAM LOGICA
