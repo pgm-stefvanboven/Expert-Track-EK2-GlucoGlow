@@ -145,7 +145,10 @@ button {
 
 .team-card {
     width: 460px;
-    padding: 30px;
+    max-width: 92vw;
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 22px 30px;
     border-radius: 12px;
     background: #0a1118;
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -155,6 +158,7 @@ button {
 
 .team-card h2 {
     margin-top: 0;
+    margin-bottom: 4px;
     color: #93c5fd;
     letter-spacing: 2px;
 }
@@ -162,15 +166,15 @@ button {
 #teamDisplayContainer {
     position: relative;
     width: 100%;
-    margin: 20px auto;
+    margin: 14px auto;
 }
 
 #teamDisplay {
     background: #0f172a;
     border: 2px solid #3b82f6;
     box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
-    height: 60px;
-    font-size: 1.8rem;
+    height: 48px;
+    font-size: 1.5rem;
 }
 
 #charCounter {
@@ -193,17 +197,17 @@ button {
 #keyboard {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    margin: 20px 0;
+    gap: 6px;
+    margin: 14px 0;
 }
 
 .key {
     background: #334155;
-    padding: 14px 0;
-    font-size: 1.25rem;
+    padding: 10px 0;
+    font-size: 1.15rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    box-shadow: 0 5px 0 #0f172a;
+    box-shadow: 0 4px 0 #0f172a;
     transition: all 0.1s;
     color: white;
 }
@@ -221,11 +225,13 @@ button {
 }
 
 .keyboard-actions button {
+    flex: 1;
+    max-width: 160px;
     background: #1f2937;
     color: white;
     border: none;
     border-radius: 8px;
-    padding: 12px 20px;
+    padding: 13px 0;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
@@ -238,7 +244,6 @@ button {
 .keyboard-actions #teamOkBtn {
     background: #3b82f6;
     /* Blauwe accentkleur voor de OK knop */
-    padding: 12px 40px;
 }
 
 /* =========================================
