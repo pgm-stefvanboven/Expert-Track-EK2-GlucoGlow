@@ -12,8 +12,9 @@ let score = 0;
 let targetPin = "";
 let teamName = "";
 let isGlucoseVisible = false;
+let bannedWords = [];
 
-// NIEUW: De geschuffelde keuzes van deze ronde
+// De geschuffelde keuzes van deze ronde
 let currentShuffledChoices = [];
 
 // SIDEQUEST & CO-OP VARIABELEN
@@ -77,9 +78,17 @@ const endTitle = document.getElementById("end-title");
 const endMessage = document.getElementById("end-message");
 const endScore = document.getElementById("end-score");
 
-const bannedWords = ["fuck", "fck", "shit", "bitch", "porno", "sex", "seks", "kut", "lul", "kanker", "kkr", "homo", "hoer", "slet", "wijf", "seksueel", "sexywijf", "gay", "nigger", "nigga", "hitler", "nazi", "kaka", "Loser", "loser", ];
-
 // LOADING DATA
+
+// Laad de verboden woorden in vanuit het JSON bestand
+fetch("data/bannedWords.json?v=" + new Date().getTime())
+    .then(response => response.json())
+    .then(data => {
+        bannedWords = data;
+        console.log("Verboden woorden geladen:", bannedWords.length);
+    })
+    .catch(error => console.error("Fout bij het laden van verboden woorden:", error));
+
 fetch("data/events.json?v=" + new Date().getTime())
     .then(response => response.json())
     .then(data => { events = data; });
