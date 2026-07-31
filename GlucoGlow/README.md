@@ -18,7 +18,7 @@ the banned words are stored in the `bannedWords.json` file located in the `Front
 ## Used sound effects
 [Sound effect 1: Start game - mokasza](https://freesound.org/people/mokasza/sounds/810178/) - This sound effect is used for starting the game.
 
-[Sound effect 2: Scan-sound - CogFireStudios](https://freesound.org/people/CogFireStudios/sounds/531512/) - This sound effect is used for.
+[Sound effect 2: Scan-sound - CogFireStudios](https://freesound.org/people/CogFireStudios/sounds/531512/) - This sound effect is used for scanning glucose levels.
 
 [Sound effect 3: Good choice sound - KoiRoylers](https://pixabay.com/sound-effects/film-special-effects-correct-356013/) - This sound effect is used when the user makes a good choice.
 
