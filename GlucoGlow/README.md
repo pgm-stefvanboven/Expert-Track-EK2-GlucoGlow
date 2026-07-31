@@ -1,6 +1,6 @@
 ## GlucoGlow
 
-A simple glucose monitoring app.
+A interactive game about diabetes.
 
 ## Installation
 
