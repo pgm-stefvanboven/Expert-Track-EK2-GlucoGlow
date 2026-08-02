@@ -30,6 +30,10 @@ const glucoseInput = document.getElementById("glucose-input");
 const sendGlucoseBtn = document.getElementById("send-glucose-btn");
 const earlyHoldWarning = document.getElementById("early-hold-warning");
 
+// Audio elements
+const soundMessageSend = new Audio('assets/sounds/message-send.mp3');
+const soundMessageReceived = new Audio('assets/sounds/message-received.mp3');
+
 let currentSecretGlucose = 0;
 let diagnosisCompleted = false;
 
@@ -198,175 +202,183 @@ function updateFromServer() {
         });
 }
 
-            function loadPhoneEvent() {
-                const event = events[currentEvent];
-                if (!event) return;
+function loadPhoneEvent() {
+    const event = events[currentEvent];
+    if (!event) return;
 
-                // 1. Selecteer de DOM elementen
-                const headerName = document.getElementById("header-name");
-                const headerAvatar = document.getElementById("header-avatar");
-                const dynamicHeader = document.getElementById("dynamic-header");
-                const headerStatusText = document.getElementById("header-status-text");
+    // 1. Selecteer de DOM elementen
+    const headerName = document.getElementById("header-name");
+    const headerAvatar = document.getElementById("header-avatar");
+    const dynamicHeader = document.getElementById("dynamic-header");
+    const headerStatusText = document.getElementById("header-status-text");
 
-                // 2. Bepaal de afzender (Source)
-                if (event.source === "mama") {
-                    headerName.textContent = "Mama";
-                    headerAvatar.textContent = "👩";
-                    headerStatusText.textContent = "Online";
-                } else if (event.source === "school") {
-                    headerName.textContent = "School";
-                    headerAvatar.textContent = "🏫";
-                    headerStatusText.textContent = "Melding";
-                } else if (event.source === "sensor") {
-                    headerName.textContent = "Sensor Systeem";
-                    headerAvatar.textContent = "📱";
-                    headerStatusText.textContent = "Live Data";
-                } else {
-                    // Fallback (Thomas)
-                    headerName.textContent = "Thomas";
-                    headerAvatar.textContent = "💬";
-                    headerStatusText.textContent = "Online";
-                }
+    // 2. Bepaal de afzender (Source)
+    if (event.source === "mama") {
+        headerName.textContent = "Mama";
+        headerAvatar.textContent = "👩";
+        headerStatusText.textContent = "Online";
+    } else if (event.source === "school") {
+        headerName.textContent = "School";
+        headerAvatar.textContent = "🏫";
+        headerStatusText.textContent = "Melding";
+    } else if (event.source === "sensor") {
+        headerName.textContent = "Sensor Systeem";
+        headerAvatar.textContent = "📱";
+        headerStatusText.textContent = "Live Data";
+    } else {
+        // Fallback (Thomas)
+        headerName.textContent = "Thomas";
+        headerAvatar.textContent = "💬";
+        headerStatusText.textContent = "Online";
+    }
 
-                // 3. Bepaal de themaskleur (Theme)
-                const themeColors = {
-                    "sport": "#15803d",       // Groen
-                    "school": "#0369a1",      // Blauw
-                    "party": "#7e22ce",       // Paars
-                    "emergency": "#b91c1c",   // Rood
-                    "travel": "#ca8a04",      // Geel/Oranje
-                    "home": "#0f766e",        // Teal
-                    "sick": "#c2410c",        // Warm oranje
-                    "system": "#374151",      // Donkergrijs
-                    "error": "#ef4444"        // Felrood
-                };
+    // 3. Bepaal de themaskleur (Theme)
+    const themeColors = {
+        "sport": "#15803d",       // Groen
+        "school": "#0369a1",      // Blauw
+        "party": "#7e22ce",       // Paars
+        "emergency": "#b91c1c",   // Rood
+        "travel": "#ca8a04",      // Geel/Oranje
+        "home": "#0f766e",        // Teal
+        "sick": "#c2410c",        // Warm oranje
+        "system": "#374151",      // Donkergrijs
+        "error": "#ef4444"        // Felrood
+    };
 
-                // Pak de kleur uit de lijst, of gebruik je standaard donkere kleur als fallback
-                const headerColor = themeColors[event.theme] || "#202c33";
-                dynamicHeader.style.backgroundColor = headerColor;
+    // Pak de kleur uit de lijst, of gebruik je standaard donkere kleur als fallback
+    const headerColor = themeColors[event.theme] || "#202c33";
+    dynamicHeader.style.backgroundColor = headerColor;
 
-                // 4. Update de situatie-tekst met het specifieke event-icoon
-                const eventIcon = event.icon ? `${event.icon} ` : "";
-                situationElement.innerHTML = `<b>${eventIcon}</b> ${event.title}`;
+    // 4. Update de situatie-tekst met het specifieke event-icoon
+    const eventIcon = event.icon ? `${event.icon} ` : "";
+    situationElement.innerHTML = `<b>${eventIcon}</b> ${event.title}`;
 
-                // --- Bestaande logica voor sidequests en pincodes ---
-                if (event.type === "pincode") {
-                    document.getElementById("quest-title").textContent = event.questTitle;
-                    const cluesList = document.getElementById("phone-clues");
-                    cluesList.innerHTML = "";
-                    event.clues.forEach(clue => {
-                        let li = document.createElement("li");
-                        li.textContent = clue;
-                        cluesList.appendChild(li);
-                    });
-                    return;
-                }
+    // --- Bestaande logica voor sidequests en pincodes ---
+    if (event.type === "pincode") {
+        document.getElementById("quest-title").textContent = event.questTitle;
+        const cluesList = document.getElementById("phone-clues");
+        cluesList.innerHTML = "";
+        event.clues.forEach(clue => {
+            let li = document.createElement("li");
+            li.textContent = clue;
+            cluesList.appendChild(li);
+        });
+        return;
+    }
 
-                if (event.type === "sidequest") {
-                    document.body.style.backgroundColor = "#7f1d1d";
-                    statusElement.textContent = "⚠ KALIBRATIE VEREIST";
-                    statusElement.style.color = "#ffffff";
-                    glucoseElement.textContent = "ERR";
-                    return;
-                }
+    if (event.type === "sidequest") {
+        document.body.style.backgroundColor = "#7f1d1d";
+        statusElement.textContent = "⚠ KALIBRATIE VEREIST";
+        statusElement.style.color = "#ffffff";
+        glucoseElement.textContent = "ERR";
+        return;
+    }
 
-                document.body.style.backgroundColor = "#0b141a";
-            }
+    document.body.style.backgroundColor = "#0b141a";
+}
 
-            function handleGlucoseSubmit() {
-                if (diagnosisCompleted || !wasPlaying) return;
+function handleGlucoseSubmit() {
+    if (diagnosisCompleted || !wasPlaying) return;
 
-                const ingevoerdeWaarde = parseInt(glucoseInput.value);
-                glucoseInput.value = "";
+    const ingevoerdeWaarde = parseInt(glucoseInput.value);
+    glucoseInput.value = "";
 
-                if (isNaN(ingevoerdeWaarde)) return;
+    if (isNaN(ingevoerdeWaarde)) return;
 
-                const gestuurdBericht = document.createElement("div");
-                gestuurdBericht.className = "message sent dynamic-bubble";
-                gestuurdBericht.style.alignSelf = "flex-end";
-                gestuurdBericht.style.backgroundColor = "#005c4b";
-                gestuurdBericht.style.padding = "8px 15px";
-                gestuurdBericht.style.borderRadius = "15px 15px 0 15px";
-                gestuurdBericht.style.marginBottom = "10px";
-                gestuurdBericht.innerHTML = `<div class="bubble-text" style="color: white;">Patiënt meldt waarde: <b>${ingevoerdeWaarde}</b></div>`;
+    soundMessageSend.play();
 
-                chatHistoryBox.insertBefore(gestuurdBericht, actionWidget);
-                chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
+    const gestuurdBericht = document.createElement("div");
+    gestuurdBericht.className = "message sent dynamic-bubble";
+    gestuurdBericht.style.alignSelf = "flex-end";
+    gestuurdBericht.style.backgroundColor = "#005c4b";
+    gestuurdBericht.style.padding = "8px 15px";
+    gestuurdBericht.style.borderRadius = "15px 15px 0 15px";
+    gestuurdBericht.style.marginBottom = "10px";
+    gestuurdBericht.innerHTML = `<div class="bubble-text" style="color: white;">Patiënt meldt waarde: <b>${ingevoerdeWaarde}</b></div>`;
 
-                if (ingevoerdeWaarde === currentSecretGlucose) {
-                    diagnosisCompleted = true;
+    chatHistoryBox.insertBefore(gestuurdBericht, actionWidget);
+    chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
 
-                    const event = events[currentEvent];
-                    // TOEGANKELIJKHEID FIX: We gebruiken de letterlijke tekst van de juiste keuze
-                    let correcteKeuze = event.choices.find(c => c.correct);
-                    let advies = correcteKeuze ? correcteKeuze.text : "Volg medisch protocol.";
+    if (ingevoerdeWaarde === currentSecretGlucose) {
+        diagnosisCompleted = true;
 
-                    const assistentAntwoord = document.createElement("div");
-                    assistentAntwoord.className = "message system dynamic-bubble";
-                    assistentAntwoord.innerHTML = `
+        // Wacht een halve seconde en speel ontvangst-geluid
+        setTimeout(() => soundMessageReceived.play(), 500);
+
+        const event = events[currentEvent];
+        // TOEGANKELIJKHEID FIX: We gebruiken de letterlijke tekst van de juiste keuze
+        let correcteKeuze = event.choices.find(c => c.correct);
+        let advies = correcteKeuze ? correcteKeuze.text : "Volg medisch protocol.";
+
+        const assistentAntwoord = document.createElement("div");
+        assistentAntwoord.className = "message system dynamic-bubble";
+        assistentAntwoord.innerHTML = `
             <div class="bubble-widget" style="background: #1f2c34; border: 1px solid #00a884; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
                 <span style="color: #00a884; font-weight: bold;">✓ Waarde geverifieerd.</span><br><br>
                 <span style="color: #fde68a;">AANBEVOLEN ACTIE:</span><br>
                 <b style="font-size: 1.1rem; color: #e9edef;">${advies}</b>
             </div>`;
 
-                    chatHistoryBox.insertBefore(assistentAntwoord, actionWidget);
-                    chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
-                    chatInputArea.style.display = "none";
+        chatHistoryBox.insertBefore(assistentAntwoord, actionWidget);
+        chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
+        chatInputArea.style.display = "none";
 
-                } else {
-                    const assistentFout = document.createElement("div");
-                    assistentFout.className = "message system dynamic-bubble";
-                    assistentFout.innerHTML = `
+    } else {
+        const assistentFout = document.createElement("div");
+        assistentFout.className = "message system dynamic-bubble";
+        assistentFout.innerHTML = `
             <div class="bubble-widget" style="background: #3b2c00; border: 1px solid #ef4444; padding: 10px; border-radius: 10px; margin-bottom: 15px;">
                 <span style="color: #ef4444;">⚠️ Foutieve patiëntdata. Vraag de actuele waarde opnieuw op!</span>
             </div>`;
 
-                    chatHistoryBox.insertBefore(assistentFout, actionWidget);
-                    chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
-                }
-            }
+        // Wacht een halve seconde en speel ontvangst-geluid
+        setTimeout(() => soundMessageReceived.play(), 500);
 
-            sendGlucoseBtn.addEventListener("click", handleGlucoseSubmit);
-            glucoseInput.addEventListener("keypress", function (e) {
-                if (e.key === 'Enter') handleGlucoseSubmit();
-            });
+        chatHistoryBox.insertBefore(assistentFout, actionWidget);
+        chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
+    }
+}
 
-            glucoseInput.addEventListener('blur', function () {
-                window.scrollTo(0, 0);
-            });
+sendGlucoseBtn.addEventListener("click", handleGlucoseSubmit);
+glucoseInput.addEventListener("keypress", function (e) {
+    if (e.key === 'Enter') handleGlucoseSubmit();
+});
 
-            function handleTap() {
-                if (!isActionActive) return;
+glucoseInput.addEventListener('blur', function () {
+    window.scrollTo(0, 0);
+});
 
-                taps++;
-                let percentage = (taps / requiredTaps) * 100;
-                actionProgress.style.width = percentage + "%";
-                tapBtn.textContent = `TAP (${taps}/${requiredTaps})`;
+function handleTap() {
+    if (!isActionActive) return;
 
-                if (taps >= requiredTaps) {
-                    isActionActive = false;
-                    isTransitioning = true;
-                    waitingForPi = true;
+    taps++;
+    let percentage = (taps / requiredTaps) * 100;
+    actionProgress.style.width = percentage + "%";
+    tapBtn.textContent = `TAP (${taps}/${requiredTaps})`;
+
+    if (taps >= requiredTaps) {
+        isActionActive = false;
+        isTransitioning = true;
+        waitingForPi = true;
 
 
-                    tapBtn.style.background = "#10b981";
-                    tapBtn.textContent = "SUCCES!";
+        tapBtn.style.background = "#10b981";
+        tapBtn.textContent = "SUCCES!";
 
-                    fetch(`${SERVER}/complete_action`);
+        fetch(`${SERVER}/complete_action`);
 
-                    setTimeout(() => {
-                        actionWidget.style.display = "none";
-                        normalChatBubble.style.opacity = "1";
-                        actionHintText.style.display = "block";
+        setTimeout(() => {
+            actionWidget.style.display = "none";
+            normalChatBubble.style.opacity = "1";
+            actionHintText.style.display = "block";
 
-                        isTransitioning = false;
-                    }, 1500);
-                }
-            }
+            isTransitioning = false;
+        }, 1500);
+    }
+}
 
-            tapBtn.addEventListener("touchstart", (e) => {
-                e.preventDefault();
-                handleTap();
-            });
-            tapBtn.addEventListener("mousedown", handleTap);
+tapBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    handleTap();
+});
+tapBtn.addEventListener("mousedown", handleTap);

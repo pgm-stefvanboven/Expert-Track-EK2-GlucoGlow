@@ -68,6 +68,18 @@ const pinSubmitBtn = document.getElementById("pinSubmitBtn");
 const pinFeedback = document.getElementById("pinFeedback");
 const questTimerDisplay = document.getElementById("quest-timer-display");
 
+// AUDIO VARIABLES
+const soundStart = new Audio('assets/sounds/game-start.mp3');
+const soundScan = new Audio('assets/sounds/scan.mp3');
+const soundCorrect = new Audio('assets/sounds/correct.mp3');
+const soundWrong = new Audio('assets/sounds/wrong.mp3');
+const soundSidequest = new Audio('assets/sounds/sidequest-start.mp3');
+const soundHeartbeat = new Audio('assets/sounds/heartbeat.mp3');
+soundHeartbeat.loop = true; // Zorgt dat de hartslag blijft kloppen
+const soundCountdown = new Audio('assets/sounds/countdown.mp3');
+const soundWin = new Audio('assets/sounds/game-win.mp3');
+const soundGameOver = new Audio('assets/sounds/game-over.mp3');
+
 const feedbackCard = document.getElementById("feedback-card");
 const feedbackStatusElement = document.getElementById("feedback-status");
 const feedbackTextElement = document.getElementById("feedback-text");
@@ -160,12 +172,19 @@ function updateGlucoseDisplay() {
         if (glucose <= 75) {
             glucoseElement.style.color = "#dc4b52";
             glucoseElement.style.textShadow = "0 0 15px rgba(220, 75, 82, 0.6)";
+            if (soundHeartbeat.paused) soundHeartbeat.play();
+            document.body.style.filter = "blur(3px)";
+            document.body.style.transition = "filter 1s ease";
         } else if (glucose >= 160) {
             glucoseElement.style.color = "#eab308";
             glucoseElement.style.textShadow = "0 0 15px rgba(234, 179, 8, 0.6)";
+            soundHeartbeat.pause();
+            document.body.style.filter = "none";
         } else {
             glucoseElement.style.color = "#16c784";
             glucoseElement.style.textShadow = "0 0 15px rgba(22, 199, 132, 0.6)";
+            soundHeartbeat.pause();
+            document.body.style.filter = "none";
         }
     } else {
         glucoseElement.textContent = "SCAN";
@@ -177,6 +196,7 @@ function updateGlucoseDisplay() {
 
 function triggerGlucoseScan() {
     if (isGlucoseVisible || gameState !== "PLAYING" || waitingForPhone) return;
+    soundScan.play(); // Speel scangeluid
     isGlucoseVisible = true;
     updateGlucoseDisplay();
     setTimeout(() => {
@@ -249,6 +269,10 @@ function triggerSensorCalibration() {
 }
 
 function startGame() {
+    soundStart.play(); // Speel startgeluid
+    soundHeartbeat.pause(); // Reset hartslag voor de zekerheid
+    document.body.style.filter = "none"; // Reset wazig scherm
+
     startScreen.style.display = "none";
     fetch(`${SERVER}/reset_game`).catch(e => console.log(e));
     gameContainer.style.display = "flex";
@@ -364,6 +388,10 @@ function startTimer() {
             timer -= 2;
         } else {
             timer -= 1;
+        }
+
+        if (timer === 5) {
+            soundCountdown.play();
         }
 
         if (timer <= 0) {
@@ -563,10 +591,12 @@ function processChoiceResult(choiceIndex) {
     feedbackTextElement.textContent = currentEvent.feedback;
 
     if (choice.correct) {
+        soundCorrect.play(); // Speel correct geluid
         score += 100;
         feedbackStatusElement.textContent = "✓ GOEDE KEUZE";
         feedbackStatusElement.style.color = "#10b981";
     } else {
+        soundWrong.play(); // Speel verkeerd geluid
         score -= 25;
         feedbackStatusElement.textContent = "✗ SLECHTE KEUZE";
         feedbackStatusElement.style.color = "#ef4444";
@@ -608,6 +638,11 @@ nextBtn.addEventListener("click", () => {
 function endGame(message) {
     gameState = "END";
     clearInterval(timerInterval);
+
+    // Stop paniek-effecten
+    soundHeartbeat.pause();
+    document.body.style.filter = "none";
+
     questOverlay.style.display = "none";
     feedbackCard.style.display = "none";
     fetch(`${SERVER}/set_glucose/-1`);
@@ -620,10 +655,12 @@ function endGame(message) {
     fetch(`${SERVER}/set_game_over/${isWin}`).catch(e => console.log(e));
 
     if (message.includes("VEILIG")) {
+        soundWin.play();
         score += 300;
         endTitle.textContent = "MISSIE GESLAAGD";
         endTitle.style.color = "#00ff99";
     } else {
+        soundGameOver.play();
         endTitle.textContent = "MISSIE MISLUKT";
         endTitle.style.color = "#ff4444";
     }
