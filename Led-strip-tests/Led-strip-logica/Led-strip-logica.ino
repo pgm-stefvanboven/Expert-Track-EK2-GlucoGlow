@@ -8,11 +8,11 @@
 
 CRGB leds[NUM_LEDS];
 
-const char* ssid = "telenet-4B182";
-const char* password = "097a375d24";
+const char* ssid = "ANDROID";
+const char* password = "bruhhhh1234";
 
 const char* apiUrl =
-  "http://192.168.0.252:5000/get_event";
+  "http://10.91.88.212:5000/get_event";
 
 void setup() {
 
