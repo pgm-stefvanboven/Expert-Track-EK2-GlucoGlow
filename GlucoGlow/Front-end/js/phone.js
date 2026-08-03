@@ -1,4 +1,4 @@
-const SERVER = "http://10.91.88.212:5000";
+const SERVER = "http://10.178.148.212:5000";
 
 let events = [];
 let currentEvent = 0;

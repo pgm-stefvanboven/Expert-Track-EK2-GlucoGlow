@@ -17,7 +17,7 @@ pygame.joystick.init()
 print("🚀 ONZICHTBAAR SCRIPT GELADEN! Je kunt nu naar je browser gaan.")
 
 # Basis URL van je Flask server
-BASE_URL = "http://10.91.88.212:5000" 
+BASE_URL = "http://10.178.148.212:5000" 
 actieve_joysticks = {}
 
 while True:

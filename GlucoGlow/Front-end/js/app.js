@@ -1,7 +1,7 @@
 console.log("APPJS GELADEN");
 alert("APPJS GELADEN");
 
-const SERVER = "http://10.91.88.212:5000";
+const SERVER = "http://10.178.148.212:5000";
 
 fetch(`${SERVER}/set_glucose/-1`);
 
@@ -384,6 +384,11 @@ setInterval(() => {
 
 function startTimer() {
     timerInterval = setInterval(() => {
+
+        if (gameState === "FEEDBACK") {
+            return; 
+        }
+
         if (gameState === "QUEST" || gameState === "TRANSITION") {
             timer -= 2;
         } else {
