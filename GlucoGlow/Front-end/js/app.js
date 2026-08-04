@@ -522,6 +522,7 @@ function loadEvent(event) {
     };
 
     const eventHeader = document.getElementById("event-header");
+    eventHeader.style.display = "flex";
     eventHeader.style.borderLeftColor = themeColors[event.theme] || "#ffffff";
 
     currentShuffledChoices = [...event.choices];
@@ -552,9 +553,8 @@ function onButtonPress(choiceIndex) {
 
     fetch(`${SERVER}/button_down/${choiceIndex}`).catch(e => console.log(e));
 
-    // VERWIJDERD: choicesContainer.style.display = "none";
+    document.getElementById("event-header").style.display = "none";
 
-    // Laat zien welke knop is gekozen
     const choiceButtons = [redBtn, yellowBtn, greenBtn];
     choiceButtons.forEach((btn, idx) => {
         if (idx === choiceIndex) {
@@ -567,10 +567,9 @@ function onButtonPress(choiceIndex) {
     });
 
     situationElement.innerHTML = `
-        <span style="color: #00ff99; font-size: 1.5rem; text-shadow: 0 0 10px rgba(0,255,153,0.8);">
-            ACTIE GESELECTEERD <br>
-            HOUD DE KNOP VAST!<br>
-            <span style="color: #e9edef; font-size: 1.1rem;">Zorgverlener: Voer de toediening uit op de GSM!</span>
+        <span style="color: #00ff99; font-size: 1.4rem; text-shadow: 0 0 10px rgba(0,255,153,0.8);">
+            HOUD DE KNOP VAST <br>
+            <span style="color: #e9edef; font-size: 1.1rem;">Zorgverlener: Voer toediening uit op de GSM!</span>
         </span>`;
 
     phoneCheckInterval = setInterval(() => {
@@ -594,11 +593,13 @@ function onButtonRelease() {
     clearInterval(phoneCheckInterval);
     waitingForPhone = false;
 
-    // NIEUW: Reset de visuele weergave van de knoppen
+    // Reset de visuele weergave van de knoppen
     const choiceButtons = [redBtn, yellowBtn, greenBtn];
     choiceButtons.forEach(btn => {
         btn.classList.remove("selected-choice", "dimmed-choice");
     });
+
+    document.getElementById("event-header").style.display = "flex";
 
     const currentEvent = events[currentEventIndex];
     situationElement.textContent = currentEvent.title;
