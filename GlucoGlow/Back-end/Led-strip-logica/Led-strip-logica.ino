@@ -12,11 +12,11 @@ const char* ssid = "ANDROID";
 const char* password = "bruhhhh1234";
 const char* apiUrl = "http://10.178.148.212:5000/get_event";
 
-// Non-blocking timer variabelen
+// Non-blocking timer variables
 unsigned long previousMillis = 0;
-const long interval = 500; // Poll elke halve seconde voor real-time reactie!
+const long interval = 500; // Poll every half second for real-time feedback!
 
-// Huidige spelstatus (geüpdatet via JSON)
+// Current game status (updated via JSON)
 int glucose = -1;
 String gameState = "START";
 bool isScanned = false; 
@@ -25,9 +25,9 @@ bool isQuestActive = false;
 void setup() {
   Serial.begin(115200);
   FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
-  FastLED.setBrightness(200); // Zet helderheid
+  FastLED.setBrightness(200); // Set brightness
   
-  fill_solid(leds, NUM_LEDS, CRGB::Blue); // Blauw tijdens opstarten
+  fill_solid(leds, NUM_LEDS, CRGB::Blue); // Blue during startup
   FastLED.show();
 
   WiFi.begin(ssid, password);
@@ -40,7 +40,7 @@ void setup() {
 void loop() {
   unsigned long currentMillis = millis();
 
-  // 1. HAAL DATA OP ZONDER DE LOOP TE BLOKKEREN
+  // 1. FETCH DATA WITHOUT BLOCKING THE THREAD
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
 
@@ -53,7 +53,7 @@ void loop() {
         DynamicJsonDocument doc(512);
         deserializeJson(doc, http.getString());
 
-        // Update variabelen (Zorg dat je backend deze meestuurt!)
+        // Update variables (Make sure your backend sends these!)
         glucose = doc["glucose"]; 
         gameState = doc["game_state"].as<String>(); 
         isScanned = doc["is_scanned"]; 
@@ -63,41 +63,41 @@ void loop() {
     }
   }
 
-  // 2. RENDER DE ANIMATIES GEBASEERD OP GAME STATE
+  // 2. RENDER THE ANIMATIONS BASED ON GAME STATE
   if (gameState == "START") {
-    // Mooi ademend blauw/wit effect voor het startscherm
     breatheEffect(CRGB::DarkBlue);
   } 
   else if (gameState == "END") {
-    if (glucose > 0) { // Gewonnen!
+    if (glucose > 0) { // We won!
       rainbowEffect();
-    } else { // Verloren (game over)
+    } else { // Lost (Game Over)
       strobeEffect(CRGB::Red, 100);
     }
   }
   else if (isQuestActive) {
-    // Pincode of Sensor offline? Laat een waarschuwend looplicht zien
+    // PIN or sensor offline? Display a flashing warning light
     cylonEffect(CRGB::Yellow);
   }
   else if (gameState == "PLAYING") {
     
-    // De belangrijkste fix: is de glucose wel zichtbaar?
+    // Is the glucose visible? 
     if (!isScanned) {
-      // Wachten op scan: Neutraal pulserend licht
+      // Waiting for scan: Neutral pulsating light
       breatheEffect(CRGB::Purple); 
     } 
     else {
-      // Waardes matchen nu met je app.js grenzen!
+      // Values now match the limits in app.js
       if (glucose <= 75) {
-        // Hypo: Knipper rood als een hartslag (synchroon met je audio!)
+        // Hypo: Flashes red like a heartbeat (in sync with the audio)
         strobeEffect(CRGB::Red, 300);
       } 
       else if (glucose >= 160) {
-        // Hyper: Geel / Oranje ademend
+        // Hyper: Yellow / Orange breathable light (in sync with the audio)
+        strobeEffect(CRGB::Yellow, 200);
         breatheEffect(CRGB::Orange);
       } 
       else {
-        // Stabiel: Solide groen
+        // Stable: Solid green
         fill_solid(leds, NUM_LEDS, CRGB::Green);
         FastLED.show();
       }
@@ -105,14 +105,14 @@ void loop() {
   }
 }
 
-// --- FASTLED ANIMATIE FUNCTIES ---
+// --- FASTLED ANIMATION FEATURES ---
 
 void breatheEffect(CRGB color) {
   float breath = (exp(sin(millis() / 2000.0 * PI)) - 0.36787944) * 108.0;
   fill_solid(leds, NUM_LEDS, color);
   FastLED.setBrightness(breath);
   FastLED.show();
-  FastLED.setBrightness(200); // Reset voor andere functies
+  FastLED.setBrightness(200); // Reset for Other Functions
 }
 
 void strobeEffect(CRGB color, int speedMs) {
