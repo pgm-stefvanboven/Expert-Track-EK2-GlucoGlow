@@ -92,10 +92,9 @@ void loop() {
         strobeEffect(CRGB::Red, 300);
       } 
       else if (glucose >= 160) {
-        // Hyper: Yellow / Orange breathable light (in sync with the audio)
-        strobeEffect(CRGB::Yellow, 200);
+        // Hyper: Orange breathable light
         breatheEffect(CRGB::Orange);
-      } 
+      }
       else {
         // Stable: Solid green
         fill_solid(leds, NUM_LEDS, CRGB::Green);
