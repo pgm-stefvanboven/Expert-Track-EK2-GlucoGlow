@@ -198,6 +198,9 @@ function triggerGlucoseScan() {
     if (isGlucoseVisible || gameState !== "PLAYING" || waitingForPhone) return;
     soundScan.play(); // Speel scangeluid
     isGlucoseVisible = true;
+
+    fetch(`${SERVER}/set_scanned/1`);
+
     updateGlucoseDisplay();
     setTimeout(() => {
         isGlucoseVisible = false;
@@ -287,6 +290,9 @@ function startGame() {
 
     fetch(`${SERVER}/set_glucose/${glucose}`);
     gameState = "PLAYING";
+
+    fetch(`${SERVER}/set_state/PLAYING`);
+
     timerElement.textContent = timer;
 
     isGlucoseVisible = false;
@@ -588,6 +594,9 @@ function processChoiceResult(choiceIndex) {
 
     if (glucose < 0) glucose = 0;
     isGlucoseVisible = true;
+
+    fetch(`${SERVER}/set_scanned/1`);
+
     updateGlucoseDisplay();
 
     if (glucose <= 45) { endGame("THOMAS KREEG EEN ERNSTIGE HYPO"); return; }
@@ -655,6 +664,8 @@ function endGame(message) {
     gameContainer.style.display = "none";
     endScreen.style.display = "flex";
     endMessage.textContent = message;
+
+    fetch(`${SERVER}/set_state/END`);
 
     const isWin = message.includes("VEILIG") ? 1 : 0;
     fetch(`${SERVER}/set_game_over/${isWin}`).catch(e => console.log(e));
