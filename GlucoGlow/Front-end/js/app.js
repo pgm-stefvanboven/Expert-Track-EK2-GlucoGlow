@@ -605,13 +605,16 @@ function processChoiceResult(choiceIndex) {
     feedbackTextElement.textContent = currentEvent.feedback;
 
     if (choice.correct) {
-        soundCorrect.play(); // Speel correct geluid
+        soundCorrect.play();
         score += 100;
         feedbackStatusElement.textContent = "✓ GOEDE KEUZE";
         feedbackStatusElement.style.color = "#10b981";
     } else {
-        soundWrong.play(); // Speel verkeerd geluid
+        soundWrong.play();
         score -= 25;
+
+        if (score < 0) score = 0;
+
         feedbackStatusElement.textContent = "✗ SLECHTE KEUZE";
         feedbackStatusElement.style.color = "#ef4444";
     }
