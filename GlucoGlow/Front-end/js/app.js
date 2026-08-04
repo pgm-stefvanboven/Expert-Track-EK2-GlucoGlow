@@ -392,7 +392,7 @@ function startTimer() {
     timerInterval = setInterval(() => {
 
         if (gameState === "FEEDBACK") {
-            return; 
+            return;
         }
 
         if (gameState === "QUEST" || gameState === "TRANSITION") {
@@ -521,7 +521,6 @@ function loadEvent(event) {
         "error": "#dc4b52"
     };
 
-    // Voegt de gekleurde balk toe aan de linkerkant
     const eventHeader = document.getElementById("event-header");
     eventHeader.style.borderLeftColor = themeColors[event.theme] || "#ffffff";
 
@@ -534,6 +533,11 @@ function loadEvent(event) {
 
     feedbackCard.style.display = "none";
     choicesContainer.style.display = "flex";
+
+    const choiceButtons = [redBtn, yellowBtn, greenBtn];
+    choiceButtons.forEach(btn => {
+        btn.classList.remove("selected-choice", "dimmed-choice");
+    });
 
     isGlucoseVisible = false;
     updateGlucoseDisplay();
@@ -548,10 +552,23 @@ function onButtonPress(choiceIndex) {
 
     fetch(`${SERVER}/button_down/${choiceIndex}`).catch(e => console.log(e));
 
-    choicesContainer.style.display = "none";
+    // VERWIJDERD: choicesContainer.style.display = "none";
+
+    // Laat zien welke knop is gekozen
+    const choiceButtons = [redBtn, yellowBtn, greenBtn];
+    choiceButtons.forEach((btn, idx) => {
+        if (idx === choiceIndex) {
+            btn.classList.add("selected-choice");
+            btn.classList.remove("dimmed-choice");
+        } else {
+            btn.classList.add("dimmed-choice");
+            btn.classList.remove("selected-choice");
+        }
+    });
+
     situationElement.innerHTML = `
         <span style="color: #00ff99; font-size: 1.5rem; text-shadow: 0 0 10px rgba(0,255,153,0.8);">
-            ⚡ ACTIE GESELECTEERD ⚡<br>
+            ACTIE GESELECTEERD <br>
             HOUD DE KNOP VAST!<br>
             <span style="color: #e9edef; font-size: 1.1rem;">Zorgverlener: Voer de toediening uit op de GSM!</span>
         </span>`;
@@ -577,9 +594,14 @@ function onButtonRelease() {
     clearInterval(phoneCheckInterval);
     waitingForPhone = false;
 
+    // NIEUW: Reset de visuele weergave van de knoppen
+    const choiceButtons = [redBtn, yellowBtn, greenBtn];
+    choiceButtons.forEach(btn => {
+        btn.classList.remove("selected-choice", "dimmed-choice");
+    });
+
     const currentEvent = events[currentEventIndex];
     situationElement.textContent = currentEvent.title;
-    choicesContainer.style.display = "flex";
 }
 
 function processChoiceResult(choiceIndex) {
