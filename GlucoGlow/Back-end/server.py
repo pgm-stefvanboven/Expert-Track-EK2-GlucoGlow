@@ -21,13 +21,31 @@ game_state = {
     "game_over": False,
     "win": False,
     "held_button": -1,
-    "action_completed": False
+    "action_completed": False,
+    # --- NIEUW VOOR DE LEDSTRIP ---
+    "game_state": "START",
+    "is_scanned": False
 }
 
 # Define route to get the current game state
 @app.route("/get_event")
 def get_event():
-    return jsonify(game_state)
+    # We maken een kopie zodat we dynamisch 'quest_active' kunnen toevoegen voor de ESP32
+    response_data = game_state.copy()
+    response_data["quest_active"] = (game_state["activeQuest"] != "none")
+    return jsonify(response_data)
+
+# --- NIEUWE ROUTES VOOR DE LEDSTRIP ---
+@app.route("/set_state/<state>")
+def set_state(state):
+    game_state["game_state"] = state
+    return jsonify({"success": True, "state": state})
+
+@app.route("/set_scanned/<int:is_scanned>")
+def set_scanned(is_scanned):
+    game_state["is_scanned"] = bool(is_scanned)
+    return jsonify({"success": True, "is_scanned": bool(is_scanned)})
+# --- EINDE NIEUWE ROUTES VOOR DE LEDSTRIP ---
 
 # Define route to set the current event based on event_id
 @app.route("/set_event/<int:event_id>")
@@ -189,6 +207,8 @@ def reset_game():
     game_state["timer"] = 90
     game_state["action_completed"] = False
     game_state["held_button"] = -1
+    game_state["game_state"] = "START"  # Ledstrip reset
+    game_state["is_scanned"] = False    # Ledstrip reset
     return jsonify({"success": True})
 
 # Run the Flask app if this script is executed directly
