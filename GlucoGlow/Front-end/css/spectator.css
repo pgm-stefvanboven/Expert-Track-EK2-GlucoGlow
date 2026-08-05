@@ -234,3 +234,38 @@ hr {
         opacity: 1;
     }
 }
+
+/* --- NEW STATUSES FOR SPECTATOR ANTI-SPOILER --- */
+
+/* Makes the glucose text appear mysterious if it hasn't been scanned yet */
+.blur-text {
+    filter: blur(8px);
+    opacity: 0.6;
+    animation: pulse-blur 2s infinite alternate;
+}
+
+@keyframes pulse-blur {
+    0% { filter: blur(8px); opacity: 0.4; }
+    100% { filter: blur(4px); opacity: 0.8; }
+}
+
+/* Gray “neutral” status for when the game hasn't started yet */
+.standby {
+    background-color: rgba(139, 148, 158, 0.15);
+    color: #8b949e;
+    border: 1px solid #8b949e;
+}
+
+/* Purple light while waiting for a scan (matches your LED strip logic!) */
+.hidden-state {
+    background-color: rgba(163, 113, 247, 0.15);
+    color: #a371f7;
+    border: 1px solid #a371f7;
+    animation: pulse-hidden 2s infinite;
+}
+
+@keyframes pulse-hidden {
+    0% { box-shadow: 0 0 0 0 rgba(163, 113, 247, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(163, 113, 247, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(163, 113, 247, 0); }
+}
