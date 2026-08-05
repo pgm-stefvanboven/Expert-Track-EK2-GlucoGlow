@@ -1,5 +1,5 @@
 console.log("APPJS GELADEN");
-alert("APPJS GELADEN");
+// alert("APPJS GELADEN");
 
 const SERVER = "http://10.178.148.212:5000";
 
