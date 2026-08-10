@@ -40,8 +40,60 @@
         </div>
     </div>
 
-    <!-- SPEL -->
+    <!-- SPEL CONTAINER -->
     <div id="game-container">
+
+        <!-- INTRO OVERLAY (Stap 1: Briefing van ±15-20 sec) -->
+        <div id="intro-overlay" style="display: none;">
+            <div class="intro-card">
+                <h2>MISSIE BRIEFING</h2>
+
+                <div class="intro-section">
+                    <h3>👤 Wie is Thomas?</h3>
+                    <p>Thomas heeft Diabetes Type 1. Zijn glucose verandert continu door eten, sport en emoties.</p>
+                </div>
+
+                <div class="intro-section">
+                    <h3>🎯 Wat is jullie doel?</h3>
+                    <p>Houd Thomas' glucose stabiel tussen de 70 en 160 mg/dL en voorkom hypo's of hypers!</p>
+                </div>
+
+                <div class="intro-grid">
+                    <div class="role-box">
+                        <h4>🕹️ Speler 1 (Scherm)</h4>
+                        <p>Scant de glucose & kiest de behandeling met de fysieke knoppen.</p>
+                    </div>
+                    <div class="role-box">
+                        <h4>📱 Speler 2 (GSM)</h4>
+                        <p>Voert de waarde in, verwerkt medische info & voert acties uit.</p>
+                    </div>
+                </div>
+
+                <div class="intro-footer">
+                    <p class="intro-hint">💡 Overleg steeds samen vóór je een keuze maakt!</p>
+                    <button id="skipIntroBtn">START DIRECT (<span id="introTimer">15</span>s)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- POPUP 1: LEES-OVERLAY (Enkel vraag + keuzes + OK knop | TIJD STAAT STIL) -->
+        <div id="read-overlay" style="display: none;">
+            <div class="read-card">
+                <h2 id="read-situation-text"></h2>
+                <div id="read-choices-list"></div>
+                <button id="readOkBtn">BEGREPEN (OK)</button>
+            </div>
+        </div>
+
+        <!-- POPUP 2: OVERLEG-OVERLAY (5 seconden aftellen | SCHERM IS ZICHTBAAR) -->
+        <div id="discuss-overlay" style="display: none;">
+            <div class="discuss-card">
+                <h3>🗣️ OVERLEGTIJD (<span id="discussTimer">5</span>s)</h3>
+                <p>Bespreek de situatie! Druk op een knop op de Pi om direct te beginnen.</p>
+            </div>
+        </div>
+
+        <!-- TOP BAR (DASHBOARD) -->
         <div id="top-bar">
             <div id="glucose-container">
                 <span class="label">Glucose</span>
@@ -53,6 +105,7 @@
             </div>
         </div>
 
+        <!-- HOOFDCONTENT (SITUATIE / PI-CONTENT) -->
         <div id="pi-content">
 
             <div id="event-header">
@@ -72,13 +125,14 @@
 
         </div>
 
+        <!-- KEUZEKNOPPEN -->
         <div id="choices">
             <div id="redBtn" class="choice-box"></div>
             <div id="yellowBtn" class="choice-box"></div>
             <div id="greenBtn" class="choice-box"></div>
         </div>
 
-        <!-- SIDEQUEST OVERLAY -->
+        <!-- SIDEQUEST OVERLAY (PINCODE) -->
         <div id="quest-overlay">
             <div class="quest-box">
                 <h2>POMP VERGRENDELD</h2>
@@ -103,7 +157,7 @@
             </div>
         </div>
 
-        <!-- FEEDBACK SCHERM -->
+        <!-- FEEDBACK SCHERM (Kort & Leerzaam) -->
         <div id="feedback-card">
             <h2 id="feedback-status"></h2>
             <p id="feedback-text"></p>
@@ -120,16 +174,9 @@
     </div>
 
     <script>
-        // 1. Generate a unique timestamp
         const timestamp = new Date().getTime();
-
-        // 2. Make a new script element
         const script = document.createElement('script');
-
-        // 3. Add the timestamp to the URL (e.g.: js/app.js?v=168493029)
         script.src = 'js/app.js?v=' + timestamp;
-
-        // 4. Place it in the HTML
         document.body.appendChild(script);
     </script>
 </body>

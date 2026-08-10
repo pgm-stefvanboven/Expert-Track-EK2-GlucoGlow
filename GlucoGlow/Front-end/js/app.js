@@ -1,11 +1,10 @@
 console.log("APPJS GELADEN");
-// alert("APPJS GELADEN");
 
 const SERVER = "http://10.178.148.212:5000";
 
 fetch(`${SERVER}/set_glucose/-1`);
 
-// GAME VARIABLES
+// GAME VARIABELEN
 let glucose = 75;
 let timer = 90;
 let score = 0;
@@ -14,17 +13,18 @@ let teamName = "";
 let isGlucoseVisible = false;
 let bannedWords = [];
 
-// De geschuffelde keuzes van deze ronde
+// Geschuffelde keuzes van de actieve ronde
 let currentShuffledChoices = [];
 
-// SIDEQUEST & CO-OP VARIABELEN
+// SIDEQUEST, OVERLEG & CO-OP VARIABELEN
 let isSidequestActive = false;
 let sidequestCode = [];
 let enteredCode = [];
 let events = [];
 let currentEventIndex = 0;
-let gameState = "START";
+let gameState = "START"; // Statuses: START, READING, DISCUSSING, PLAYING, TRANSITION, QUEST, FEEDBACK, END
 let timerInterval;
+let discussInterval = null;
 let waitingForPhone = false;
 let currentChoiceIndex = -1;
 let phoneCheckInterval;
@@ -36,7 +36,6 @@ const highscoreNameElement = document.getElementById("highscoreName");
 const highscorePointsElement = document.getElementById("highscorePoints");
 
 const teamOverlay = document.getElementById("team-overlay");
-const teamNameInput = document.getElementById("teamNameInput");
 const teamOkBtn = document.getElementById("teamOkBtn");
 const teamDisplay = document.getElementById("teamDisplay");
 const keyboard = document.getElementById("keyboard");
@@ -49,7 +48,6 @@ const gameContainer = document.getElementById("game-container");
 const glucoseElement = document.getElementById("glucose");
 const timerElement = document.getElementById("timer");
 const situationElement = document.getElementById("pi-situation-text");
-const piHeader = document.getElementById("pi-header");
 const piIcon = document.getElementById("pi-icon");
 const piThemeText = document.getElementById("pi-theme-text");
 const piSourceLabel = document.getElementById("pi-source-label");
@@ -58,24 +56,23 @@ const redBtn = document.getElementById("redBtn");
 const yellowBtn = document.getElementById("yellowBtn");
 const greenBtn = document.getElementById("greenBtn");
 
-// Maak de scan-knop aanklikbaar met de muis/touch (én de fysieke knop blijft werken!)
+// Scan-knop interactie
 glucoseElement.style.cursor = "pointer";
 glucoseElement.addEventListener("click", triggerGlucoseScan);
 
 const questOverlay = document.getElementById("quest-overlay");
-const pinInput = document.getElementById("pinInput");
-const pinSubmitBtn = document.getElementById("pinSubmitBtn");
+const pinDisplay = document.getElementById("pinDisplay");
 const pinFeedback = document.getElementById("pinFeedback");
 const questTimerDisplay = document.getElementById("quest-timer-display");
 
-// AUDIO VARIABLES
+// AUDIO
 const soundStart = new Audio('assets/sounds/game-start.mp3');
 const soundScan = new Audio('assets/sounds/scan.mp3');
 const soundCorrect = new Audio('assets/sounds/correct.mp3');
 const soundWrong = new Audio('assets/sounds/wrong.mp3');
 const soundSidequest = new Audio('assets/sounds/sidequest-start.mp3');
 const soundHeartbeat = new Audio('assets/sounds/heartbeat.mp3');
-soundHeartbeat.loop = true; // Zorgt dat de hartslag blijft kloppen
+soundHeartbeat.loop = true;
 const soundCountdown = new Audio('assets/sounds/countdown.mp3');
 const soundWin = new Audio('assets/sounds/game-win.mp3');
 const soundGameOver = new Audio('assets/sounds/game-over.mp3');
@@ -90,16 +87,11 @@ const endTitle = document.getElementById("end-title");
 const endMessage = document.getElementById("end-message");
 const endScore = document.getElementById("end-score");
 
-// LOADING DATA
-
-// Laad de verboden woorden in vanuit het JSON bestand
+// DATA LADEN
 fetch("data/bannedWords.json?v=" + new Date().getTime())
     .then(response => response.json())
-    .then(data => {
-        bannedWords = data;
-        console.log("Verboden woorden geladen:", bannedWords.length);
-    })
-    .catch(error => console.error("Fout bij het laden van verboden woorden:", error));
+    .then(data => { bannedWords = data; })
+    .catch(error => console.error("Fout bij laden verboden woorden:", error));
 
 fetch("data/events.json?v=" + new Date().getTime())
     .then(response => response.json())
@@ -108,12 +100,10 @@ fetch("data/events.json?v=" + new Date().getTime())
 fetch(`${SERVER}/get_highscore`)
     .then(response => response.json())
     .then(data => {
-        if (!highscoreNameElement || !highscorePointsElement) {
-            console.warn("Highscore elements niet gevonden in de HTML (highscoreName / highscorePoints).");
-            return;
+        if (highscoreNameElement && highscorePointsElement) {
+            highscoreNameElement.textContent = data.team;
+            highscorePointsElement.textContent = data.highscore;
         }
-        highscoreNameElement.textContent = data.team;
-        highscorePointsElement.textContent = data.highscore;
     });
 
 // TEAM NAAM LOGICA
@@ -147,8 +137,8 @@ spaceBtn.addEventListener("click", () => {
 function isValidTeamName(name) {
     const lower = name.toLowerCase();
     if (bannedWords.some(word => lower.includes(word))) return false;
-    const letters = (name.match(/[a-z]/gi) || []).length;
-    if (letters < 3) return false;
+    const lettersMatch = (name.match(/[a-z]/gi) || []).length;
+    if (lettersMatch < 3) return false;
     if (!/[aeiou]/i.test(name)) return false;
     return true;
 }
@@ -190,13 +180,13 @@ function updateGlucoseDisplay() {
         glucoseElement.textContent = "SCAN";
         glucoseElement.style.color = "";
         glucoseElement.style.textShadow = "";
-        glucoseElement.classList.add('scan-active'); // Voegt de pulserende glow toe
+        glucoseElement.classList.add('scan-active');
     }
 }
 
 function triggerGlucoseScan() {
-    if (isGlucoseVisible || gameState !== "PLAYING" || waitingForPhone) return;
-    soundScan.play(); // Speel scangeluid
+    if (isGlucoseVisible || (gameState !== "PLAYING" && gameState !== "DISCUSSING") || waitingForPhone) return;
+    soundScan.play();
     isGlucoseVisible = true;
 
     fetch(`${SERVER}/set_scanned/1`);
@@ -210,7 +200,7 @@ function triggerGlucoseScan() {
 
 function getValidEvent() {
     const validEvents = events.filter(event => {
-        if (event.type === "sidequest") return false;
+        if (event.type === "sidequest" || event.type === "pincode") return false;
         const pastBijGlucose = glucose >= event.minGlucose && glucose <= event.maxGlucose;
         const isNietGespeeld = !event.played;
         return pastBijGlucose && isNietGespeeld;
@@ -229,10 +219,7 @@ function triggerNextEvent() {
     const nextEvent = getValidEvent();
     if (nextEvent) {
         currentEventIndex = events.indexOf(nextEvent);
-        fetch(`${SERVER}/set_event/${currentEventIndex}`)
-            .then(response => response.json())
-            .catch(error => console.error("Flask Event Fout:", error));
-
+        fetch(`${SERVER}/set_event/${currentEventIndex}`);
         fetch(`${SERVER}/set_quest/none`);
         loadEvent(nextEvent);
     } else {
@@ -271,34 +258,68 @@ function triggerSensorCalibration() {
     choicesContainer.style.display = "flex";
 }
 
+// INTRO BRIEFING OVERLAY (±15-20 Sec)
+function showIntroOverlay(onComplete) {
+    const introOverlay = document.getElementById("intro-overlay");
+    const introTimerSpan = document.getElementById("introTimer");
+    const skipBtn = document.getElementById("skipIntroBtn");
+
+    if (!introOverlay) {
+        onComplete();
+        return;
+    }
+
+    introOverlay.style.display = "flex";
+    let timeLeft = 15;
+
+    const introInterval = setInterval(() => {
+        timeLeft--;
+        if (introTimerSpan) introTimerSpan.textContent = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(introInterval);
+            introOverlay.style.display = "none";
+            onComplete();
+        }
+    }, 1000);
+
+    if (skipBtn) {
+        skipBtn.onclick = () => {
+            clearInterval(introInterval);
+            introOverlay.style.display = "none";
+            onComplete();
+        };
+    }
+}
+
+// START SPEL LOGICA
 function startGame() {
-    soundStart.play(); // Speel startgeluid
-    soundHeartbeat.pause(); // Reset hartslag voor de zekerheid
-    document.body.style.filter = "none"; // Reset wazig scherm
+    soundStart.play();
+    soundHeartbeat.pause();
+    document.body.style.filter = "none";
 
     startScreen.style.display = "none";
     fetch(`${SERVER}/reset_game`).catch(e => console.log(e));
     gameContainer.style.display = "flex";
 
-    events.forEach(e => e.played = false);
-    const minGlucose = 80;
-    const maxGlucose = 130;
-    glucose = Math.floor(Math.random() * (maxGlucose - minGlucose + 1)) + minGlucose;
-    timer = 90;
-    score = 0;
-    isSidequestActive = false;
+    showIntroOverlay(() => {
+        events.forEach(e => e.played = false);
+        const minGlucose = 80;
+        const maxGlucose = 130;
+        glucose = Math.floor(Math.random() * (maxGlucose - minGlucose + 1)) + minGlucose;
+        timer = 90;
+        score = 0;
+        isSidequestActive = false;
 
-    fetch(`${SERVER}/set_glucose/${glucose}`);
-    gameState = "PLAYING";
+        fetch(`${SERVER}/set_glucose/${glucose}`);
+        gameState = "PLAYING";
+        fetch(`${SERVER}/set_state/PLAYING`);
 
-    fetch(`${SERVER}/set_state/PLAYING`);
-
-    timerElement.textContent = timer;
-
-    isGlucoseVisible = false;
-    updateGlucoseDisplay();
-    triggerNextEvent();
-    startTimer();
+        timerElement.textContent = timer;
+        isGlucoseVisible = false;
+        updateGlucoseDisplay();
+        triggerNextEvent();
+        startTimer();
+    });
 }
 
 startBtn.addEventListener("click", () => {
@@ -324,7 +345,7 @@ teamOkBtn.addEventListener("click", () => {
     startGame();
 });
 
-// --- FYSIEKE ARCADE KNOPPEN (RASPBERRY PI) ---
+// FYSIEKE KNOPPEN & HARDWARE POLLING
 let previousHeldButton = -1;
 let lastButtonPressTime = 0;
 let holdGraceTimer = null;
@@ -337,7 +358,6 @@ setInterval(() => {
             const now = Date.now();
 
             if (currentHeldButton !== -1 && previousHeldButton === -1) {
-
                 clearTimeout(holdGraceTimer);
 
                 if (now - lastButtonPressTime < 300) {
@@ -354,14 +374,12 @@ setInterval(() => {
 
                     if (enteredCode.length === 3) {
                         if (JSON.stringify(enteredCode) === JSON.stringify(sidequestCode)) {
-                            // GEEN ALERT MEER, MAAR IN-GAME FEEDBACK
                             isSidequestActive = false;
-                            gameState = "TRANSITION"; // Blokkeer andere knoppen
+                            gameState = "TRANSITION";
                             score += 100;
                             situationElement.innerHTML = `<span style="color: #10b981; font-weight: bold; font-size: 1.5rem;">✓ KALIBRATIE SUCCESVOL!<br>Sensor is weer online.</span>`;
                             setTimeout(triggerNextEvent, 2000);
                         } else {
-                            // GEEN ALERT MEER
                             enteredCode = [];
                             timer -= 5;
                             timerElement.textContent = timer;
@@ -372,13 +390,13 @@ setInterval(() => {
                         }
                     }
                 }
-                else if (gameState === "PLAYING") {
+                else if (gameState === "PLAYING" || gameState === "DISCUSSING") {
                     onButtonPress(currentHeldButton);
                 }
             }
 
             if (currentHeldButton === -1 && previousHeldButton !== -1) {
-                if (gameState === "PLAYING" && !isSidequestActive) {
+                if ((gameState === "PLAYING" || gameState === "DISCUSSING") && !isSidequestActive) {
                     holdGraceTimer = setTimeout(() => {
                         onButtonRelease();
                     }, 300);
@@ -388,12 +406,10 @@ setInterval(() => {
         }).catch(error => { });
 }, 100);
 
+// TIMER LOGICA (PAUSEERT TIJDENS 'READING' EN 'FEEDBACK')
 function startTimer() {
     timerInterval = setInterval(() => {
-
-        if (gameState === "FEEDBACK") {
-            return;
-        }
+        if (gameState === "FEEDBACK" || gameState === "READING") return;
 
         if (gameState === "QUEST" || gameState === "TRANSITION") {
             timer -= 2;
@@ -401,9 +417,7 @@ function startTimer() {
             timer -= 1;
         }
 
-        if (timer === 5) {
-            soundCountdown.play();
-        }
+        if (timer === 5) soundCountdown.play();
 
         if (timer <= 0) {
             timer = 0;
@@ -419,9 +433,18 @@ function startTimer() {
     }, 1000);
 }
 
-// ONSCREEN NUMPAD LOGICA
+// STOP OVERLEGSTAND HELPER
+function stopDiscussMode() {
+    if (discussInterval) {
+        clearInterval(discussInterval);
+        discussInterval = null;
+    }
+    const discussOverlay = document.getElementById("discuss-overlay");
+    if (discussOverlay) discussOverlay.style.display = "none";
+}
+
+// PINCODE LOGICA
 let currentPin = "";
-const pinDisplay = document.getElementById("pinDisplay");
 
 function addPin(num) {
     if (currentPin.length < 4) {
@@ -468,13 +491,9 @@ function triggerPincodeQuest() {
         currentEventIndex = randomPinIndex;
         targetPin = events[randomPinIndex].pin;
         fetch(`${SERVER}/set_event/${currentEventIndex}`);
-
-        // VOEG DEZE REGEL TOE:
         fetch(`${SERVER}/set_quest/pincode`);
     } else {
         targetPin = "6162";
-
-        // VOEG HEM HIER OOK TOE ALS FALLBACK:
         fetch(`${SERVER}/set_quest/pincode`);
     }
 
@@ -482,33 +501,22 @@ function triggerPincodeQuest() {
     questOverlay.style.display = "flex";
 }
 
+// LOAD EVENT INCLUSIEF POPUP 1 (LEESFASE) EN POPUP 2 (OVERLEGFASE)
 function loadEvent(event) {
+    stopDiscussMode();
+
     situationElement.textContent = event.title;
     piIcon.textContent = event.icon || "⚠";
 
-    // 1. Bepaal de afzender tekst
     let afzenderTekst = "";
-    if (event.source === "mama") {
-        afzenderTekst = "👩 MAMA";
-    } else if (event.source === "school") {
-        afzenderTekst = "🏫 SCHOOL";
-    } else if (event.source === "sensor") {
-        afzenderTekst = "📱 SENSOR";
-    } else {
-        afzenderTekst = "💬 THOMAS";
-    }
+    if (event.source === "mama") afzenderTekst = "👩 MAMA";
+    else if (event.source === "school") afzenderTekst = "🏫 SCHOOL";
+    else if (event.source === "sensor") afzenderTekst = "📱 SENSOR";
+    else afzenderTekst = "💬 THOMAS";
 
-    // 2. Bepaal de thema tekst
-    let themaTekst = (event.theme || "MELDING").toUpperCase();
-
-    // 3. Update de UI elementen
-    // Thema
-    piThemeText.textContent = themaTekst;
-
-    // Afzender
+    piThemeText.textContent = (event.theme || "MELDING").toUpperCase();
     piSourceLabel.textContent = afzenderTekst;
 
-    // Thema kleur nu op de linker border (border-left)
     const themeColors = {
         "sport": "#16c784",
         "school": "#3b82f6",
@@ -542,10 +550,70 @@ function loadEvent(event) {
 
     isGlucoseVisible = false;
     updateGlucoseDisplay();
-    gameState = "PLAYING";
+
+    // --- POPUP 1: VRAAG EN MOGELIJKHEDEN LEZEN (TIJD STAAT STIL) ---
+    gameState = "READING";
+
+    const readOverlay = document.getElementById("read-overlay");
+    const readSituationText = document.getElementById("read-situation-text");
+    const readChoicesList = document.getElementById("read-choices-list");
+    const readOkBtn = document.getElementById("readOkBtn");
+
+    if (readOverlay && readSituationText && readChoicesList && readOkBtn) {
+        readSituationText.textContent = event.title;
+        readChoicesList.innerHTML = "";
+
+        currentShuffledChoices.forEach((choice, index) => {
+            const choiceItem = document.createElement("div");
+            choiceItem.className = "read-choice-item";
+            choiceItem.textContent = `${index + 1}. ${choice.text}`;
+            readChoicesList.appendChild(choiceItem);
+        });
+
+        readOverlay.style.display = "flex";
+
+        readOkBtn.onclick = () => {
+            readOverlay.style.display = "none";
+            startDiscussPhase();
+        };
+    } else {
+        startDiscussPhase();
+    }
+}
+
+// POPUP 2: OVERLEGFUSE VAN 5 SECONDEN (SCHERM ZICHTBAAR, AFBREKEN BIJ KNOPDRUK)
+function startDiscussPhase() {
+    gameState = "DISCUSSING";
+
+    const discussOverlay = document.getElementById("discuss-overlay");
+    const discussTimerSpan = document.getElementById("discussTimer");
+
+    if (!discussOverlay) {
+        gameState = "PLAYING";
+        return;
+    }
+
+    let discussTime = 5;
+    if (discussTimerSpan) discussTimerSpan.textContent = discussTime;
+    discussOverlay.style.display = "block";
+
+    discussInterval = setInterval(() => {
+        discussTime--;
+        if (discussTimerSpan) discussTimerSpan.textContent = discussTime;
+
+        if (discussTime <= 0) {
+            stopDiscussMode();
+            gameState = "PLAYING";
+        }
+    }, 1000);
 }
 
 function onButtonPress(choiceIndex) {
+    if (gameState === "DISCUSSING") {
+        stopDiscussMode();
+        gameState = "PLAYING";
+    }
+
     if (gameState !== "PLAYING" || waitingForPhone) return;
 
     currentChoiceIndex = choiceIndex;
@@ -587,29 +655,27 @@ function onButtonPress(choiceIndex) {
 }
 
 function onButtonRelease() {
-    if (gameState !== "PLAYING" || !waitingForPhone) return;
+    if ((gameState !== "PLAYING" && gameState !== "DISCUSSING") || !waitingForPhone) return;
 
     fetch(`${SERVER}/button_up`).catch(e => console.log(e));
     clearInterval(phoneCheckInterval);
     waitingForPhone = false;
 
-    // Reset de visuele weergave van de knoppen
     const choiceButtons = [redBtn, yellowBtn, greenBtn];
     choiceButtons.forEach(btn => {
         btn.classList.remove("selected-choice", "dimmed-choice");
     });
 
     document.getElementById("event-header").style.display = "flex";
-
     const currentEvent = events[currentEventIndex];
     situationElement.textContent = currentEvent.title;
 }
 
+// PROCESS CHOICE RESULT & FEEDBACK WEERGEVEN
 function processChoiceResult(choiceIndex) {
     gameState = "FEEDBACK";
 
     const currentEvent = events[currentEventIndex];
-    // Gebruik de actuele geschuffelde keuze!
     const choice = currentShuffledChoices[choiceIndex];
 
     glucose += choice.effect;
@@ -619,7 +685,6 @@ function processChoiceResult(choiceIndex) {
     isGlucoseVisible = true;
 
     fetch(`${SERVER}/set_scanned/1`);
-
     updateGlucoseDisplay();
 
     if (glucose <= 45) { endGame("THOMAS KREEG EEN ERNSTIGE HYPO"); return; }
@@ -635,7 +700,6 @@ function processChoiceResult(choiceIndex) {
     } else {
         soundWrong.play();
         score -= 25;
-
         if (score < 0) score = 0;
 
         feedbackStatusElement.textContent = "✗ SLECHTE KEUZE";
@@ -647,7 +711,7 @@ function processChoiceResult(choiceIndex) {
 }
 
 document.addEventListener("keydown", (event) => {
-    if (gameState === "PLAYING" && !isSidequestActive) {
+    if ((gameState === "PLAYING" || gameState === "DISCUSSING") && !isSidequestActive) {
         if (event.repeat) return;
         if (event.key === "1") onButtonPress(0);
         if (event.key === "2") onButtonPress(1);
@@ -660,7 +724,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 document.addEventListener("keyup", (event) => {
-    if (gameState === "PLAYING" && !isSidequestActive) {
+    if ((gameState === "PLAYING" || gameState === "DISCUSSING") && !isSidequestActive) {
         if (event.key === "1" || event.key === "2" || event.key === "3") {
             onButtonRelease();
         }
@@ -678,8 +742,8 @@ nextBtn.addEventListener("click", () => {
 function endGame(message) {
     gameState = "END";
     clearInterval(timerInterval);
+    stopDiscussMode();
 
-    // Stop paniek-effecten
     soundHeartbeat.pause();
     document.body.style.filter = "none";
 
@@ -712,10 +776,11 @@ function endGame(message) {
 
     let countdown = 5;
     const countdownElement = document.getElementById("countdown");
-    countdownElement.textContent = countdown;
+    if (countdownElement) countdownElement.textContent = countdown;
+
     const countdownInterval = setInterval(() => {
         countdown--;
-        countdownElement.textContent = countdown;
+        if (countdownElement) countdownElement.textContent = countdown;
         if (countdown <= 0) {
             clearInterval(countdownInterval);
             fetch(`${SERVER}/set_glucose/-1`);

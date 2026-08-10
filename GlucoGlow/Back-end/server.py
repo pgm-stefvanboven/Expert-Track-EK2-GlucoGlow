@@ -1,7 +1,6 @@
 # Import necessary libraries
 from flask import Flask, jsonify
 from flask_cors import CORS
-
 import json
 import os
 
@@ -22,20 +21,18 @@ game_state = {
     "win": False,
     "held_button": -1,
     "action_completed": False,
-    # --- NIEUW VOOR DE LEDSTRIP ---
     "game_state": "START",
     "is_scanned": False
 }
 
-# Define route to get the current game state
+# Route: Haal actuele status op voor Scherm / GSM / ESP32
 @app.route("/get_event")
 def get_event():
-    # We maken een kopie zodat we dynamisch 'quest_active' kunnen toevoegen voor de ESP32
     response_data = game_state.copy()
     response_data["quest_active"] = (game_state["activeQuest"] != "none")
     return jsonify(response_data)
 
-# --- NIEUWE ROUTES VOOR DE LEDSTRIP ---
+# --- ROUTES VOOR LEDSTRIP & STATUS ---
 @app.route("/set_state/<state>")
 def set_state(state):
     game_state["game_state"] = state
@@ -45,9 +42,8 @@ def set_state(state):
 def set_scanned(is_scanned):
     game_state["is_scanned"] = bool(is_scanned)
     return jsonify({"success": True, "is_scanned": bool(is_scanned)})
-# --- EINDE NIEUWE ROUTES VOOR DE LEDSTRIP ---
 
-# Define route to set the current event based on event_id
+# --- EVENT & GLUCOSE MANAGEMENT ---
 @app.route("/set_event/<int:event_id>")
 def set_event(event_id):
     game_state["currentEvent"] = event_id
@@ -56,7 +52,6 @@ def set_event(event_id):
         "currentEvent": event_id
     })
 
-# Define route to set the glucose level based on value
 @app.route("/set_glucose/<value>")
 def set_glucose(value):
     numeric_value = int(value)
@@ -67,7 +62,7 @@ def set_glucose(value):
         "glucose": numeric_value
     })
 
-# Define route to handle button presses based on button_id
+# --- HARDWARE BUTTON LOGICA ---
 @app.route("/button/<int:button_id>")
 def button(button_id):
     global last_button
@@ -77,7 +72,6 @@ def button(button_id):
         "button": button_id
     })
 
-# Define route to get the last button pressed
 @app.route("/get_button")
 def get_button():
     global last_button
@@ -87,8 +81,7 @@ def get_button():
         "button": button
     })
 
-# --- NIEUWE CO-OP ROUTES (VASTHOUDEN & ACTIE) ---
-
+# --- CO-OP ACTIES (VASTHOUDEN & BEVESTIGEN VIA GSM) ---
 @app.route("/button_down/<int:button_id>")
 def button_down(button_id):
     game_state["held_button"] = button_id
@@ -102,7 +95,7 @@ def button_up():
 @app.route("/complete_action")
 def complete_action():
     game_state["action_completed"] = True
-    game_state["held_button"] = -1 # Reset de hold automatisch
+    game_state["held_button"] = -1  # Reset de hold automatisch
     return jsonify({"success": True})
 
 @app.route("/reset_action")
@@ -110,9 +103,7 @@ def reset_action():
     game_state["action_completed"] = False
     return jsonify({"success": True})
 
-# --- EINDE CO-OP ROUTES ---
-
-# Define route to trigger or end a quest
+# --- QUESTS & PINCODES ---
 @app.route("/set_quest/<quest_name>")
 def set_quest(quest_name):
     game_state["activeQuest"] = quest_name
@@ -122,7 +113,6 @@ def set_quest(quest_name):
         "activeQuest": quest_name
     })
 
-# Define route to check the PIN code
 @app.route("/check_pin/<pin>")
 def check_pin(pin):
     correct_pin = "6162"
@@ -132,23 +122,28 @@ def check_pin(pin):
     else:
         return jsonify({"success": False, "message": "Foutieve code!"})
 
+# --- HIGHSCORES & TIMER ---
 @app.route("/save_score/<team>/<score>")
 def save_score(team, score):
     score = int(score)
     bestand = os.path.join(
         os.path.dirname(__file__),
-        "..",
-        "Front-end",
         "data",
         "highscores.json"
     )
+
+    if not os.path.exists(os.path.dirname(bestand)):
+        os.makedirs(os.path.dirname(bestand), exist_ok=True)
 
     if not os.path.exists(bestand):
         with open(bestand, "w") as f:
             json.dump([], f)
 
-    with open(bestand, "r") as f:
-        highscores = json.load(f)
+    try:
+        with open(bestand, "r") as f:
+            highscores = json.load(f)
+    except json.JSONDecodeError:
+        highscores = []
 
     highscores.append({
         "team": team,
@@ -167,8 +162,6 @@ def save_score(team, score):
 def get_highscore():
     bestand = os.path.join(
         os.path.dirname(__file__),
-        "..",
-        "Front-end",
         "data",
         "highscores.json"
     )
@@ -176,11 +169,11 @@ def get_highscore():
     if not os.path.exists(bestand):
         return jsonify({"team": "Niemand", "highscore": 0})
 
-    with open(bestand, "r") as f:
-        try:
+    try:
+        with open(bestand, "r") as f:
             highscores = json.load(f)
-        except json.JSONDecodeError:
-            return jsonify({"team": "Niemand", "highscore": 0})
+    except json.JSONDecodeError:
+        return jsonify({"team": "Niemand", "highscore": 0})
 
     if len(highscores) == 0:
         return jsonify({"team": "Niemand", "highscore": 0})
@@ -207,11 +200,11 @@ def reset_game():
     game_state["timer"] = 90
     game_state["action_completed"] = False
     game_state["held_button"] = -1
-    game_state["game_state"] = "START"  # Ledstrip reset
-    game_state["is_scanned"] = False    # Ledstrip reset
+    game_state["game_state"] = "START"
+    game_state["is_scanned"] = False
     return jsonify({"success": True})
 
-# Run the Flask app if this script is executed directly
+# Run Flask Server
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",

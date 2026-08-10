@@ -8,7 +8,9 @@
         "minGlucose": 70,
         "maxGlucose": 110,
         "trend": "↓↓",
-        "feedback": "✅ Oef, net op tijd! Je spieren verbruiken extra suiker bij het sprinten. Dit voorkomt een hypo.",
+        "contextInfo": "Thomas heeft intensief gesport. Zijn spieren blijven na de inspanning extra glucose uit het bloed opnemen.",
+        "actionType": "tap_hold",
+        "feedback": "✓ Dextro bevat snelle suikers die direct in het bloed worden opgenomen en zo een acute hypo stoppen.",
         "choices": [
             {
                 "text": "Geef Dextro",
@@ -36,7 +38,9 @@
         "minGlucose": 75,
         "maxGlucose": 130,
         "trend": "↓",
-        "feedback": "⚠ Dat was nipt! De insuline werkt al, dus er móét gegeten worden om een crash te voorkomen.",
+        "contextInfo": "De insuline zit al in zijn lichaam en verlaagt actief zijn bloedsuiker. Zonder eten ontstaat snel een hypo.",
+        "actionType": "confirm_only",
+        "feedback": "✓ Koolhydraten zijn direct nodig om de reeds toegediende insuline in het lichaam op te vangen.",
         "choices": [
             {
                 "text": "Koop iets met koolhydraten",
@@ -64,7 +68,16 @@
         "minGlucose": 80,
         "maxGlucose": 140,
         "trend": "↓",
-        "feedback": "💪 Slim! Sporten kost veel energie. Een snack vooraf houdt de suikerspiegel mooi stabiel.",
+        "contextInfo": "Ongeplande beweging kost veel energie. Zonder extra koolhydraten zakt de glucose tijdens de les.",
+        "actionType": "quiz_prompt",
+        "quizQuestion": "Wat is het effect van extra sporten op de bloedsuiker?",
+        "quizOptions": [
+            "Spieren verbruiken extra glucose (daling)",
+            "Geen enkel effect op glucose",
+            "Glucose stijgt altijd extreem snel"
+        ],
+        "correctQuizIndex": 0,
+        "feedback": "✓ Een snack vooraf voedt de spieren en houdt de bloedsuikerspiegel op peil tijdens fysieke inspanning.",
         "choices": [
             {
                 "text": "Neem een snack vooraf",
@@ -92,7 +105,9 @@
         "minGlucose": 50,
         "maxGlucose": 69,
         "trend": "↓↓",
-        "feedback": "🚑 Correct. Bij acute hyposignalen zijn snelle suikers onmiddellijk noodzakelijk.",
+        "feedback": "✓ Bij acute hypo-symptomen zijn snelle suikers noodzakelijk om bewustzijnsverlies te voorkomen.",
+        "contextInfo": "Thomas vertoont duidelijke hypo-symptomen (trillen, zweten). De glucosewaarde daalt razendsnel.",
+        "actionType": "tap_hold",
         "choices": [
             {
                 "text": "Geef direct snelwerkende suikers",
@@ -120,7 +135,9 @@
         "minGlucose": 140,
         "maxGlucose": 220,
         "trend": "↑",
-        "feedback": "👍 Goed meegedacht! Stress verhoogt de glucose. Eerst meten voorkomt dat je blind insuline bijspuit.",
+        "contextInfo": "Examenstress maakt stresshormonen (zoals adrenaline) aan. Deze hormonen laten de glucose stijgen.",
+        "actionType": "confirm_only",
+        "feedback": "✓ Eerst meten voorkomt dat je blind insuline spuit voor een stijging die door stress wordt veroorzaakt.",
         "choices": [
             {
                 "text": "Meet eerst zijn glucosewaarde",
@@ -148,7 +165,16 @@
         "minGlucose": 90,
         "maxGlucose": 150,
         "trend": "→",
-        "feedback": "😌 Dat voorkomt problemen. Alcohol verhoogt later de kans op een hypo. Extra meten is cruciaal.",
+        "contextInfo": "Alcohol blokkeert de suikerpomp van de lever. Het risico op een verlate (nachtelijke) hypo is erg groot.",
+        "actionType": "quiz_prompt",
+        "quizQuestion": "Waarom is alcohol gevaarlijk bij diabetes?",
+        "quizOptions": [
+            "De lever stopt tijdelijk met glucose afgeven",
+            "Insuline werkt niet meer",
+            "Glucose stijgt dagenlang"
+        ],
+        "correctQuizIndex": 0,
+        "feedback": "✓ Extra controleren voorkomt dat Thomas 's nachts ongemerkt in een gevaarlijke hypo belandt.",
         "choices": [
             {
                 "text": "Controleer extra tijdens de avond en voor het slapen",
@@ -176,7 +202,9 @@
         "minGlucose": 80,
         "maxGlucose": 180,
         "trend": "→",
-        "feedback": "✅ Rust in de tent. Na een chaotische dag voorkomt een extra controle schommelingen in de nacht.",
+        "contextInfo": "Na een drukke dag reageert het lichaam anders. Een extra controle brengt de nachtelijke situatie in kaart.",
+        "actionType": "confirm_only",
+        "feedback": "✓ Een extra controle voor het slapengaan geeft inzicht en voorkomt schommelingen in de nacht.",
         "choices": [
             {
                 "text": "Controleer zijn glucose",
@@ -204,7 +232,16 @@
         "minGlucose": 100,
         "maxGlucose": 200,
         "trend": "↑",
-        "feedback": "🩺 Verstandig. Ziekte maakt glucosewaarden onvoorspelbaar. Vaker meten is dan de enige oplossing.",
+        "contextInfo": "Ziekte en koorts zorgen voor afweerreacties die de bloedsuiker onvoorspelbaar laten stijgen.",
+        "actionType": "quiz_prompt",
+        "quizQuestion": "Wat gebeurt er meestal met de glucose als je ziek bent?",
+        "quizOptions": [
+            "De glucose stijgt door stress/ontsteking",
+            "De glucose blijft exact gelijk",
+            "Je hebt direct 0 insuline nodig"
+        ],
+        "correctQuizIndex": 0,
+        "feedback": "✓ Ziekte maakt de insulinebehoefte wisselvallig; frequent meten is de enige veilige optie.",
         "choices": [
             {
                 "text": "Controleer vaker zijn glucose",
@@ -232,7 +269,9 @@
         "minGlucose": 90,
         "maxGlucose": 160,
         "trend": "→",
-        "feedback": "🎉 Perfect opgelost. Zolang je de koolhydraten telt en de insuline aanpast, kan een stukje taart prima.",
+        "contextInfo": "Gebak bevat veel koolhydraten. Om taart te eten moet de insulinedosis nauwkeurig berekend worden.",
+        "actionType": "tap_hold",
+        "feedback": "✓ Door koolhydraten te tellen en de insuline aan te passen, kan Thomas gewoon veilig taart eten.",
         "choices": [
             {
                 "text": "Controleer de waarde en pas insuline aan op de taart",
@@ -260,7 +299,9 @@
         "minGlucose": 80,
         "maxGlucose": 150,
         "trend": "→",
-        "feedback": "🚗 Veilig op weg! Een hypo achter het stuur is levensgevaarlijk. Altijd meten voor vertrek.",
+        "contextInfo": "Een lange autorit betekent lang stilzitten. Een daling onderweg moet snel opgevangen kunnen worden.",
+        "actionType": "confirm_only",
+        "feedback": "✓ Een controle voor vertrek zorgt ervoor dat Thomas veilig op weg gaat met noodsnacks binnen handbereik.",
         "choices": [
             {
                 "text": "Controleer zijn glucose voor vertrek en leg snacks klaar",

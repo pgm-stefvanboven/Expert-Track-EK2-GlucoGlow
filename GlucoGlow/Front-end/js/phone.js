@@ -6,17 +6,15 @@ let wasPlaying = false;
 let isTransitioning = false;
 let waitingForPi = false;
 
-// DOM ELEMENTS
+// DOM ELEMENTEN
 const waitingScreen = document.getElementById("waiting-screen");
 const chatContainer = document.getElementById("chat-container");
 const questScreen = document.getElementById("quest-screen");
 
-// Waiting screen elements
 const waitingSpinner = document.getElementById("waiting-spinner");
 const waitingTitle = document.getElementById("waiting-title");
 const waitingText = document.getElementById("waiting-text");
 
-// Phone screen elements
 const glucoseElement = document.getElementById("phone-glucose");
 const statusElement = document.getElementById("phone-status");
 const situationElement = document.getElementById("phone-situation");
@@ -24,29 +22,31 @@ const normalChatBubble = document.getElementById("normal-chat-bubble");
 const chatHistoryBox = document.getElementById("chat-history-box");
 const actionHintText = document.getElementById("action-hint-text");
 
-// Chat input elements
 const chatInputArea = document.getElementById("chat-input-area");
 const glucoseInput = document.getElementById("glucose-input");
 const sendGlucoseBtn = document.getElementById("send-glucose-btn");
 const earlyHoldWarning = document.getElementById("early-hold-warning");
 
-// Audio elements
+// AUDIO ELEMENTEN
 const soundMessageSend = new Audio('assets/sounds/message-send.mp3');
 const soundMessageReceived = new Audio('assets/sounds/message-received.mp3');
 
 let currentSecretGlucose = 0;
 let diagnosisCompleted = false;
 
-// Action widget elements
+// ACTION WIDGET ELEMENTEN
 const actionWidget = document.getElementById("action-widget");
 const actionProgress = document.getElementById("action-progress");
 const tapBtn = document.getElementById("tapBtn");
+const actionTitle = document.getElementById("action-title");
+const actionText = document.getElementById("action-text");
+const progressContainer = document.getElementById("progress-container");
 
 let isActionActive = false;
 let taps = 0;
-const requiredTaps = 10;
+let requiredTaps = 10;
 
-// Load events from JSON file
+// Laad de events uit de JSON
 fetch("data/events.json")
     .then(response => response.json())
     .then(data => {
@@ -54,7 +54,7 @@ fetch("data/events.json")
         setInterval(updateFromServer, 500);
     });
 
-// Update the phone screen based on server data
+// Update GSM status vanuit server
 function updateFromServer() {
     if (isTransitioning) return;
 
@@ -88,7 +88,7 @@ function updateFromServer() {
             waitingText.textContent = "Wachten op connectie met spelsysteem...";
             waitingScreen.style.display = "none";
 
-            // 1. HARD RESET: Check right away to see if the PI screen has switched to a new event
+            // RESET bij nieuw event
             if (data.currentEvent !== currentEvent) {
                 currentEvent = data.currentEvent;
                 diagnosisCompleted = false;
@@ -101,9 +101,9 @@ function updateFromServer() {
                 document.querySelectorAll(".dynamic-bubble").forEach(el => el.remove());
             }
 
-            // 2. Wait for the PI screen to confirm that the action is complete
             if (waitingForPi) return;
 
+            // QUEST OF NORMAL CHAT SCHERM
             if (data.activeQuest === "pincode" || (events[currentEvent] && events[currentEvent].type === "pincode")) {
                 chatContainer.style.display = "none";
                 questScreen.style.display = "flex";
@@ -117,14 +117,10 @@ function updateFromServer() {
 
             currentSecretGlucose = data.glucose;
 
-            // -------------------------
             // SENSOR WEERGAVE
-            // -------------------------
-
             if (diagnosisCompleted) {
-
                 glucoseElement.textContent = currentSecretGlucose;
-                statusElement.textContent = "STABIEL";
+                statusElement.textContent = currentSecretGlucose <= 75 ? "LAAG" : (currentSecretGlucose >= 160 ? "HOOG" : "STABIEL");
 
                 if (currentSecretGlucose <= 75) {
                     glucoseElement.style.color = "#ef4444";
@@ -136,69 +132,37 @@ function updateFromServer() {
                     glucoseElement.style.color = "#00a884";
                     statusElement.style.color = "#00a884";
                 }
-
             } else {
-
                 glucoseElement.textContent = "???";
                 glucoseElement.style.color = "#e9edef";
-                statusElement.textContent = "⚠ SENSORDATA ONTBREEKT";
+                statusElement.textContent = "⚠ VRAAG DATA AAN PATIËNT";
                 statusElement.style.color = "#f59e0b";
-
             }
 
-
-            // -------------------------
-            // CO-OP ACTIE
-            // -------------------------
-
+            // CO-OP ACTIE TRIGGERING
             if (data.held_button !== -1 && !data.action_completed) {
-
                 if (diagnosisCompleted) {
-
                     earlyHoldWarning.style.display = "none";
 
                     if (!isActionActive) {
-
-                        isActionActive = true;
-                        taps = 0;
-
-                        actionProgress.style.width = "0%";
-                        tapBtn.textContent = `TAP (0/${requiredTaps})`;
-                        tapBtn.style.background =
-                            "linear-gradient(180deg, #34d399 0%, #059669 100%)";
-
-                        normalChatBubble.style.opacity = "0.5";
-                        actionWidget.style.display = "block";
-                        actionHintText.style.display = "none";
-
-                        chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
+                        setupActionType(events[currentEvent]);
                     }
-
                 } else {
-
                     actionWidget.style.display = "none";
                     earlyHoldWarning.style.display = "block";
                     chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
-
                 }
-
             } else {
-
                 earlyHoldWarning.style.display = "none";
-
                 if (isActionActive) {
-
                     isActionActive = false;
                     actionWidget.style.display = "none";
                     normalChatBubble.style.opacity = "1";
                     actionHintText.style.display = "block";
-
                 }
-
             }
 
             loadPhoneEvent();
-
         });
 }
 
@@ -206,13 +170,11 @@ function loadPhoneEvent() {
     const event = events[currentEvent];
     if (!event) return;
 
-    // 1. Selecteer de DOM elementen
     const headerName = document.getElementById("header-name");
     const headerAvatar = document.getElementById("header-avatar");
     const dynamicHeader = document.getElementById("dynamic-header");
     const headerStatusText = document.getElementById("header-status-text");
 
-    // 2. Bepaal de afzender (Source)
     if (event.source === "mama") {
         headerName.textContent = "Mama";
         headerAvatar.textContent = "👩";
@@ -226,34 +188,27 @@ function loadPhoneEvent() {
         headerAvatar.textContent = "📱";
         headerStatusText.textContent = "Live Data";
     } else {
-        // Fallback (Thomas)
         headerName.textContent = "Thomas";
         headerAvatar.textContent = "💬";
         headerStatusText.textContent = "Online";
     }
 
-    // 3. Bepaal de themaskleur (Theme)
     const themeColors = {
-        "sport": "#15803d",       // Groen
-        "school": "#0369a1",      // Blauw
-        "party": "#7e22ce",       // Paars
-        "emergency": "#b91c1c",   // Rood
-        "travel": "#ca8a04",      // Geel/Oranje
-        "home": "#0f766e",        // Teal
-        "sick": "#c2410c",        // Warm oranje
-        "system": "#374151",      // Donkergrijs
-        "error": "#ef4444"        // Felrood
+        "sport": "#15803d",
+        "school": "#0369a1",
+        "party": "#7e22ce",
+        "emergency": "#b91c1c",
+        "travel": "#ca8a04",
+        "home": "#0f766e",
+        "sick": "#c2410c",
+        "system": "#374151",
+        "error": "#ef4444"
     };
 
-    // Pak de kleur uit de lijst, of gebruik je standaard donkere kleur als fallback
-    const headerColor = themeColors[event.theme] || "#202c33";
-    dynamicHeader.style.backgroundColor = headerColor;
-
-    // 4. Update de situatie-tekst met het specifieke event-icoon
+    dynamicHeader.style.backgroundColor = themeColors[event.theme] || "#202c33";
     const eventIcon = event.icon ? `${event.icon} ` : "";
     situationElement.innerHTML = `<b>${eventIcon}</b> ${event.title}`;
 
-    // --- Bestaande logica voor sidequests en pincodes ---
     if (event.type === "pincode") {
         document.getElementById("quest-title").textContent = event.questTitle;
         const cluesList = document.getElementById("phone-clues");
@@ -277,6 +232,7 @@ function loadPhoneEvent() {
     document.body.style.backgroundColor = "#0b141a";
 }
 
+// AFHANDELING GLUCOSE INVOER (Geen antwoord meer, enkel informatie!)
 function handleGlucoseSubmit() {
     if (diagnosisCompleted || !wasPlaying) return;
 
@@ -294,29 +250,25 @@ function handleGlucoseSubmit() {
     gestuurdBericht.style.padding = "8px 15px";
     gestuurdBericht.style.borderRadius = "15px 15px 0 15px";
     gestuurdBericht.style.marginBottom = "10px";
-    gestuurdBericht.innerHTML = `<div class="bubble-text" style="color: white;">Patiënt meldt waarde: <b>${ingevoerdeWaarde}</b></div>`;
+    gestuurdBericht.innerHTML = `<div class="bubble-text" style="color: white;">Ingevoerde waarde: <b>${ingevoerdeWaarde} mg/dL</b></div>`;
 
     chatHistoryBox.insertBefore(gestuurdBericht, actionWidget);
     chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
 
     if (ingevoerdeWaarde === currentSecretGlucose) {
         diagnosisCompleted = true;
-
-        // Wacht een halve seconde en speel ontvangst-geluid
         setTimeout(() => soundMessageReceived.play(), 500);
 
         const event = events[currentEvent];
-        // TOEGANKELIJKHEID FIX: We gebruiken de letterlijke tekst van de juiste keuze
-        let correcteKeuze = event.choices.find(c => c.correct);
-        let advies = correcteKeuze ? correcteKeuze.text : "Volg medisch protocol.";
+        let statusText = ingevoerdeWaarde <= 75 ? "LAAG" : (ingevoerdeWaarde >= 160 ? "HOOG" : "NORMAAL");
 
+        // Informatieve repons op de GSM (GEEN direct antwoord!)
         const assistentAntwoord = document.createElement("div");
         assistentAntwoord.className = "message system dynamic-bubble";
         assistentAntwoord.innerHTML = `
-            <div class="bubble-widget" style="background: #1f2c34; border: 1px solid #00a884; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
-                <span style="color: #00a884; font-weight: bold;">✓ Waarde geverifieerd.</span><br><br>
-                <span style="color: #fde68a;">AANBEVOLEN ACTIE:</span><br>
-                <b style="font-size: 1.1rem; color: #e9edef;">${advies}</b>
+            <div class="bubble-widget" style="background: #1f2c34; border: 1px solid #3b82f6; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left;">
+                <span style="color: #60a5fa; font-weight: bold; font-size: 1.1rem;">📊 WAARDE: ${ingevoerdeWaarde} mg/dL — ${statusText}</span><br><br>
+                <span style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.4; display: block;">${event.contextInfo || "Overleg samen met Speler 1 welke behandeling nu het beste past."}</span>
             </div>`;
 
         chatHistoryBox.insertBefore(assistentAntwoord, actionWidget);
@@ -328,15 +280,123 @@ function handleGlucoseSubmit() {
         assistentFout.className = "message system dynamic-bubble";
         assistentFout.innerHTML = `
             <div class="bubble-widget" style="background: #3b2c00; border: 1px solid #ef4444; padding: 10px; border-radius: 10px; margin-bottom: 15px;">
-                <span style="color: #ef4444;">⚠️ Foutieve patiëntdata. Vraag de actuele waarde opnieuw op!</span>
+                <span style="color: #ef4444;">⚠️ Foutieve waarde! Vraag Speler 1 om de glucose opnieuw te scannen.</span>
             </div>`;
 
-        // Wacht een halve seconde en speel ontvangst-geluid
         setTimeout(() => soundMessageReceived.play(), 500);
-
         chatHistoryBox.insertBefore(assistentFout, actionWidget);
         chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
     }
+}
+
+// INSTELLEN VAN DE DYNAMISCHE CO-OP ACTIES (STAP 4)
+function setupActionType(event) {
+    isActionActive = true;
+    taps = 0;
+    const actionType = (event && event.actionType) ? event.actionType : "tap_hold";
+
+    normalChatBubble.style.opacity = "0.5";
+    actionWidget.style.display = "block";
+    actionHintText.style.display = "none";
+
+    if (actionType === "confirm_only") {
+        requiredTaps = 1;
+        actionTitle.textContent = "⚡ ACTIE BEVESTIGEN";
+        actionText.textContent = "Overlegd met Speler 1? Tik hieronder om de gekozen behandeling uit te voeren.";
+        progressContainer.style.display = "none";
+        tapBtn.textContent = "BEVESTIG BEHANDELING";
+    }
+    else if (actionType === "quiz_prompt") {
+        requiredTaps = 1;
+        actionTitle.textContent = "❓ CONTROLE VRAAG";
+        actionText.textContent = event.quizQuestion || "Beantwoord de medische vraag om de actie af te ronden:";
+        progressContainer.style.display = "none";
+
+        let quizHtml = "";
+        if (event.quizOptions) {
+            quizHtml = event.quizOptions.map((opt, idx) => `
+                <button onclick="handleQuizAnswer(${idx})" style="padding: 12px; width: 100%; margin-bottom: 8px; background: #2a3942; color: white; border: 1px solid #3b82f6; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer;">
+                    ${opt}
+                </button>
+            `).join("");
+        }
+
+        tapBtn.style.display = "none";
+        let container = document.getElementById("action-content-container");
+        let existingQuiz = document.getElementById("quiz-buttons");
+        if (existingQuiz) existingQuiz.remove();
+
+        let quizDiv = document.createElement("div");
+        quizDiv.id = "quiz-buttons";
+        quizDiv.innerHTML = quizHtml;
+        container.appendChild(quizDiv);
+    }
+    else {
+        // Standaard tap_hold (10x tappen)
+        requiredTaps = 10;
+        actionTitle.textContent = "⚡ ACTIE UITVOEREN";
+        actionText.textContent = "Speler 1 houdt de knop vast! Tap razendsnel om de toediening te voltooien!";
+        progressContainer.style.display = "block";
+        actionProgress.style.width = "0%";
+        tapBtn.style.display = "block";
+        tapBtn.textContent = `TAP (0/${requiredTaps})`;
+
+        let existingQuiz = document.getElementById("quiz-buttons");
+        if (existingQuiz) existingQuiz.remove();
+    }
+
+    chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
+}
+
+function handleQuizAnswer(index) {
+    const event = events[currentEvent];
+    if (index === event.correctQuizIndex) {
+        completeActionSuccess();
+    } else {
+        alert("Fout antwoord! Overleg goed met Speler 1.");
+    }
+}
+
+function handleTap() {
+    if (!isActionActive) return;
+
+    const event = events[currentEvent];
+    const actionType = (event && event.actionType) ? event.actionType : "tap_hold";
+
+    if (actionType === "quiz_prompt") return;
+
+    taps++;
+    let percentage = (taps / requiredTaps) * 100;
+    actionProgress.style.width = percentage + "%";
+
+    if (actionType === "confirm_only") {
+        tapBtn.textContent = "BEVESTIGD!";
+    } else {
+        tapBtn.textContent = `TAP (${taps}/${requiredTaps})`;
+    }
+
+    if (taps >= requiredTaps) {
+        completeActionSuccess();
+    }
+}
+
+function completeActionSuccess() {
+    isActionActive = false;
+    isTransitioning = true;
+    waitingForPi = true;
+
+    tapBtn.style.display = "block";
+    tapBtn.style.background = "#10b981";
+    tapBtn.textContent = "SUCCES!";
+
+    fetch(`${SERVER}/complete_action`);
+
+    setTimeout(() => {
+        actionWidget.style.display = "none";
+        normalChatBubble.style.opacity = "1";
+        actionHintText.style.display = "block";
+        isTransitioning = false;
+    }, 1500);
 }
 
 sendGlucoseBtn.addEventListener("click", handleGlucoseSubmit);
@@ -347,35 +407,6 @@ glucoseInput.addEventListener("keypress", function (e) {
 glucoseInput.addEventListener('blur', function () {
     window.scrollTo(0, 0);
 });
-
-function handleTap() {
-    if (!isActionActive) return;
-
-    taps++;
-    let percentage = (taps / requiredTaps) * 100;
-    actionProgress.style.width = percentage + "%";
-    tapBtn.textContent = `TAP (${taps}/${requiredTaps})`;
-
-    if (taps >= requiredTaps) {
-        isActionActive = false;
-        isTransitioning = true;
-        waitingForPi = true;
-
-
-        tapBtn.style.background = "#10b981";
-        tapBtn.textContent = "SUCCES!";
-
-        fetch(`${SERVER}/complete_action`);
-
-        setTimeout(() => {
-            actionWidget.style.display = "none";
-            normalChatBubble.style.opacity = "1";
-            actionHintText.style.display = "block";
-
-            isTransitioning = false;
-        }, 1500);
-    }
-}
 
 tapBtn.addEventListener("touchstart", (e) => {
     e.preventDefault();

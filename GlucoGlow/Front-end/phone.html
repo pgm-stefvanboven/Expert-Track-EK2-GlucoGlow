@@ -12,33 +12,42 @@
 </head>
 
 <body>
+    <!-- WACHTSCHERM -->
     <div id="waiting-screen">
         <div id="waiting-spinner" class="spinner"></div>
         <h2 id="waiting-title">STAND-BY</h2>
         <p id="waiting-text">Wachten op connectie met spelsysteem...</p>
     </div>
 
+    <!-- CHAT CONTAINER -->
     <div id="chat-container"
         style="display: none; flex-direction: column; position: fixed; top: 0; left: 0; width: 100%; height: 100dvh;">
+
+        <!-- HEADER -->
         <div class="chat-header" id="dynamic-header" style="flex-shrink: 0; transition: background-color 0.3s ease;">
-            <div class="avatar" id="header-avatar">T</div>
+            <div class="avatar" id="header-avatar">💬</div>
             <div class="header-info">
                 <div class="name" id="header-name">Thomas</div>
-                <div class="status"><span class="dot" id="header-status-dot"></span> <span
-                        id="header-status-text">Online</span></div>
+                <div class="status">
+                    <span class="dot" id="header-status-dot"></span>
+                    <span id="header-status-text">Online</span>
+                </div>
             </div>
         </div>
 
+        <!-- CHAT GESCHIEDENIS -->
         <div class="chat-history" id="chat-history-box"
             style="flex: 1 1 auto; overflow-y: auto; min-height: 0; padding-bottom: 20px;">
             <div class="date-divider">VANDAAG</div>
 
+            <!-- SITUATIE BUBBEL -->
             <div class="message received" id="normal-chat-bubble">
-                <div class="sender">Thomas</div>
+                <div class="sender" id="bubble-sender">Thomas</div>
                 <div class="bubble-text" id="phone-situation">...</div>
                 <div class="time">Zojuist</div>
             </div>
 
+            <!-- SENSOR WIDGET -->
             <div class="message system">
                 <div class="sender">GlucoGlow Sensor Alert</div>
                 <div class="bubble-widget">
@@ -52,6 +61,7 @@
                 <div class="time">Live data</div>
             </div>
 
+            <!-- VROEGTIJDIGE ACTIE WAARSCHUWING -->
             <div class="message system" id="early-hold-warning"
                 style="display:none; border: 2px solid #ef4444; margin-top: 15px; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);">
                 <div class="sender" style="color: #ef4444;">⚠️ ACTIE GEBLOKKEERD</div>
@@ -62,39 +72,34 @@
                 </div>
             </div>
 
+            <!-- DYNAMISCHE CO-OP ACTIE WIDGET -->
             <div class="message system" id="action-widget" style="display:none; margin-top: 15px; width: 100%;">
-                <!-- Hoofdcontainer met donkere achtergrond, zachte randen en schaduw -->
                 <div class="bubble-widget"
                     style="padding: 0; background: #1e272e; border: 1px solid #2f3a43; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.6);">
 
-                    <!-- Header sectie met subtiel verloop (gradient) en bliksem-icoon -->
                     <div
                         style="background: linear-gradient(180deg, #2a3740 0%, #1e272e 100%); padding: 15px; border-bottom: 1px solid #161e24;">
-                        <div
+                        <div id="action-title"
                             style="color: #4ade80; font-weight: bold; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px;">
                             ⚡ ACTIE BEVESTIGEN
                         </div>
                     </div>
 
-                    <!-- Content sectie -->
-                    <div style="padding: 20px;">
+                    <div style="padding: 20px;" id="action-content-container">
                         <p id="action-text"
                             style="font-size: 1.05rem; margin-top: 0; margin-bottom: 20px; color: #e9edef; line-height: 1.4;">
-                            Patiënt houdt knop vast! Tap razendsnel om actie te voltooien!
+                            Patiënt houdt knop vast! Voer de gekozen actie uit om af te ronden.
                         </p>
 
-                        <!-- Progress bar container (met medische 'tick marks' via CSS patroon en inset-shadow) -->
-                        <div
+                        <!-- Progress bar container -->
+                        <div id="progress-container"
                             style="width: 100%; height: 28px; background-color: #0b1014; background-image: repeating-linear-gradient(to right, transparent, transparent 9.5%, #2a3942 9.5%, #2a3942 10%); border-radius: 14px; margin-bottom: 25px; border: 1px solid #161e24; box-shadow: inset 0 2px 6px rgba(0,0,0,0.8); position: relative; padding: 3px;">
-
-                            <!-- Inner groene vul-balk met glow -->
                             <div id="action-progress"
                                 style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #34d399); border-radius: 10px; transition: width 0.1s ease-out; box-shadow: 0 0 12px rgba(52, 211, 153, 0.4);">
                             </div>
-
                         </div>
 
-                        <!-- Gradient Button met glans (inset shadow) en diepte -->
+                        <!-- Actie Knop -->
                         <button id="tapBtn"
                             style="padding: 16px; width: 100%; background: linear-gradient(180deg, #34d399 0%, #059669 100%); color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 1.4rem; cursor: pointer; text-shadow: 0 2px 4px rgba(0,0,0,0.3); box-shadow: 0 4px 15px rgba(5, 150, 105, 0.25), inset 0 1px 2px rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px;">
                             TAP (0/10)
@@ -106,7 +111,7 @@
             <div class="action-hint" id="action-hint-text">Samenwerking vereist!</div>
         </div>
 
-        <!-- Extra padding-bottom voor mobiele swipe-bars -->
+        <!-- INPUT GEBIED MET NUMERIEK TOETSENBORD -->
         <div id="chat-input-area"
             style="display: flex; flex-shrink: 0; padding: 15px 15px 25px 15px; background-color: #202c33; border-top: 1px solid #2a3942; align-items: center; gap: 10px;">
             <input type="number" id="glucose-input" placeholder="Typ glucosewaarde..."
@@ -118,7 +123,7 @@
         </div>
     </div>
 
-    <!-- QUEST SCREEN -->
+    <!-- QUEST SCREEN (PINCODES & AANWIJZINGEN) -->
     <div id="quest-screen"
         style="display: none; flex-direction: column; min-height: 100dvh; background-color: #0b141a; color: #e9edef; padding: 50px 20px 30px 20px; overflow-y: auto; z-index: 200; position: absolute; top: 0; left: 0; width: 100%; box-sizing: border-box; justify-content: flex-start; align-items: center;">
 
