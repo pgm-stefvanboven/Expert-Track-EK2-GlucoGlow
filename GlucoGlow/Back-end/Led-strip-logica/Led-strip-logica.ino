@@ -10,7 +10,7 @@ CRGB leds[NUM_LEDS];
 
 const char* ssid = "ANDROID";
 const char* password = "bruhhhh1234";
-const char* apiUrl = "http://172.31.149.212/get_event";
+const char* apiUrl = "http://172.31.149.212:5000/get_event";
 
 // Non-blocking timer variables
 unsigned long previousMillis = 0;
