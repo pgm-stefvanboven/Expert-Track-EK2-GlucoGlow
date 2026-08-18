@@ -12,27 +12,37 @@
 <body>
     <!-- STARTSCHERM -->
     <div id="start-screen">
-        <div class="parcours-badge">
-            <span class="badge-step">HALTE 3 VAN 5</span>
-            <span class="badge-link">Van: Halte 2 (Bewustwording) ➔ Naar: Halte 3 (Meting & Balans)</span>
+        <header class="station-header">
+            <div class="station-tag">HALTE 3 / 5</div>
+            <div class="station-route">
+                <span class="from-node">Halte 2: Bewustwording</span>
+                <span class="route-arrow">➔</span>
+                <span class="current-node">Halte 3: Meting & Balans</span>
+            </div>
+        </header>
+
+        <!-- 2. CENTRALE HERO MET CONTEXT & TITEL -->
+        <div class="start-hero">
+            <div class="walk-intro-pill">
+                Bij halte 2 zag je de invloeden — nu ervaar je zélf de continue controle.
+            </div>
+
+            <h1 class="main-title">GLUCOGLOW</h1>
+            <p class="hero-subtext">Houd Thomas' glucose stabiel • Reageer snel & kies slim</p>
         </div>
 
-        <div class="route-context-box">
-            <p>Bij de vorige halte zag je welke factoren glucose beïnvloeden. Nu stap je zélf in de schoenen van Thomas:
-                ervaar de continue controle en hou zijn waarden stabiel!</p>
-        </div>
+        <!-- 3. FOOTER MET HIGHSCORE & STARTKNOP IN ÉÉN MOOIE BALANS -->
+        <footer class="start-footer">
+            <div id="highscore-box">
+                <span class="highscore-label">🏆 BESTE SCORE</span>
+                <span class="highscore-val"><span id="highscoreName">Team</span> • <span id="highscorePoints">0</span>
+                    pt</span>
+            </div>
 
-        <h1>GLUCOGLOW</h1>
-        <p class="intro-text">Help Thomas zijn glucose stabiel te houden door de juiste keuzes te maken.</p>
-        <p class="motivation">Reageer snel en kies slim!</p>
+            <button id="startBtn">START MISSIE</button>
+        </footer>
 
-        <div id="highscore-box">
-            <div class="highscore-label">🏆 Beste teamscore</div>
-            <div class="highscore-name"><span id="highscoreName"></span></div>
-            <div class="highscore-points"><span id="highscorePoints"></span> punten</div>
-        </div>
-        <button id="startBtn">START</button>
-
+        <!-- Team overlay blijft hetzelfde -->
         <div id="team-overlay">
             <div class="team-card">
                 <h2>TEAMNAAM</h2>
