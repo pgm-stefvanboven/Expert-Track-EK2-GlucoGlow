@@ -1,956 +1,1789 @@
-/* =========================================
-   1. RESET & GLOBAL STYLING
-========================================= */
-html,
-body {
-    margin: 0;
-    overflow: hidden;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    box-sizing: border-box;
-    background: #081018;
-    color: white;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
+/* =========================================================
+   GLUCOGLOW
+   Complete interface styling
+   Designed for 800 × 400 game interface
+========================================================= */
+
+/* =========================================================
+   1. RESET & GLOBAL
+========================================================= */
 
 *,
 *::before,
 *::after {
-    box-sizing: inherit;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+
+    background:
+        radial-gradient(circle at 50% 35%, #102b3d 0%, #07131e 48%, #03080d 100%);
+
+    color: #ffffff;
+
+    font-family:
+        "Segoe UI",
+        "Trebuchet MS",
+        Arial,
+        sans-serif;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(circle at 50% 45%,
+            rgba(0, 229, 255, 0.07),
+            transparent 45%);
+
+    z-index: -1;
 }
 
 button {
     outline: none;
     font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* =========================================
-   2. CONTAINERS
-========================================= */
+
+/* =========================================================
+   2. MAIN CONTAINERS
+========================================================= */
+
+#start-screen,
 #game-container,
 #end-screen {
     width: 800px;
     height: 400px;
-    background: #0a1118;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+
     position: relative;
-    flex-direction: column;
-    padding: 20px 40px;
-    display: none;
+
     overflow: hidden;
+
+    border-radius: 18px;
+
+    border: 1px solid rgba(120, 220, 255, 0.16);
+
+    background:
+        linear-gradient(145deg,
+            rgba(13, 35, 49, 0.98),
+            rgba(4, 12, 19, 0.98));
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.65),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
+
+
+/* =========================================================
+   3. START SCREEN
+========================================================= */
 
 #start-screen {
-    width: 800px;
-    height: 400px;
-    max-height: 100vh;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
-    position: relative;
-    overflow: hidden;
-    box-sizing: border-box;
     display: flex;
+
     flex-direction: column;
+
     justify-content: space-between;
-    align-items: center;
+    align-items: stretch;
+
+    padding: 20px 30px 22px;
+
     text-align: center;
-    gap: 6px;
-    padding: 14px 30px;
-    background: radial-gradient(circle, #111827 0%, #05080f 100%);
 }
 
-/* =========================================
-   PARCOURS & WANDELING LINKS (COMPACT)
-========================================= */
-.parcours-badge {
-    display: inline-flex;
+
+/* subtle ambient glow */
+
+#start-screen::before {
+    content: "";
+
+    position: absolute;
+
+    width: 420px;
+    height: 420px;
+
+    left: 50%;
+    top: 45%;
+
+    transform: translate(-50%, -50%);
+
+    background:
+        radial-gradient(circle,
+            rgba(0, 220, 255, 0.14) 0%,
+            rgba(0, 220, 255, 0.05) 32%,
+            transparent 70%);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   4. STATION / ROUTE HEADER
+========================================================= */
+
+.station-header {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+
+    display: flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(59, 130, 246, 0.15);
-    border: 1px solid rgba(96, 165, 250, 0.4);
-    padding: 3px 12px;
-    border-radius: 20px;
-    margin-bottom: 0;
-}
+    justify-content: space-between;
 
-.badge-step {
-    background: #3b82f6;
-    color: #ffffff;
-    font-weight: 800;
-    font-size: 0.7rem;
-    padding: 2px 6px;
+    min-height: 42px;
+
+    padding: 7px 12px;
+
     border-radius: 10px;
-    letter-spacing: 0.5px;
+
+    background:
+        rgba(4, 15, 24, 0.72);
+
+    border: 1px solid rgba(109, 212, 239, 0.12);
 }
 
-.badge-link {
-    font-size: 0.75rem;
-    color: #93c5fd;
-    font-weight: 600;
-}
 
-.route-context-box {
-    background: rgba(15, 23, 42, 0.7);
-    border-left: 3px solid #38bdf8;
-    padding: 5px 12px;
+/* halte badge */
+
+.station-tag {
+    flex-shrink: 0;
+
+    padding: 5px 10px;
+
     border-radius: 6px;
-    max-width: 680px;
-}
 
-.route-context-box p {
-    margin: 0;
-    font-size: 0.82rem;
-    color: #cbd5e1;
-    line-height: 1.25;
-}
+    background: rgba(0, 229, 255, 0.10);
 
-/* Eindscherm volgende halte card */
-.next-stop-card {
-    background: #1e293b;
-    border: 2px solid #10b981;
-    border-radius: 12px;
-    padding: 14px 24px;
-    max-width: 600px;
-    margin: 10px auto 20px auto;
-    text-align: center;
-    box-shadow: 0 0 25px rgba(16, 185, 129, 0.2);
-}
+    border: 1px solid rgba(0, 229, 255, 0.28);
 
-.next-stop-badge {
-    color: #34d399;
-    font-size: 0.8rem;
+    color: #65eaff;
+
+    font-size: 0.68rem;
     font-weight: 800;
-    letter-spacing: 1.5px;
-    margin-bottom: 4px;
-}
 
-.next-stop-card h3 {
-    margin: 0 0 6px 0;
-    font-size: 1.2rem;
-    color: #ffffff;
-}
+    letter-spacing: 1.2px;
 
-.next-stop-card p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #cbd5e1;
-    line-height: 1.3;
-}
-
-/* =========================================
-   STARTSCHERM & GLOW EFFECT (COMPACT)
-========================================= */
-#start-screen h1 {
-    font-size: 2.3rem;
-    margin: 2px 0 0 0;
-    color: #ffffff;
-    text-shadow:
-        0 0 10px rgba(255, 255, 255, 0.8),
-        0 0 20px #60a5fa,
-        0 0 35px #3b82f6;
-    letter-spacing: 2px;
     text-transform: uppercase;
 }
 
-.intro-text {
-    font-size: 0.95rem;
-    margin: 0;
-    color: #cbd5e1;
-    max-width: 580px;
-    line-height: 1.2;
-}
 
-.motivation {
-    font-size: 0.9rem;
-    font-weight: 700;
-    margin: 0;
-    color: #16c784;
-}
+/* route */
 
-#highscore-box {
+.station-route {
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 9px;
+
+    color: #718b9b;
+
+    font-size: 0.68rem;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.from-node {
+    color: #7e919e;
+}
+
+.route-arrow {
+    color: #3e6576;
+
+    font-size: 0.8rem;
+}
+
+.current-node {
+    color: #dffaff;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   5. HERO
+========================================================= */
+
+.start-hero {
+    position: relative;
+    z-index: 2;
+
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    margin: 0;
-    padding: 6px 18px;
-    background: rgba(0, 0, 0, 0.35);
+
+    padding: 8px 0 4px;
+}
+
+
+/* intro pill */
+
+.walk-intro-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    max-width: 650px;
+
+    padding: 7px 17px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(101, 234, 255, 0.07);
+
+    border: 1px solid rgba(101, 234, 255, 0.18);
+
+    color: #a7c8d4;
+
+    font-size: 0.72rem;
+    font-weight: 600;
+
+    letter-spacing: 0.15px;
+
+    box-shadow:
+        0 0 20px rgba(0, 229, 255, 0.04);
+}
+
+
+/* main logo */
+
+.main-title,
+#start-screen h1 {
+    position: relative;
+
+    margin: 10px 0 3px;
+
+    color: #f4fdff;
+
+    font-size: 3.15rem;
+
+    line-height: 0.95;
+
+    font-weight: 900;
+
+    letter-spacing: 5px;
+
+    text-transform: uppercase;
+
+    text-shadow:
+        0 0 4px rgba(255, 255, 255, 0.8),
+        0 0 14px rgba(0, 229, 255, 0.8),
+        0 0 32px rgba(0, 184, 255, 0.45);
+
+    animation: logoGlow 3s ease-in-out infinite;
+}
+
+
+@keyframes logoGlow {
+
+    0%,
+    100% {
+        text-shadow:
+            0 0 4px rgba(255, 255, 255, 0.75),
+            0 0 14px rgba(0, 229, 255, 0.7),
+            0 0 30px rgba(0, 184, 255, 0.4);
+    }
+
+    50% {
+        text-shadow:
+            0 0 5px rgba(255, 255, 255, 1),
+            0 0 20px rgba(0, 229, 255, 0.95),
+            0 0 42px rgba(0, 184, 255, 0.6);
+    }
+}
+
+
+/* subtitle */
+
+.hero-subtext {
+    margin: 3px 0 0;
+
+    color: #d4e4ea;
+
+    font-size: 0.86rem;
+
+    font-weight: 600;
+
+    letter-spacing: 0.15px;
+}
+
+
+/* =========================================================
+   6. START FOOTER
+========================================================= */
+
+.start-footer {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 9px;
+}
+
+
+/* =========================================================
+   7. HIGHSCORE
+========================================================= */
+
+#highscore-box {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    min-height: 31px;
+
+    padding: 5px 14px;
+
+    background:
+        rgba(3, 13, 20, 0.76);
+
+    border: 1px solid rgba(113, 194, 214, 0.22);
+
     border-radius: 8px;
-    border: 1px solid rgba(147, 197, 253, 0.3);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .highscore-label {
-    font-size: 0.75rem;
-    font-weight: 600;
+    color: #8ba9b5;
+
+    font-size: 0.62rem;
+    font-weight: 800;
+
+    letter-spacing: 0.8px;
+
     text-transform: uppercase;
-    color: #93c5fd;
 }
 
-.highscore-name {
-    font-size: 0.95rem;
-    font-weight: bold;
-    color: #e5e7eb;
+.highscore-val {
+    color: #ffffff;
+
+    font-size: 0.76rem;
+    font-weight: 700;
 }
 
-.highscore-points {
+.highscore-val #highscoreName {
+    color: #dceaf0;
+}
+
+.highscore-val #highscorePoints {
+    color: #7cf5c5;
+}
+
+
+/* =========================================================
+   8. PRIMARY START BUTTON
+========================================================= */
+
+#startBtn {
+    position: relative;
+
+    min-width: 250px;
+
+    padding: 10px 35px;
+
+    border: none;
+    border-radius: 9px;
+
+    background:
+        linear-gradient(135deg,
+            #4ce6e9,
+            #21cbdc);
+
+    color: #04202a;
+
+    font-size: 0.98rem;
+
+    font-weight: 900;
+
+    letter-spacing: 0.8px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 22px rgba(0, 220, 255, 0.20),
+        inset 0 1px 0 rgba(255, 255, 255, 0.45);
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        filter 0.15s ease;
+}
+
+#startBtn:hover {
+    filter: brightness(1.08);
+
+    box-shadow:
+        0 10px 28px rgba(0, 220, 255, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+#startBtn:active {
+    transform: translateY(2px) scale(0.98);
+
+    box-shadow:
+        0 4px 12px rgba(0, 220, 255, 0.2);
+}
+
+
+/* =========================================================
+   9. GAME CONTAINER
+========================================================= */
+
+#game-container,
+#end-screen {
+    display: none;
+
+    flex-direction: column;
+
+    padding: 18px 28px;
+}
+
+
+/* =========================================================
+   10. TOP BAR / GAME DASHBOARD
+========================================================= */
+
+#top-bar {
+    position: relative;
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    flex-shrink: 0;
+
+    min-height: 65px;
+
+    padding: 8px 18px;
+
+    margin-bottom: 15px;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(135deg,
+            rgba(19, 48, 63, 0.95),
+            rgba(7, 22, 31, 0.95));
+
+    border: 1px solid rgba(116, 215, 235, 0.16);
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+
+#glucose-container,
+#timer-container {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 110px;
+}
+
+
+.label {
+    margin-bottom: 2px;
+
+    color: #76909c;
+
+    font-size: 0.62rem;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1.5px;
+}
+
+
+#glucose,
+#timer {
+    line-height: 1;
+
+    font-size: 2.35rem;
+
+    font-weight: 900;
+
+    font-variant-numeric: tabular-nums;
+}
+
+
+#glucose {
+    color: #45e6a2;
+
+    text-shadow:
+        0 0 15px rgba(69, 230, 162, 0.3);
+}
+
+
+#timer {
+    color: #f4ce52;
+
+    text-shadow:
+        0 0 15px rgba(244, 206, 82, 0.25);
+}
+
+
+/* glucose scan */
+
+.scan-active {
+    color: #ffffff !important;
+
+    animation: scanGlow 1.2s infinite;
+}
+
+
+@keyframes scanGlow {
+
+    0% {
+        text-shadow:
+            0 0 5px #00ffc8;
+    }
+
+    50% {
+        text-shadow:
+            0 0 15px #00ffc8,
+            0 0 30px #00ffc8;
+    }
+
+    100% {
+        text-shadow:
+            0 0 5px #00ffc8;
+    }
+}
+
+
+/* =========================================================
+   11. EVENT CONTENT
+========================================================= */
+
+#pi-content {
+    width: 100%;
+
+    flex: 1;
+
+    min-height: 0;
+
+    margin-bottom: 12px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+#event-header {
+    display: flex;
+
+    flex-direction: row;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 12px;
+
+    padding: 8px 12px;
+
+    border-left: 3px solid #35d9d8;
+
+    border-radius: 0 8px 8px 0;
+
+    background:
+        rgba(20, 58, 68, 0.28);
+}
+
+
+.event-theme {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #ecfbff;
+
+    font-size: 0.83rem;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1.5px;
+}
+
+
+#pi-icon {
     font-size: 1rem;
-    font-weight: bold;
-    color: #facc15;
 }
 
-/* =========================================
-   3. INTRO OVERLAY
-========================================= */
+
+.event-source {
+    color: #77919c;
+
+    font-size: 0.68rem;
+
+    font-weight: 700;
+
+    letter-spacing: 0.8px;
+
+    text-transform: uppercase;
+}
+
+
+#pi-situation-text {
+    margin: 0;
+
+    max-width: 720px;
+
+    color: #f1f8fa;
+
+    font-size: 1.35rem;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+
+/* =========================================================
+   12. CHOICES
+========================================================= */
+
+#choices {
+    width: 100%;
+
+    height: 76px;
+
+    display: flex;
+
+    flex-shrink: 0;
+
+    gap: 12px;
+
+    align-items: stretch;
+}
+
+
+.choice-box {
+    flex: 1;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 9px 13px;
+
+    border-radius: 10px;
+
+    border: 2px solid rgba(255, 255, 255, 0.10);
+
+    color: #ffffff;
+
+    font-size: 0.88rem;
+
+    font-weight: 800;
+
+    line-height: 1.25;
+
+    text-align: center;
+
+    pointer-events: none;
+
+    box-shadow:
+        0 6px 0 rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease,
+        filter 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+#redBtn {
+    background:
+        linear-gradient(145deg,
+            #df5960,
+            #bb3942);
+}
+
+
+#yellowBtn {
+    background:
+        linear-gradient(145deg,
+            #f0c743,
+            #d7a916);
+
+    color: #19200d;
+}
+
+
+#greenBtn {
+    background:
+        linear-gradient(145deg,
+            #32d59a,
+            #12a978);
+}
+
+
+.choice-box.selected-choice {
+    transform:
+        scale(1.04) translateY(-4px);
+
+    border-color: #ffffff;
+
+    box-shadow:
+        0 12px 25px rgba(0, 0, 0, 0.35),
+        0 0 20px rgba(255, 255, 255, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+
+    filter: brightness(1.1);
+
+    z-index: 10;
+}
+
+
+.choice-box.dimmed-choice {
+    opacity: 0.28;
+
+    transform: scale(0.97);
+
+    filter: grayscale(70%);
+}
+
+
+/* =========================================================
+   13. INTRO OVERLAY
+========================================================= */
+
 #intro-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(8, 16, 24, 0.98);
+
+    inset: 0;
+
     z-index: 300;
+
     display: flex;
+
     justify-content: center;
     align-items: center;
+
     padding: 20px;
-    backdrop-filter: blur(6px);
+
+    background:
+        rgba(3, 12, 18, 0.96);
+
+    backdrop-filter: blur(8px);
 }
 
+
 .intro-card {
-    background: #0f172a;
-    border: 2px solid #3b82f6;
-    border-radius: 16px;
-    padding: 20px 28px;
-    max-width: 720px;
     width: 100%;
-    color: white;
-    box-shadow: 0 0 40px rgba(59, 130, 246, 0.25);
+    max-width: 720px;
+
+    padding: 20px 25px;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(145deg,
+            #102b3a,
+            #081720);
+
+    border: 1px solid rgba(75, 224, 236, 0.28);
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.55),
+        0 0 30px rgba(0, 220, 255, 0.08);
+
     text-align: left;
 }
 
+
 .intro-card h2 {
-    color: #60a5fa;
-    margin: 0 0 12px 0;
+    margin: 0 0 12px;
+
+    color: #6cebf0;
+
+    font-size: 1.55rem;
+
+    font-weight: 900;
+
     text-align: center;
+
     letter-spacing: 2px;
-    font-size: 1.8rem;
+
     text-transform: uppercase;
 }
 
+
 .intro-section {
-    margin-bottom: 12px;
-    background: rgba(255, 255, 255, 0.03);
-    padding: 10px 14px;
+    margin-bottom: 9px;
+
+    padding: 9px 12px;
+
     border-radius: 8px;
-    border-left: 3px solid #60a5fa;
+
+    background: rgba(255, 255, 255, 0.035);
+
+    border-left: 3px solid #42dce3;
 }
 
+
 .intro-section h3 {
-    margin: 0 0 4px 0;
-    font-size: 1.05rem;
-    color: #93c5fd;
+    margin: 0 0 3px;
+
+    color: #9cecf0;
+
+    font-size: 0.95rem;
 }
+
 
 .intro-section p {
     margin: 0;
-    font-size: 0.95rem;
-    color: #cbd5e1;
+
+    color: #c2d5dc;
+
+    font-size: 0.82rem;
+
     line-height: 1.3;
 }
+
 
 .intro-grid {
     display: flex;
-    gap: 12px;
-    margin: 14px 0;
+
+    gap: 10px;
+
+    margin: 11px 0;
 }
+
 
 .role-box {
     flex: 1;
-    background: #1e293b;
-    padding: 12px;
-    border-radius: 10px;
-    border-left: 4px solid #10b981;
+
+    padding: 10px;
+
+    border-radius: 9px;
+
+    background: rgba(255, 255, 255, 0.045);
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
+
 .role-box h4 {
-    margin: 0 0 6px 0;
-    font-size: 1rem;
-    color: #34d399;
+    margin: 0 0 4px;
+
+    color: #5ce7b4;
+
+    font-size: 0.85rem;
 }
+
 
 .role-box p {
     margin: 0;
-    font-size: 0.9rem;
-    color: #e2e8f0;
+
+    color: #c7d9df;
+
+    font-size: 0.76rem;
+
     line-height: 1.3;
 }
 
+
 .intro-footer {
+    margin-top: 10px;
+
     text-align: center;
-    margin-top: 15px;
 }
+
 
 .intro-hint {
-    margin: 0 0 10px 0;
-    font-size: 0.95rem;
-    color: #facc15;
-    font-weight: 600;
+    margin: 0 0 8px;
+
+    color: #f4d35e;
+
+    font-size: 0.78rem;
+
+    font-weight: 700;
 }
+
 
 #skipIntroBtn {
-    background: #10b981;
-    color: white;
+    padding: 9px 28px;
+
     border: none;
-    padding: 10px 30px;
-    font-weight: bold;
-    font-size: 1.1rem;
     border-radius: 8px;
+
+    background: #23c99a;
+
+    color: #05251d;
+
+    font-size: 0.88rem;
+
+    font-weight: 900;
+
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
 }
 
+
 #skipIntroBtn:active {
-    background: #059669;
     transform: scale(0.98);
 }
 
-/* =========================================
-   4. TEAM OVERLAY & TOETSENBORD
-========================================= */
-#team-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(8, 16, 24, 0.95);
+
+/* =========================================================
+   14. READ OVERLAY
+========================================================= */
+
+#read-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 250;
+
+    display: flex;
+
     justify-content: center;
     align-items: center;
-    z-index: 200;
-    backdrop-filter: blur(4px);
+
+    padding: 20px;
+
+    background:
+        rgba(3, 12, 18, 0.97);
+
+    backdrop-filter: blur(8px);
 }
+
+
+.read-card {
+    width: 100%;
+    max-width: 650px;
+
+    padding: 22px 28px;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(145deg,
+            #102a38,
+            #081720);
+
+    border: 1px solid rgba(78, 220, 235, 0.3);
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+
+.read-card h2 {
+    margin: 0 0 16px;
+
+    color: #f1fbfd;
+
+    font-size: 1.2rem;
+
+    line-height: 1.3;
+
+    text-align: center;
+}
+
+
+#read-choices-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-bottom: 18px;
+}
+
+
+.read-choice-item {
+    padding: 10px 14px;
+
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.055);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    color: #d8e6eb;
+
+    font-size: 0.9rem;
+
+    font-weight: 600;
+
+    text-align: left;
+}
+
+
+#readOkBtn {
+    display: block;
+
+    margin: 0 auto;
+
+    padding: 10px 34px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #25c99b;
+
+    color: #05251d;
+
+    font-size: 0.92rem;
+
+    font-weight: 900;
+
+    cursor: pointer;
+}
+
+
+#readOkBtn:active {
+    transform: scale(0.97);
+}
+
+
+/* =========================================================
+   15. DISCUSSION OVERLAY
+========================================================= */
+
+#discuss-overlay {
+    position: absolute;
+
+    top: 14px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 200;
+
+    pointer-events: none;
+}
+
+
+.discuss-card {
+    min-width: 330px;
+
+    padding: 9px 20px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(9, 27, 35, 0.95);
+
+    border: 1px solid rgba(244, 211, 94, 0.55);
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.35),
+        0 0 18px rgba(244, 211, 94, 0.08);
+
+    text-align: center;
+
+    animation: fadeInDown 0.3s ease;
+}
+
+
+.discuss-card h3 {
+    margin: 0;
+
+    color: #f4d35e;
+
+    font-size: 0.88rem;
+
+    font-weight: 900;
+}
+
+
+.discuss-card p {
+    margin: 3px 0 0;
+
+    color: #b8cbd2;
+
+    font-size: 0.7rem;
+}
+
+
+@keyframes fadeInDown {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+/* =========================================================
+   16. FEEDBACK
+========================================================= */
+
+#feedback-card {
+    display: none;
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 150;
+
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    padding: 30px;
+
+    background:
+        rgba(3, 12, 18, 0.96);
+
+    backdrop-filter: blur(8px);
+
+    text-align: center;
+}
+
+
+#feedback-status {
+    margin: 0 0 9px;
+
+    font-size: 2.5rem;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+}
+
+
+#feedback-text {
+    max-width: 650px;
+
+    margin: 0 0 22px;
+
+    color: #d6e4e9;
+
+    font-size: 1.1rem;
+
+    line-height: 1.4;
+}
+
+
+#nextBtn {
+    padding: 11px 48px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #24cda0;
+
+    color: #05251d;
+
+    font-size: 1rem;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(36, 205, 160, 0.15);
+}
+
+
+#nextBtn:active {
+    transform: scale(0.98);
+}
+
+
+/* =========================================================
+   17. QUEST / PINCODE
+========================================================= */
+
+#quest-overlay {
+    display: none;
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 100;
+
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    background:
+        rgba(3, 10, 15, 0.96);
+
+    backdrop-filter: blur(8px);
+}
+
+
+.quest-box {
+    width: 90%;
+    max-width: 390px;
+
+    padding: 18px 24px;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(145deg,
+            #192b34,
+            #0b171d);
+
+    border: 1px solid rgba(239, 99, 99, 0.55);
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(239, 68, 68, 0.12);
+
+    text-align: center;
+}
+
+
+.quest-box h2 {
+    margin: 0 0 4px;
+
+    color: #ff7777;
+
+    font-size: 1.05rem;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+}
+
+
+#quest-timer-display {
+    margin: 4px 0;
+
+    color: #ff7777;
+
+    font-family: monospace;
+
+    font-size: 2rem;
+
+    font-weight: 900;
+}
+
+
+#pinDisplay {
+    width: 180px;
+
+    min-height: 42px;
+
+    margin: 0 auto 8px;
+
+    padding: 5px;
+
+    border-radius: 9px;
+
+    background: #071118;
+
+    border: 1px solid #35515e;
+
+    color: #56e5f0;
+
+    font-family: monospace;
+
+    font-size: 1.5rem;
+
+    letter-spacing: 7px;
+}
+
+
+#pinFeedback {
+    height: 17px;
+
+    margin: 0 0 7px;
+
+    color: #f5c84c;
+
+    font-size: 0.78rem;
+
+    font-weight: 700;
+}
+
+
+#numpad {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 7px;
+
+    max-width: 210px;
+
+    margin: 0 auto;
+}
+
+
+.num-btn {
+    padding: 8px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #263d48;
+
+    color: #ffffff;
+
+    font-size: 1rem;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+.num-btn:active {
+    transform: scale(0.95);
+
+    background: #345462;
+}
+
+
+.clear-btn {
+    background: #c94b54;
+}
+
+
+.submit-btn {
+    background: #20b988;
+}
+
+
+/* =========================================================
+   18. TEAM NAME OVERLAY
+========================================================= */
+
+#team-overlay {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 200;
+
+    justify-content: center;
+    align-items: center;
+
+    background:
+        rgba(2, 10, 16, 0.94);
+
+    backdrop-filter: blur(8px);
+}
+
 
 .team-card {
     width: 460px;
     max-width: 92vw;
+
     max-height: 92vh;
+
     overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding: 22px 30px;
-    border-radius: 12px;
-    background: #0a1118;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+
+    padding: 24px 28px;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(145deg,
+            #102a38,
+            #08161e);
+
+    border: 1px solid rgba(74, 220, 232, 0.25);
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.65);
+
     text-align: center;
+
+    scrollbar-width: none;
 }
 
 .team-card::-webkit-scrollbar {
     display: none;
 }
 
+
 .team-card h2 {
-    margin-top: 0;
-    margin-bottom: 4px;
-    color: #93c5fd;
+    margin: 0 0 5px;
+
+    color: #68e9ef;
+
+    font-size: 1.35rem;
+
     letter-spacing: 2px;
 }
+
 
 #teamDisplayContainer {
     position: relative;
+
     width: 100%;
+
     margin: 14px auto;
 }
 
+
 #teamDisplay {
-    background: #0f172a;
-    border: 2px solid #3b82f6;
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
     height: 48px;
-    font-size: 1.8rem;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+
+    border-radius: 9px;
+
+    background: #07151e;
+
+    border: 1px solid rgba(72, 220, 234, 0.45);
+
+    color: #f0fbfd;
+
+    font-size: 1.7rem;
+
+    box-shadow:
+        inset 0 0 15px rgba(0, 220, 255, 0.04);
 }
+
 
 #charCounter {
     position: absolute;
-    top: 18px;
-    right: 15px;
-    font-size: 0.85rem;
-    color: #9ca3af;
+
+    top: 15px;
+    right: 13px;
+
+    color: #708b96;
+
+    font-size: 0.72rem;
 }
+
 
 #teamFeedback {
-    height: 20px;
-    margin: 8px 0 0 0;
-    color: #ef4444;
-    font-size: 0.95rem;
-    font-weight: bold;
+    height: 18px;
+
+    margin: 7px 0 0;
+
+    color: #f06a72;
+
+    font-size: 0.82rem;
+
+    font-weight: 700;
 }
 
-/* Toetsenbord Grid */
+
+/* keyboard */
+
 #keyboard {
     display: grid;
+
     grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    margin: 14px 0;
+
+    gap: 5px;
+
+    margin: 13px 0;
 }
+
 
 .key {
-    background: #334155;
-    padding: 10px 0;
-    font-size: 1.15rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    box-shadow: 0 4px 0 #0f172a;
-    transition: all 0.1s;
-    color: white;
+    padding: 9px 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    border-radius: 7px;
+
+    background: #213943;
+
+    color: #ffffff;
+
+    font-size: 1rem;
+
+    font-weight: 700;
+
     cursor: pointer;
+
+    box-shadow:
+        0 3px 0 #09151b;
 }
 
+
 .key:active {
-    background: #475569;
-    transform: translateY(5px);
-    box-shadow: 0 0 0 #0f172a;
+    transform: translateY(3px);
+
+    box-shadow: none;
+
+    background: #31515d;
 }
+
 
 .keyboard-actions {
     display: flex;
+
     justify-content: center;
-    gap: 12px;
+
+    gap: 9px;
 }
+
 
 .keyboard-actions button {
     flex: 1;
+
     max-width: 160px;
-    background: #1f2937;
-    color: white;
+
+    padding: 11px 0;
+
     border: none;
     border-radius: 8px;
-    padding: 13px 0;
-    font-size: 1rem;
-    font-weight: bold;
+
+    background: #20353f;
+
+    color: #ffffff;
+
+    font-size: 0.85rem;
+
+    font-weight: 800;
+
     cursor: pointer;
 }
+
 
 .keyboard-actions button:active {
-    transform: scale(0.95);
-}
-
-.keyboard-actions #teamOkBtn {
-    background: #3b82f6;
-}
-
-.keyboard-actions #teamOkBtn:active {
-    background: #2563eb;
-}
-
-/* =========================================
-   5. TOP BAR & DASHBOARD
-========================================= */
-#top-bar {
-    width: 100%;
-    display: flex;
-    flex-shrink: 0;
-    justify-content: space-between;
-    background: linear-gradient(180deg, #172033, #101827);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.35);
-    padding: 15px 28px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-}
-
-#glucose-container,
-#timer-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.label {
-    font-size: 0.75rem;
-    color: #9ca3af;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 4px;
-}
-
-#glucose,
-#timer {
-    font-size: 2.7rem;
-    font-weight: bold;
-    line-height: 1;
-}
-
-#glucose {
-    letter-spacing: 2px;
-    color: #10b981;
-}
-
-#timer {
-    color: #eab308;
-}
-
-/* SCAN Animatie */
-.scan-active {
-    color: #ffffff !important;
-    animation: scanGlow 1.2s infinite;
-}
-
-@keyframes scanGlow {
-    0% {
-        text-shadow: 0 0 5px #00ffc8;
-    }
-
-    50% {
-        text-shadow: 0 0 20px #00ffc8, 0 0 35px #00ffc8;
-    }
-
-    100% {
-        text-shadow: 0 0 5px #00ffc8;
-    }
-}
-
-/* =========================================
-   6. CONTENT HIERARCHIE
-========================================= */
-#pi-content {
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-#event-header {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 22px;
-    border-left: 4px solid;
-    padding-left: 12px;
-}
-
-.event-theme {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #f3f4f6;
-}
-
-#pi-icon {
-    opacity: .9;
-}
-
-.event-source {
-    font-size: 0.82rem;
-    opacity: .65;
-    letter-spacing: .5px;
-    margin-left: 6px;
-    margin-top: 2px;
-}
-
-#pi-situation-text {
-    font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1.3;
-}
-
-/* =========================================
-   POPUP 1: LEES OVERLAY (Timer staat stil)
-========================================= */
-#read-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(8, 16, 24, 0.98);
-    z-index: 250;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 25px;
-    backdrop-filter: blur(6px);
-}
-
-.read-card {
-    background: #0f172a;
-    border: 2px solid #3b82f6;
-    border-radius: 16px;
-    padding: 25px 35px;
-    max-width: 650px;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
-}
-
-.read-card h2 {
-    font-size: 1.4rem;
-    color: #ffffff;
-    margin-top: 0;
-    margin-bottom: 20px;
-    line-height: 1.3;
-}
-
-#read-choices-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 25px;
-}
-
-.read-choice-item {
-    background: #1e293b;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 12px 18px;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    color: #e2e8f0;
-    text-align: left;
-    font-weight: 600;
-}
-
-#readOkBtn {
-    background: #10b981;
-    color: white;
-    border: none;
-    padding: 12px 40px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-}
-
-#readOkBtn:active {
-    background: #059669;
     transform: scale(0.96);
 }
 
-/* =========================================
-   POPUP 2: OVERLEG OVERLAY (5s Banner)
-========================================= */
-#discuss-overlay {
-    position: absolute;
-    top: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 200;
-    pointer-events: none;
+
+.keyboard-actions #teamOkBtn {
+    background: #24cda0;
+
+    color: #05251d;
 }
 
-.discuss-card {
-    background: rgba(15, 23, 42, 0.92);
-    border: 2px solid #facc15;
-    border-radius: 12px;
-    padding: 10px 25px;
-    text-align: center;
-    box-shadow: 0 5px 20px rgba(250, 204, 21, 0.3);
-    backdrop-filter: blur(4px);
-    animation: fadeInDown 0.3s ease;
-}
 
-.discuss-card h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: #facc15;
-}
+/* =========================================================
+   19. END SCREEN
+========================================================= */
 
-.discuss-card p {
-    margin: 4px 0 0 0;
-    font-size: 0.85rem;
-    color: #cbd5e1;
-}
-
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* =========================================
-   7. KEUZEKNOPPEN
-========================================= */
-#choices {
-    display: flex;
-    flex-shrink: 0;
-    gap: 15px;
-    width: 100%;
-    align-items: stretch;
-    height: 80px;
-}
-
-.choice-box {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 15px;
-    font-size: 1.05rem;
-    line-height: 1.3;
-    border-radius: 12px;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.2);
-    text-align: center;
-    font-weight: 600;
-    pointer-events: none;
-    transition: all 0.2s ease-in-out;
-}
-
-.choice-box.selected-choice {
-    transform: scale(1.05) translateY(-5px);
-    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.4), inset 0 2px 10px rgba(255, 255, 255, 0.5);
-    border: 3px solid white;
-    z-index: 10;
-    filter: brightness(1.2);
-}
-
-.choice-box.dimmed-choice {
-    opacity: 0.3;
-    transform: scale(0.95);
-    filter: grayscale(80%);
-}
-
-#redBtn {
-    background: #dc4b52;
-    color: white;
-}
-
-#yellowBtn {
-    background: #eab308;
-    color: #111827;
-}
-
-#greenBtn {
-    background: #16c784;
-    color: white;
-}
-
-/* =========================================
-   8. OVERLAYS & COMPONENTEN
-========================================= */
-#feedback-card {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(11, 20, 26, 0.95);
-    z-index: 150;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(5px);
-    text-align: center;
-    padding: 30px;
-}
-
-#feedback-status {
-    font-size: 2.8rem;
-    margin-top: 0;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-}
-
-#feedback-text {
-    font-size: 1.3rem;
-    color: #e2e8f0;
-    margin-bottom: 30px;
-    line-height: 1.4;
-    max-width: 85%;
-}
-
-#quest-overlay {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(11, 20, 26, 0.95);
-    z-index: 100;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(5px);
-}
-
-.quest-box {
-    background-color: #1e293b;
-    padding: 15px 25px;
-    border-radius: 12px;
-    border: 2px solid #ef4444;
-    box-shadow: 0 0 50px rgba(239, 68, 68, 0.4);
-    width: 90%;
-    max-width: 450px;
-    text-align: center;
-}
-
-.quest-box h2 {
-    color: #ef4444;
-    font-size: 1.25rem;
-    margin-top: 0;
-    margin-bottom: 5px;
-    text-transform: uppercase;
-}
-
-#quest-timer-display {
-    font-size: 2.2rem;
-    color: #ef4444;
-    font-weight: bold;
-    margin: 5px 0;
-    font-family: monospace;
-}
-
-#pinDisplay {
-    font-size: 1.6rem;
-    padding: 5px;
-    width: 180px;
-    margin: 0 auto 10px auto;
-    border-radius: 12px;
-    border: 2px solid #334155;
-    background: #0f172a;
-    color: #38bdf8;
-    letter-spacing: 8px;
-    font-family: monospace;
-    min-height: 45px;
-}
-
-#pinFeedback {
-    color: #f59e0b;
-    font-weight: bold;
-    height: 18px;
-    margin: 0 0 8px 0;
-}
-
-#numpad {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    max-width: 220px;
-    margin: 0 auto;
-}
-
-.num-btn {
-    background-color: #334155;
-    color: white;
-    font-size: 1.15rem;
-    padding: 8px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.num-btn:active {
-    background-color: #475569;
-    transform: scale(0.95);
-}
-
-.clear-btn {
-    background-color: #dc4b52;
-}
-
-.submit-btn {
-    background-color: #16c784;
-}
-
-/* Knoppen: Start & Volgende */
-#startBtn {
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 45px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 2px;
-    transition: background 0.2s, transform 0.1s;
-}
-
-#startBtn:active {
-    background: #2563eb;
-    transform: scale(0.98);
-}
-
-#nextBtn {
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 55px;
-    font-size: 1.25rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-    margin-top: 10px;
-}
-
-#nextBtn:active {
-    background: #2563eb;
-    transform: scale(0.98);
-}
-
-/* =========================================
-   9. END SCREEN
-========================================= */
 #end-screen {
     justify-content: center;
+
     align-items: center;
+
     text-align: center;
-    background: radial-gradient(circle, #111827 0%, #05080f 100%);
+
+    padding: 25px 40px;
 }
+
 
 #end-title {
-    font-size: 3.5rem;
-    margin: 0 0 15px 0;
+    margin: 0 0 8px;
+
+    color: #eafff8;
+
+    font-size: 2.8rem;
+
+    font-weight: 900;
+
+    letter-spacing: 3px;
+
     text-transform: uppercase;
-    letter-spacing: 4px;
-    text-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+
+    text-shadow:
+        0 0 18px rgba(50, 225, 165, 0.35);
 }
+
 
 #end-message {
-    font-size: 1.8rem;
-    color: #cbd5e1;
-    margin: 0 0 20px 0;
+    margin: 0 0 14px;
+
+    color: #bfd0d6;
+
+    font-size: 1.2rem;
 }
+
 
 #end-score {
-    font-size: 2.2rem;
-    font-weight: bold;
-    color: #facc15;
-    margin: 0 0 30px 0;
-    padding: 15px 30px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    border: 1px solid rgba(250, 204, 21, 0.3);
+    margin: 0 0 17px;
+
+    padding: 9px 25px;
+
+    border-radius: 9px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    border: 1px solid rgba(244, 211, 94, 0.25);
+
+    color: #f4d35e;
+
+    font-size: 1.5rem;
+
+    font-weight: 900;
 }
 
+
+.next-stop-card {
+    width: 100%;
+    max-width: 600px;
+
+    margin: 0 0 14px;
+
+    padding: 13px 20px;
+
+    border-radius: 11px;
+
+    background:
+        rgba(21, 52, 48, 0.5);
+
+    border: 1px solid rgba(52, 211, 153, 0.32);
+
+    box-shadow:
+        0 0 25px rgba(52, 211, 153, 0.06);
+
+    text-align: center;
+}
+
+
+.next-stop-badge {
+    margin-bottom: 4px;
+
+    color: #54e0ae;
+
+    font-size: 0.65rem;
+
+    font-weight: 900;
+
+    letter-spacing: 1.3px;
+}
+
+
+.next-stop-card h3 {
+    margin: 0 0 5px;
+
+    color: #e9fff7;
+
+    font-size: 1rem;
+}
+
+
+.next-stop-card p {
+    margin: 0;
+
+    color: #a9c3bd;
+
+    font-size: 0.76rem;
+
+    line-height: 1.35;
+}
+
+
 #restartCountdown {
-    color: #64748b;
-    font-size: 1.1rem;
+    margin: 0;
+
+    color: #627984;
+
+    font-size: 0.78rem;
+}
+
+
+/* =========================================================
+   20. RESPONSIVE SAFETY
+========================================================= */
+
+@media (max-width: 850px) {
+
+    #start-screen,
+    #game-container,
+    #end-screen {
+        width: 96vw;
+        max-width: 800px;
+    }
+}
+
+
+@media (max-height: 450px) {
+
+    #start-screen,
+    #game-container,
+    #end-screen {
+        height: 96vh;
+        max-height: 400px;
+    }
+}
+
+
+/* =========================================================
+   21. ACCESSIBILITY / TOUCH
+========================================================= */
+
+button {
+    -webkit-touch-callout: none;
+}
+
+button:focus-visible {
+    outline: 2px solid #6cebf0;
+    outline-offset: 2px;
 }
