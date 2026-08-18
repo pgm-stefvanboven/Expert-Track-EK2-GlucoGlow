@@ -51,42 +51,43 @@ button {
 #start-screen {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     text-align: center;
-    gap: 14px;
-    height: auto;
-    min-height: 400px;
-    padding: 40px 40px 35px 40px;
+    gap: 6px;
+    height: 400px;
+    max-height: 100vh;
+    padding: 14px 30px;
     background: radial-gradient(circle, #111827 0%, #05080f 100%);
+    box-sizing: border-box;
 }
 
 /* =========================================
-   PARCOURS & WANDELING LINKS (HALTE 2 & 4)
+   PARCOURS & WANDELING LINKS (COMPACT)
 ========================================= */
 .parcours-badge {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     background: rgba(59, 130, 246, 0.15);
     border: 1px solid rgba(96, 165, 250, 0.4);
-    padding: 6px 16px;
+    padding: 3px 12px;
     border-radius: 20px;
-    margin-bottom: 5px;
+    margin-bottom: 0;
 }
 
 .badge-step {
     background: #3b82f6;
     color: #ffffff;
     font-weight: 800;
-    font-size: 0.75rem;
-    padding: 3px 8px;
-    border-radius: 12px;
-    letter-spacing: 1px;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
 }
 
 .badge-link {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: #93c5fd;
     font-weight: 600;
 }
@@ -94,17 +95,16 @@ button {
 .route-context-box {
     background: rgba(15, 23, 42, 0.7);
     border-left: 3px solid #38bdf8;
-    padding: 8px 18px;
+    padding: 5px 12px;
     border-radius: 6px;
-    max-width: 620px;
-    margin-bottom: 5px;
+    max-width: 680px;
 }
 
 .route-context-box p {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.82rem;
     color: #cbd5e1;
-    line-height: 1.4;
+    line-height: 1.25;
 }
 
 /* Eindscherm volgende halte card */
@@ -141,67 +141,78 @@ button {
 }
 
 /* =========================================
-   STARTSCHERM & GLOW EFFECT
+   STARTSCHERM & GLOW EFFECT (COMPACT)
 ========================================= */
 #start-screen h1 {
-    font-size: 4rem;
-    margin: 0 0 10px 0;
+    font-size: 2.3rem;
+    margin: 2px 0 0 0;
     color: #ffffff;
     text-shadow:
         0 0 10px rgba(255, 255, 255, 0.8),
         0 0 20px #60a5fa,
-        0 0 40px #3b82f6,
-        0 0 60px #1d4ed8;
-    letter-spacing: 3px;
+        0 0 35px #3b82f6;
+    letter-spacing: 2px;
     text-transform: uppercase;
 }
 
 .intro-text {
-    font-size: 1.2rem;
+    font-size: 0.95rem;
     margin: 0;
     color: #cbd5e1;
-    max-width: 520px;
-    line-height: 1.4;
+    max-width: 580px;
+    line-height: 1.2;
 }
 
 .motivation {
-    font-size: 1.05rem;
+    font-size: 0.9rem;
     font-weight: 700;
     margin: 0;
     color: #16c784;
-    letter-spacing: 0.3px;
 }
 
 #highscore-box {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 5px;
-    margin: 6px 0 0 0;
-    padding: 18px 32px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
+    justify-content: center;
+    gap: 12px;
+    margin: 0;
+    padding: 6px 18px;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 8px;
     border: 1px solid rgba(147, 197, 253, 0.3);
 }
 
 .highscore-label {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
     color: #93c5fd;
 }
 
 .highscore-name {
-    font-size: 1.15rem;
+    font-size: 0.95rem;
     font-weight: bold;
     color: #e5e7eb;
 }
 
 .highscore-points {
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: bold;
     color: #facc15;
+}
+
+/* COMPACTE STARTKNOP */
+#startBtn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 45px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 2px;
 }
 
 /* =========================================
