@@ -774,7 +774,7 @@ function endGame(message) {
     endScore.textContent = `Score: ${score} punten`;
     fetch(`${SERVER}/save_score/${encodeURIComponent(teamName)}/${score}`);
 
-    let countdown = 5;
+    let countdown = 10;
     const countdownElement = document.getElementById("countdown");
     if (countdownElement) countdownElement.textContent = countdown;
 

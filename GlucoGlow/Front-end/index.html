@@ -12,9 +12,20 @@
 <body>
     <!-- STARTSCHERM -->
     <div id="start-screen">
+        <div class="parcours-badge">
+            <span class="badge-step">HALTE 3 VAN 5</span>
+            <span class="badge-link">Van: Halte 2 (Bewustwording) ➔ Naar: Halte 3 (Meting & Balans)</span>
+        </div>
+
+        <div class="route-context-box">
+            <p>Bij de vorige halte zag je welke factoren glucose beïnvloeden. Nu stap je zélf in de schoenen van Thomas:
+                ervaar de continue controle en hou zijn waarden stabiel!</p>
+        </div>
+
         <h1>GLUCOGLOW</h1>
         <p class="intro-text">Help Thomas zijn glucose stabiel te houden door de juiste keuzes te maken.</p>
         <p class="motivation">Reageer snel en kies slim!</p>
+
         <div id="highscore-box">
             <div class="highscore-label">🏆 Beste teamscore</div>
             <div class="highscore-name"><span id="highscoreName"></span></div>
@@ -170,7 +181,15 @@
         <h1 id="end-title">MISSIE GESLAAGD</h1>
         <p id="end-message">Thomas kwam veilig thuis.</p>
         <p id="end-score">Score: 0 punten</p>
-        <p id="restartCountdown">Terug naar het startscherm over <span id="countdown">5</span> seconden...</p>
+
+        <div class="next-stop-card">
+            <div class="next-stop-badge">VOLGENDE STAP IN DE WANDELING ➔</div>
+            <h3>Wandel verder naar Halte 4: Actie & Keuzes</h3>
+            <p>Jullie hebben de mentale druk en het balanceren net zélf gevoeld. Bij halte 4 ontdek je hoe deze keuzes
+                doorwerken in het dagelijks leven.</p>
+        </div>
+
+        <p id="restartCountdown">Volgend team aan de beurt over <span id="countdown">10</span> seconden...</p>
     </div>
 
     <script>
