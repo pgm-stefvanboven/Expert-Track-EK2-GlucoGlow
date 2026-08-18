@@ -82,7 +82,7 @@ const soundCountdown = new Audio("assets/sounds/countdown.mp3");
 const soundWin = new Audio("assets/sounds/game-win.mp3");
 const soundGameOver = new Audio("assets/sounds/game-over.mp3");
 
-// NIEUW: MISSIEBRIEFING
+// MISSIEBRIEFING
 const soundBriefing = new Audio("assets/sounds/missie-briefing.mp3");
 soundBriefing.preload = "auto";
 
@@ -370,16 +370,8 @@ function showIntroOverlay(onComplete) {
         return;
     }
 
-    /*
-     * Oude 15 seconden-timer is bewust verwijderd.
-     * De briefing duurt nu zolang als de voice-over duurt.
-     */
-
     introOverlay.style.display = "flex";
 
-    // De knop is geen "skip"-knop meer.
-    // We gebruiken dezelfde HTML-button zodat index.html
-    // niet aangepast hoeft te worden.
     if (introButton) {
         introButton.disabled = true;
         introButton.textContent = "BRIEFING BEZIG...";
@@ -387,12 +379,10 @@ function showIntroOverlay(onComplete) {
         introButton.style.cursor = "default";
     }
 
-    // Oude timer verbergen
     if (introTimerSpan) {
         introTimerSpan.style.display = "none";
     }
 
-    // Zorg dat de audio altijd vanaf het begin start.
     soundBriefing.pause();
     soundBriefing.currentTime = 0;
 
@@ -411,20 +401,12 @@ function showIntroOverlay(onComplete) {
         onComplete();
     }
 
-    /*
-     * Wanneer de voice-over volledig klaar is,
-     * begint het spel automatisch.
-     */
+    // Briefing sluit direct wanneer de audio eindigt
     soundBriefing.onended = () => {
-        setTimeout(() => {
-            finishIntro();
-        }, 700);
+        finishIntro();
     };
 
-    /*
-     * Als de audio om een technische reden niet kan spelen,
-     * mag de installatie niet blijven hangen op de briefing.
-     */
+    // Technische fallback: voorkom vastlopen bij fout
     soundBriefing.onerror = error => {
         console.error(
             "Missiebriefing kon niet worden afgespeeld:",
@@ -436,11 +418,6 @@ function showIntroOverlay(onComplete) {
         }, 1000);
     };
 
-    /*
-     * De audio wordt gestart vanuit de START MISSIE-flow.
-     * Omdat startGame() rechtstreeks vanuit een klik wordt
-     * aangeroepen, zou de browser autoplay normaal toelaten.
-     */
     const playPromise = soundBriefing.play();
 
     if (playPromise !== undefined) {
@@ -450,12 +427,6 @@ function showIntroOverlay(onComplete) {
                 error
             );
 
-            /*
-             * Veiligheidsfallback:
-             * als de browser autoplay toch blokkeert,
-             * laten we de briefing nog 1 seconde staan
-             * en starten daarna het spel.
-             */
             setTimeout(() => {
                 finishIntro();
             }, 1000);
@@ -468,8 +439,6 @@ function showIntroOverlay(onComplete) {
 // =========================================================
 
 function startGame() {
-    soundStart.play().catch(() => { });
-
     soundHeartbeat.pause();
 
     document.body.style.filter = "none";
@@ -482,6 +451,8 @@ function startGame() {
     gameContainer.style.display = "flex";
 
     showIntroOverlay(() => {
+        // Game-start geluid speelt pas na de missiebriefing
+        soundStart.play().catch(() => { });
 
         events.forEach(e => {
             e.played = false;
@@ -682,7 +653,7 @@ setInterval(() => {
 
 // =========================================================
 // TIMER LOGICA
-// PAUSEERT TIJDENS READING EN FEEDBACK
+// PAUSEERT TIJDENS READING, DISCUSSING EN FEEDBACK
 // =========================================================
 
 function startTimer() {
@@ -691,7 +662,8 @@ function startTimer() {
 
         if (
             gameState === "FEEDBACK" ||
-            gameState === "READING"
+            gameState === "READING" ||
+            gameState === "DISCUSSING"
         ) {
             return;
         }
@@ -995,15 +967,22 @@ function loadEvent(event) {
         readOverlay.style.display = "flex";
 
         readOkBtn.onclick = () => {
-
+            // Eerst vraag-overlay weg
             readOverlay.style.display = "none";
 
-            startDiscussPhase();
+            // Korte overgang waarin knoppen geen acties kunnen triggeren
+            gameState = "TRANSITION";
+
+            setTimeout(() => {
+                startDiscussPhase();
+            }, 300);
         };
 
     } else {
-
-        startDiscussPhase();
+        gameState = "TRANSITION";
+        setTimeout(() => {
+            startDiscussPhase();
+        }, 300);
     }
 }
 
@@ -1015,6 +994,8 @@ function startDiscussPhase() {
 
     gameState = "DISCUSSING";
 
+    fetch(`${SERVER}/set_state/DISCUSSING`).catch(() => { });
+
     const discussOverlay =
         document.getElementById("discuss-overlay");
 
@@ -1024,6 +1005,7 @@ function startDiscussPhase() {
     if (!discussOverlay) {
 
         gameState = "PLAYING";
+        fetch(`${SERVER}/set_state/PLAYING`).catch(() => { });
 
         return;
     }
@@ -1050,6 +1032,7 @@ function startDiscussPhase() {
             stopDiscussMode();
 
             gameState = "PLAYING";
+            fetch(`${SERVER}/set_state/PLAYING`).catch(() => { });
         }
 
     }, 1000);
@@ -1066,6 +1049,7 @@ function onButtonPress(choiceIndex) {
         stopDiscussMode();
 
         gameState = "PLAYING";
+        fetch(`${SERVER}/set_state/PLAYING`).catch(() => { });
     }
 
     if (
@@ -1377,7 +1361,6 @@ function endGame(message) {
 
     soundHeartbeat.pause();
 
-    // Voor de zekerheid ook briefing stoppen
     soundBriefing.pause();
 
     document.body.style.filter = "none";

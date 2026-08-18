@@ -326,12 +326,12 @@
         "theme": "system",
         "trend": "⚠",
         "type": "pincode",
-        "pin": "6162",
+        "pin": "1615",
         "questTitle": "DOSSIER: THOMAS",
         "clues": [
-            "Aantal letters voornaam patiënt",
-            "Eerste twee cijfers max. veilige glucose (160)",
-            "Aantal pijltjes standaard hypo-alarm (↓↓)"
+            "De veilige bovengrens is 160. Neem de eerste twee cijfers: 16.",
+            "Bij een hypo geldt de 15-15-regel. Neem het eerste getal: 15.",
+            "Zet de twee getallen achter elkaar: 16 + 15."
         ]
     },
     {
